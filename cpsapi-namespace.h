@@ -1,3 +1,7 @@
+// Copyright (C) 2019 by Pedro Mendes, Rector and Visitors of the
+// University of Virginia, University of Heidelberg, and University
+// Connecticut School of Medicine.
+// All rights reserved.
 
 #ifndef CPSAPI_NAMESPACE_H
 #define CPSAPI_NAMESPACE_H 1
