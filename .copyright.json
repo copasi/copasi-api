@@ -1,5 +1,5 @@
 {
-  "$schema": "./schema/preCommitHook.json",
+  "$schema": "https://raw.githubusercontent.com/NSSAC/nssacPreCommitHook/master/schema/preCommitHook.json",
   "license": [
     "Licensed under the Apache License, Version 2.0 (the \"License\");",
     "you may not use this file except in compliance with the License.",
@@ -9,7 +9,9 @@
   "copyright": [
     {
       "text": [
-        "Copyright (C) {:s} Rector and Visitors of the University of Virginia",
+        "Copyright (C) {:s} by Pedro Mendes, Rector and Visitors of the",
+        "University of Virginia, University of Heidelberg, and University",
+        "of Connecticut School of Medicine.",
         "All rights reserved"
       ]
     }

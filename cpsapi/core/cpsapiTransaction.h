@@ -12,25 +12,30 @@
 //   http://www.apache.org/licenses/LICENSE-2.0 
 // END: License 
 
-#include "cpsapi/core/cpsapiContainer.h"
+#pragma once
 
-#include <copasi/core/CDataContainer.h>
+#include <set>
+#include <map>
+
+#include "cpsapi/cpsapiConfig.h"
+
+class CModel;
+class CDataObject;
 
 CPSAPI_NAMESPACE_BEGIN
 
-cpsapiContainer::cpsapiContainer(CDataContainer * pContainer)
-  :base(pContainer)
+class cpsapiTransaction
 {
-  if (dynamic_cast< CDataContainer * >(mpObject) == nullptr)
-    mpObject = nullptr;
-}
+private:
+  typedef std::map< CModel *, std::set< CDataObject * > > Map; 
+  static Map Transactions;
 
-cpsapiContainer::cpsapiContainer(const cpsapiContainer & src)
-  :base(src)
-{}
+public:
+  static bool beginTransaction(CModel * pModel);
 
-// virtual
-cpsapiContainer::~cpsapiContainer()
-{}
+  static bool endTransaction(CModel * pModel);
+  
+  static bool synchronize(CDataObject * pObject);
+};
 
 CPSAPI_NAMESPACE_END

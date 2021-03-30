@@ -12,11 +12,11 @@
 #   http://www.apache.org/licenses/LICENSE-2.0 
 # END: License 
 
-file(GLOB CURRENT_DIR__HEADERS core/*.h)
-file(GLOB CURRENT_DIR_SOURCES core/*.cpp)
+file(GLOB CURRENT_DIR_HEADERS model/*.h)
+file(GLOB CURRENT_DIR_SOURCES model/*.cpp)
 
 # create source group for IDEs
-source_group(core FILES ${CURRENT_DIR_SOURCES} ${CURRENT_DIR_HEADERS})
+source_group(model FILES ${CURRENT_DIR_SOURCES} ${CURRENT_DIR_HEADERS})
 
 # add files to main CPSAPI sources
 set(CPSAPI_SOURCES ${CPSAPI_SOURCES} ${CURRENT_DIR_SOURCES})

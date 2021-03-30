@@ -1,5 +1,7 @@
 # BEGIN: Copyright 
-# Copyright (C) 2021 Rector and Visitors of the University of Virginia 
+# Copyright (C) 2021 by Pedro Mendes, Rector and Visitors of the 
+# University of Virginia, University of Heidelberg, and University 
+# of Connecticut School of Medicine. 
 # All rights reserved 
 # END: Copyright 
 
@@ -19,22 +21,47 @@ include(GNUInstallDirs)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules ${CMAKE_MODULE_PATH})
 include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
 
+set(EXTRA_DEFS "" CACHE STRING "additional definitions to be used." )
+set(EXTRA_LIBS "" CACHE STRING "List of additional libraries to link against.  Separate multiple names using semicolons." )
+set(EXTRA_INCLUDE_DIRS "" CACHE STRING "List of additional include directories to use during compilation. Separate multiple directories using semicolons." )
+
+if(EXTRA_DEFS)
+  add_definitions(${EXTRA_DEFS})
+endif(EXTRA_DEFS)
+
+if(EXTRA_INCLUDE_DIRS)
+  foreach(dir ${EXTRA_INCLUDE_DIRS})
+    include_directories(BEFORE ${dir})
+  endforeach()
+endif(EXTRA_INCLUDE_DIRS)
+
+option (ENABLE_CPP_NAMESPACE "Enable the use of cpsapi namespace." OFF)
+
+if (ENABLE_CPP_NAMESPACE)
+  set(CPSAPI_USE_CPP_NAMESPACE 1)
+endif (ENABLE_CPP_NAMESPACE)
+
 find_package(LIBCOPASISE REQUIRED)
-include_directories(BEFORE ${LIBCOPASISE_INCLUDE_DIR} "/home/shoops/workspace/copasi-dependencies/local/include")
+include_directories(BEFORE ${LIBCOPASISE_INCLUDE_DIR})
 
 add_subdirectory(cpsapi)
 
 get_directory_property(DirDefs COMPILE_DEFINITIONS)
 
 message(STATUS "-----------------------------------------------------------
- Building CPSAPI ${COPASI_VERSION_MAJOR}.${COPASI_VERSION_MINOR}.${COPASI_VERSION_BUILD} (${CMAKE_BUILD_TYPE})
+ Building ${CMAKE_PROJECT_NAME} ${CMAKE_PROJECT_VERSION} (${CMAKE_BUILD_TYPE})
 
    Source Dir           = ${CMAKE_SOURCE_DIR}
    Binary Dir           = ${CMAKE_BINARY_DIR}
    Install Prefix       = ${CMAKE_INSTALL_PREFIX}
 
  Dependencies:
-   libCOPASISE include = ${LIBCOPASISE_INCLUDE_DIR}
-   libCOPASISE Libs    = ${LIBCOPASISE_LIBRARY}
+   libCOPASISE include  = ${LIBCOPASISE_INCLUDE_DIR}
+   libCOPASISE Libs     = ${LIBCOPASISE_LIBRARY}
    libCOPASISE LDFLAGS  = ${LIBCOPASISE_LINKER_FLAGS}
+
+ Options:
+
+   Enable namespace     = ${ENABLE_CPP_NAMESPACE}
+   Additional Defines   = ${DirDefs}
 ")

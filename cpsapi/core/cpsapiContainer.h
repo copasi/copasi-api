@@ -1,5 +1,7 @@
 // BEGIN: Copyright 
-// Copyright (C) 2021 Rector and Visitors of the University of Virginia 
+// Copyright (C) 2021 by Pedro Mendes, Rector and Visitors of the 
+// University of Virginia, University of Heidelberg, and University 
+// of Connecticut School of Medicine. 
 // All rights reserved 
 // END: Copyright 
 
@@ -12,23 +14,25 @@
 
 #pragma once
 
-#include <copasi/core/CDataContainer.h>
-
 #include "cpsapi/core/cpsapiObject.h"
+
+class CDataContainer;
 
 CPSAPI_NAMESPACE_BEGIN
 
-class cpsapiContainer: public cpsapiObject
+class cpsapiContainer : public cpsapiObject
 {
+private:
+  typedef cpsapiObject base;
+
 public:
   cpsapiContainer() = delete;
 
   cpsapiContainer(CDataContainer * pContainer);
 
-  cpsapiContainer(const cpsapiObject & src);
+  cpsapiContainer(const cpsapiContainer & src);
 
   virtual ~cpsapiContainer();
-
 };
 
 CPSAPI_NAMESPACE_END

@@ -12,25 +12,3 @@
 //   http://www.apache.org/licenses/LICENSE-2.0 
 // END: License 
 
-#include "cpsapi/core/cpsapiContainer.h"
-
-#include <copasi/core/CDataContainer.h>
-
-CPSAPI_NAMESPACE_BEGIN
-
-cpsapiContainer::cpsapiContainer(CDataContainer * pContainer)
-  :base(pContainer)
-{
-  if (dynamic_cast< CDataContainer * >(mpObject) == nullptr)
-    mpObject = nullptr;
-}
-
-cpsapiContainer::cpsapiContainer(const cpsapiContainer & src)
-  :base(src)
-{}
-
-// virtual
-cpsapiContainer::~cpsapiContainer()
-{}
-
-CPSAPI_NAMESPACE_END

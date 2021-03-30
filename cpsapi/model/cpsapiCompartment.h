@@ -14,52 +14,42 @@
 
 #pragma once
 
-#include <set>
-#include <copasi/undo/CData.h>
+#include "cpsapi/model/cpsapiModelEntity.h"
 
-#include "cpsapi/core/cpsapiTransaction.h"
-
-class CDataObject;
+class CCompartment;
 
 CPSAPI_NAMESPACE_BEGIN
 
-class cpsapiObject 
+class cpsapiCompartment: public cpsapiModelEntity
 {
+private:
+  typedef cpsapiModelEntity base;
+
 public:
   enum class Property
   {
+    INITIAL_INTENSIVE_VALUE = CData::Property::INITIAL_INTENSIVE_VALUE,
+    EXPRESSION = CData::Property::EXPRESSION,
+    INITIAL_EXPRESSION = CData::Property::INITIAL_EXPRESSION,
+    INITIAL_VALUE = CData::Property::INITIAL_VALUE,
+    SIMULATION_TYPE = CData::Property::SIMULATION_TYPE,
+    ADD_NOISE = CData::Property::ADD_NOISE,
+    NOISE_EXPRESSION = CData::Property::NOISE_EXPRESSION,
     OBJECT_NAME = CData::Property::OBJECT_NAME
   };
 
-  cpsapiObject() = delete;
+  cpsapiCompartment() = delete;
 
-  cpsapiObject(CDataObject * pObject);
+  cpsapiCompartment(CCompartment * pCompartment);
 
-  cpsapiObject(const cpsapiObject & src);
+  cpsapiCompartment(const cpsapiCompartment & src);
 
-  virtual ~cpsapiObject();
-
-  CDataObject * getObject();
-
-  const CDataObject * getObject() const;
+  virtual ~cpsapiCompartment();
 
   bool set(const Property & property, const CDataValue & value);
 
-  bool set(const std::string & property, const CDataValue & value);
-
-  bool isValidProperty(const std::string & property) const;
-
-  bool isValidProperty(const CData::Property & property) const;
-
-  operator bool() const;
-
 protected:
-  typedef std::set< CData::Property > Properties;
-
   virtual bool set(const CData::Property & property, const CDataValue & value);
-
-  CDataObject * mpObject;
-  Properties * mpSupportedProperties;
 
 private:
   static Properties SupportedProperties;

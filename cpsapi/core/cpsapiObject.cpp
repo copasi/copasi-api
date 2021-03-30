@@ -1,5 +1,7 @@
 // BEGIN: Copyright 
-// Copyright (C) 2021 Rector and Visitors of the University of Virginia 
+// Copyright (C) 2021 by Pedro Mendes, Rector and Visitors of the 
+// University of Virginia, University of Heidelberg, and University 
+// of Connecticut School of Medicine. 
 // All rights reserved 
 // END: Copyright 
 
@@ -10,38 +12,41 @@
 //   http://www.apache.org/licenses/LICENSE-2.0 
 // END: License 
 
-#include <cassert>
-
 #include "cpsapi/core/cpsapiObject.h"
+
+#include <copasi/core/CDataObject.h>
 
 CPSAPI_NAMESPACE_BEGIN
 CPSAPI_NAMESPACE_USE
 
 // static
-cpsapiObject::ValidProperties cpsapiObject::__ValidProperties = {CData::Property::OBJECT_NAME};
+cpsapiObject::Properties cpsapiObject::SupportedProperties = 
+{
+  CData::Property::OBJECT_NAME
+};
 
 cpsapiObject::cpsapiObject(CDataObject * pObject)
   : mpObject(pObject)
-{
-  assert(mpObject != NULL);
-}
+  , mpSupportedProperties(&SupportedProperties)
+{}
 
 cpsapiObject::cpsapiObject(const cpsapiObject & src)
   : mpObject(src.mpObject)
+  , mpSupportedProperties(src.mpSupportedProperties)
 {}
 
 // virtual
 cpsapiObject::~cpsapiObject()
 {}
 
-CDataObject & cpsapiObject::getObject()
+CDataObject * cpsapiObject::getObject()
 {
-  return *mpObject;
+  return mpObject;
 }
 
-const CDataObject & cpsapiObject::getObject() const
+const CDataObject * cpsapiObject::getObject() const
 {
-  return *mpObject;
+  return mpObject;
 }
 
 bool cpsapiObject::set(const cpsapiObject::Property & property, const CDataValue & value)
@@ -56,38 +61,44 @@ bool cpsapiObject::set(const std::string & property, const CDataValue & value)
   return set(CData::PropertyName.toEnum(property), value);
 }
 
-bool cpsapiObject::isValidAttribute(const std::string & property) const
+bool cpsapiObject::isValidProperty(const std::string & property) const
 {
-  return isValidAttribute(CData::PropertyName.toEnum(property));
+  return isValidProperty(CData::PropertyName.toEnum(property));
 }
 
 // virtual
-bool cpsapiObject::isValidAttribute(const CData::Property & property) const
+bool cpsapiObject::isValidProperty(const CData::Property & property) const
 {
-  return __ValidProperties.find(property) != __ValidProperties.end();
+  return mpSupportedProperties->find(property) != mpSupportedProperties->end();
 }
 
 // virtual
 bool cpsapiObject::set(const CData::Property & property,
                        const CDataValue & value)
 {
-  if (!isValidAttribute(property))
+  if (!isValidProperty(property))
     return false;
+
+  bool success = false;
 
   switch (property)
     {
     case CData::Property::OBJECT_NAME:
       if (value.getType() == CDataValue::Type::STRING)
-        return mpObject->setObjectName(value.toString());
+        success = mpObject->setObjectName(value.toString());
 
-      return false;
       break;
 
     default:
       break;
     }
 
-  return false;
+  return success && cpsapiTransaction::synchronize(mpObject);
+}
+
+cpsapiObject::operator bool() const
+{
+  return mpObject != nullptr;
 }
 
 CPSAPI_NAMESPACE_END

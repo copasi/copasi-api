@@ -1,5 +1,7 @@
 // BEGIN: Copyright 
-// Copyright (C) 2021 Rector and Visitors of the University of Virginia 
+// Copyright (C) 2021 by Pedro Mendes, Rector and Visitors of the 
+// University of Virginia, University of Heidelberg, and University 
+// of Connecticut School of Medicine. 
 // All rights reserved 
 // END: Copyright 
 
@@ -10,8 +12,17 @@
 //   http://www.apache.org/licenses/LICENSE-2.0 
 // END: License 
 
-#ifndef CPSAPI_NAMESPACE_H
-#define CPSAPI_NAMESPACE_H 1
+#pragma once
+
+#define CPSAPI_VERSION_MAJOR @CPSAPI_VERSION_MAJOR@
+#define CPSAPI_VERSION_MINOR @CPSAPI_VERSION_MINOR@
+#define CPSAPI_VERSION_PATCH @CPSAPI_VERSION_PATCH@
+
+#include "git-commit.h"
+
+// Add attribute location id to edges
+#cmakedefine CPSAPI_USE_CPP_NAMESPACE
+
 
 #if defined(__cplusplus) && defined(CPSAPI_USE_CPP_NAMESPACE) && !defined(SWIG)
   /* C++ namespace of CPSAPI */
@@ -29,7 +40,3 @@
   #define CPSAPI_NAMESPACE_USE 
   #define CPSAPI_NAMESPACE_QUALIFIER 
 #endif
-
-
-#endif  /* CPSAPI_NAMESPACE_H */
-
