@@ -39,6 +39,13 @@ cpsapiObject::cpsapiObject(const cpsapiObject & src)
 cpsapiObject::~cpsapiObject()
 {}
 
+// virtual 
+void cpsapiObject::accept(cpsapiVisitor& v)
+{
+  v.visit(*this);
+}
+
+  
 CDataObject * cpsapiObject::getObject()
 {
   return mpObject;
@@ -51,13 +58,11 @@ const CDataObject * cpsapiObject::getObject() const
 
 bool cpsapiObject::set(const cpsapiObject::Property & property, const CDataValue & value)
 {
-  return set(static_cast<const CData::Property >(property), value);
+  return set(static_cast< CData::Property >(property), value);
 }
 
 bool cpsapiObject::set(const std::string & property, const CDataValue & value)
 {
-  CData::Property P = CData::PropertyName.toEnum(property);
-
   return set(CData::PropertyName.toEnum(property), value);
 }
 

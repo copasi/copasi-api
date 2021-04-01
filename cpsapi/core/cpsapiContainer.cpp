@@ -33,4 +33,22 @@ cpsapiContainer::cpsapiContainer(const cpsapiContainer & src)
 cpsapiContainer::~cpsapiContainer()
 {}
 
+// virtual 
+void cpsapiContainer::accept(cpsapiVisitor & v)
+{
+  base::accept(v);
+
+  CDataContainer * pContainer = static_cast< CDataContainer * >(mpObject);
+
+  CDataContainer::objectMap & Objects = pContainer->getObjects();
+  CDataContainer::objectMap::iterator it = Objects.begin();
+  CDataContainer::objectMap::iterator end = Objects.end();
+
+  for (; it != end; ++it)
+    if (it->hasFlag(CDataObject::Flag::Container))
+      cpsapiContainer(static_cast< CDataContainer * >(*it)).accept(v);
+    else
+      cpsapiObject(*it).accept(v);
+}
+
 CPSAPI_NAMESPACE_END

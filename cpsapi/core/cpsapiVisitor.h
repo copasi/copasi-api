@@ -14,27 +14,16 @@
 
 #pragma once
 
-#include "cpsapi/core/cpsapiObject.h"
-
-class CDataContainer;
+#include "cpsapi/cpsapiConfig.h"
 
 CPSAPI_NAMESPACE_BEGIN
 
-class cpsapiContainer : public cpsapiObject
+class cpsapiObject;
+
+class cpsapiVisitor
 {
-private:
-  typedef cpsapiObject base;
-
-public:
-  cpsapiContainer() = delete;
-
-  cpsapiContainer(CDataContainer * pContainer);
-
-  cpsapiContainer(const cpsapiContainer & src);
-
-  virtual ~cpsapiContainer();
-
-  virtual void accept(cpsapiVisitor & v) override;
+  public:
+    virtual void visit(cpsapiObject & object) = 0;
 };
 
 CPSAPI_NAMESPACE_END

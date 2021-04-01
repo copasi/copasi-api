@@ -18,6 +18,7 @@
 #include <copasi/undo/CData.h>
 
 #include "cpsapi/core/cpsapiTransaction.h"
+#include "cpsapi/core/cpsapiVisitor.h"
 
 class CDataObject;
 
@@ -38,6 +39,8 @@ public:
   cpsapiObject(const cpsapiObject & src);
 
   virtual ~cpsapiObject();
+
+  virtual void accept(cpsapiVisitor& v);
 
   CDataObject * getObject();
 

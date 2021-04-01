@@ -48,7 +48,7 @@ public:
   bool set(const Property & property, const CDataValue & value);
 
 protected:
-  virtual bool set(const CData::Property & property, const CDataValue & value);
+  virtual bool set(const CData::Property & property, const CDataValue & value) override;
 
 private:
   static Properties SupportedProperties;
