@@ -1,15 +1,22 @@
+// BEGIN: Copyright 
+// Copyright (C) 2021 by Pedro Mendes, Rector and Visitors of the 
+// University of Virginia, University of Heidelberg, and University 
+// of Connecticut School of Medicine. 
+// All rights reserved 
+// END: Copyright 
+
+// BEGIN: License 
+// Licensed under the Apache License, Version 2.0 (the "License"); 
+// you may not use this file except in compliance with the License. 
+// You may obtain a copy of the License at 
+//   http://www.apache.org/licenses/LICENSE-2.0 
+// END: License 
+
 /**
  * Main Entry point for all tests (defines catch main, and only one 
  * test file can do it). This file is there to include utility 
  * functions used in all other test files.
  */
-
-
- // as far as i can tell this needs to be defined
-#define COPASI_MAIN
-#include <copasi/copasi.h>
-#include <copasi/core/CRootContainer.h>
-
 
 // now include catch
 #define CATCH_CONFIG_RUNNER
@@ -17,6 +24,9 @@
 
 #include <string.h>
 #include <cstdlib>
+
+#include <cpsapi/cpsapiConfig.h>
+#include <cpsapi/core/cpsapiRoot.h>
 
 /**
  * Tries to find the test file in the srcdir environment variable.
@@ -43,17 +53,15 @@ std::string getTestFile(const std::string& fileName)
   return fullName;
 }
 
+CPSAPI_NAMESPACE_USE
 
-int main(int argc, char * argv[])
+int main(int argc, char *argv[])
 {
-  // setup copasi 
-  CRootContainer::init(0, NULL);
- 
-  // global setup...
+  cpsapiRoot::init();
 
   int result = Catch::Session().run(argc, argv);
- 
-  // global clean-up...
+
+  cpsapiRoot::release();
 
   return result;
 }
