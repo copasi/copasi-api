@@ -18,7 +18,7 @@
 #define CPSAPI_VERSION_MINOR @CPSAPI_VERSION_MINOR@
 #define CPSAPI_VERSION_PATCH @CPSAPI_VERSION_PATCH@
 
-#include "git-commit.h"
+#include <cpsapi/git-commit.h>
 
 // Add attribute location id to edges
 #cmakedefine CPSAPI_USE_CPP_NAMESPACE
