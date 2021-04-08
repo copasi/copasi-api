@@ -35,7 +35,7 @@ if(EXTRA_INCLUDE_DIRS)
   endforeach()
 endif(EXTRA_INCLUDE_DIRS)
 
-option (COPASI_DEPENDENCY_DIR "Installation directory of the COPASI dependencies")
+set(COPASI_DEPENDENCY_DIR "" CACHE PATH "Installation directory of the COPASI dependencies")
 
 if (COPASI_DEPENDENCY_DIR)
   include_directories(BEFORE ${COPASI_DEPENDENCY_DIR}/include)
