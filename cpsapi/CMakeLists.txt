@@ -54,7 +54,6 @@ endmacro(copy_if_different_and_remove)
 
 # if git is present, get the version string from it
 if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
-  
 	execute_process(
 	COMMAND "${GIT_EXECUTABLE}"
 		 describe --always --dirty
