@@ -12,12 +12,15 @@
 #   http://www.apache.org/licenses/LICENSE-2.0 
 # END: License 
 
-file(GLOB CURRENT_DIR_HEADERS core/*.h)
-file(GLOB CURRENT_DIR_SOURCES core/*.cpp)
+cmake_minimum_required (VERSION 3.1.3)
+
+file(GLOB CURRENT_DIR_HEADERS *.h)
+file(GLOB CURRENT_DIR_SOURCES *.cpp)
 
 # create source group for IDEs
-source_group(core FILES ${CURRENT_DIR_SOURCES} ${CURRENT_DIR_HEADERS})
+source_group(example1 FILES ${CURRENT_DIR_SOURCES} ${CURRENT_DIR_HEADERS})
 
-# add files to main CPSAPI sources
-set(CPSAPI_SOURCES ${CPSAPI_SOURCES} ${CURRENT_DIR_SOURCES})
-set(CPSAPI_HEADERS ${CPSAPI_HEADERS} ${CURRENT_DIR_HEADERS})
+add_executable(example1 ${CURRENT_DIR_SOURCES})
+
+target_link_libraries(example1 cpsapi ${LIBCOPASISE_LIBRARY})
+

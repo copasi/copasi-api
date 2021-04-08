@@ -13,8 +13,90 @@
 // END: License 
 
 #include "cpsapi/model/cpsapiModel.h"
+#include "cpsapi/model/cpsapiCompartment.h"
+
+#include <copasi/model/CModel.h>
 
 CPSAPI_NAMESPACE_BEGIN
 
+cpsapiModel::cpsapiModel(CModel * pModel)
+  : cpsapiModelEntity(pModel)
+{
+  // TODO CRITICAL Implement me!
+}
+
+cpsapiModel::cpsapiModel(const cpsapiModel & src)
+  : cpsapiModelEntity(src)
+{
+  // TODO CRITICAL Implement me!
+}
+
+// virtual
+cpsapiModel::~cpsapiModel()
+{
+  // TODO CRITICAL Implement me!
+}
+
+void cpsapiModel::beginTransaction() const
+{
+  // TODO CRITICAL Implement me!
+}
+
+void cpsapiModel::endTransaction() const
+{
+  // TODO CRITICAL Implement me!
+}
+
+bool cpsapiModel::synchronize(const std::set< CDataObject * > & changedObjects)
+{
+  // TODO CRITICAL Implement me!
+
+  return false;
+}
+
+bool cpsapiModel::addCompartment(const std::string & name)
+{
+  // TODO CRITICAL Implement me!
+
+  return false;
+}
+
+bool cpsapiModel::deleteCompartment(const std::string & name)
+{
+  // TODO CRITICAL Implement me!
+
+  return false;
+}
+
+bool cpsapiModel::selectCompartment(const std::string & name)
+{
+  // TODO CRITICAL Implement me!
+
+  return false;
+}
+
+CCompartment * cpsapiModel::compartment(const std::string & name)
+{
+  // TODO CRITICAL Implement me!
+
+  return nullptr;
+}
+
+std::vector< cpsapiCompartment > cpsapiModel::getCompartments() const
+{
+  // TODO CRITICAL Implement me!
+
+  return std::vector< cpsapiCompartment >();
+}
+
+void cpsapiModel::changeCompartment(CCompartment * pCompartment)
+{
+  // TODO CRITICAL Implement me!
+}
+
+void cpsapiModel::assertDefaultCompartment()
+{
+  // TODO CRITICAL Implement me!
+}
 
 CPSAPI_NAMESPACE_END

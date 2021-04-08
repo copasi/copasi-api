@@ -1,5 +1,5 @@
 # BEGIN: Copyright 
-# Copyright (C) 2019 - 2021 by Pedro Mendes, Rector and Visitors of the 
+# Copyright (C) 2021 by Pedro Mendes, Rector and Visitors of the 
 # University of Virginia, University of Heidelberg, and University 
 # of Connecticut School of Medicine. 
 # All rights reserved 
@@ -52,13 +52,3 @@ FIND_PACKAGE_HANDLE_STANDARD_ARGS(CROSSGUID REQUIRED LIBCOPASISE_INCLUDE_DIR LIB
 
 mark_as_advanced(LIBCOPASISE_INCLUDE_DIR LIBCOPASISE_LIBRARY)
 
-list(FIND LIBCOPASISE_LIBRARY "OpenMP::OpenMP_CXX" OPENMP_ENABLED)
-
-message(STATUS "OpenMP: " ${OPENMP_ENABLED})
-if (${OPENMP_ENABLED} GREATER -1)
-  set(OPENMP_ENABLED ON)
-  find_package (OpenMP REQUIRED)
-  include_directories(BEFORE ${OpenMP_INCLUDE_PATH})
-endif()
-
-find_package(LIBSEDML REQUIRED)

@@ -35,6 +35,15 @@ if(EXTRA_INCLUDE_DIRS)
   endforeach()
 endif(EXTRA_INCLUDE_DIRS)
 
+option (COPASI_DEPENDENCY_DIR "Installation directory of the COPASI dependencies")
+
+if (COPASI_DEPENDENCY_DIR)
+  include_directories(BEFORE ${COPASI_DEPENDENCY_DIR}/include)
+  add_link_options("-L${COPASI_DEPENDENCY_DIR}/${CMAKE_INSTALL_LIBDIR}")
+endif (COPASI_DEPENDENCY_DIR)
+
+message (STATUS "COPASI dependencies: " ${COPASI_DEPENDENCY_DIR}/${CMAKE_INSTALL_LIBDIR}/cmake)
+
 option (ENABLE_CPP_NAMESPACE "Enable the use of cpsapi namespace." OFF)
 
 if (ENABLE_CPP_NAMESPACE)
@@ -45,6 +54,7 @@ find_package(LIBCOPASISE REQUIRED)
 include_directories(BEFORE ${LIBCOPASISE_INCLUDE_DIR})
 
 add_subdirectory(cpsapi)
+add_subdirectory(examples)
 
 get_directory_property(DirDefs COMPILE_DEFINITIONS)
 
@@ -59,6 +69,8 @@ message(STATUS "-----------------------------------------------------------
    libCOPASISE include  = ${LIBCOPASISE_INCLUDE_DIR}
    libCOPASISE Libs     = ${LIBCOPASISE_LIBRARY}
    libCOPASISE LDFLAGS  = ${LIBCOPASISE_LINKER_FLAGS}
+
+   COPASI dependencies  = ${COPASI_DEPENDENCY_DIR}
 
  Options:
 

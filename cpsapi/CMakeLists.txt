@@ -34,5 +34,10 @@ include(core/CMakeLists.txt)
 include(model/CMakeLists.txt)
 
 add_library (cpsapi STATIC ${CPSAPI_SOURCES} ${CPSAPI_HEADERS})
+target_link_libraries(cpsapi ${LIBCOPASISE_LIBRARY_NAME})
+
+if (OPENMP_ENABLED)
+target_compile_options(cpsapi PUBLIC ${OpenMP_CXX_FLAGS})
+endif (OPENMP_ENABLED)
 
 add_dependencies(cpsapi GIT_COMMIT)
