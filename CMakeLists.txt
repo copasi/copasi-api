@@ -56,6 +56,9 @@ include_directories(BEFORE ${LIBCOPASISE_INCLUDE_DIR})
 add_subdirectory(cpsapi)
 add_subdirectory(examples)
 
+include(CTest)
+add_subdirectory(tests)
+
 get_directory_property(DirDefs COMPILE_DEFINITIONS)
 
 message(STATUS "-----------------------------------------------------------
