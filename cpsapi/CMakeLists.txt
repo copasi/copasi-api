@@ -14,6 +14,44 @@
 
 find_package(Git QUIET)
 
+
+###############################################################################
+#
+# utility macro for copying files only if they have changed, for this it is
+# assumed that the source file is always created. Then the macro is called.
+# If the target file will only be overwritten if it does not yet exist, or
+# its content is different. At the end the source file will be removed.
+#
+macro(copy_if_different_and_remove source target)
+# message(
+# "
+# copy_if_different_and_remove called with:
+#     source = ${source}
+#     target = ${target}
+# "
+# )
+file(READ ${source} CONTENT)
+
+if (EXISTS ${target})
+    # message("target exists")
+    file(READ ${target} CURRENT_CONTENT)
+    string(COMPARE EQUAL ${CURRENT_CONTENT} ${CONTENT} IS_SAME)
+    if (NOT ${IS_SAME})
+        #message("content is different")
+        file(WRITE ${target} ${CONTENT})
+    endif()
+else()
+    #message("target does not exist")
+    file(WRITE ${target} ${CONTENT})
+endif()
+
+file(REMOVE ${source})
+
+endmacro(copy_if_different_and_remove)
+
+###############################################################################
+
+
 # if git is present, get the version string from it
 if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
   
@@ -46,11 +84,13 @@ endif()
 # 	CMAKE_CURRENT_BINARY_DIR: ${CMAKE_CURRENT_BINARY_DIR}
 # ")
 
-if (NOT CURRENT EQUAL GIT_COMMIT_OUT)
-	file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/git-commit.h ${GIT_COMMIT_OUT})
-else()
-	message("No Changes to Git Version")
-endif()
+
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/git-commit.h.new ${GIT_COMMIT_OUT})
+
+copy_if_different_and_remove(
+  ${CMAKE_CURRENT_BINARY_DIR}/git-commit.h.new
+  ${CMAKE_CURRENT_BINARY_DIR}/git-commit.h
+)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cpsapiConfig.h.in ${CMAKE_CURRENT_SOURCE_DIR}/cpsapiConfig.h)
 
