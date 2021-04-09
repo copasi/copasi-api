@@ -16,7 +16,6 @@
 
 #include <copasi/core/CDataObject.h>
 
-CPSAPI_NAMESPACE_BEGIN
 CPSAPI_NAMESPACE_USE
 
 // static
@@ -26,12 +25,12 @@ cpsapiObject::Properties cpsapiObject::SupportedProperties =
 };
 
 cpsapiObject::cpsapiObject(CDataObject * pObject)
-  : mpObject(pObject)
+  : mObject(pObject)
   , mpSupportedProperties(&SupportedProperties)
 {}
 
 cpsapiObject::cpsapiObject(const cpsapiObject & src)
-  : mpObject(src.mpObject)
+  : mObject(src.mObject)
   , mpSupportedProperties(src.mpSupportedProperties)
 {}
 
@@ -48,12 +47,12 @@ void cpsapiObject::accept(cpsapiVisitor& v)
   
 CDataObject * cpsapiObject::getObject()
 {
-  return mpObject;
+  return *mObject;
 }
 
 const CDataObject * cpsapiObject::getObject() const
 {
-  return mpObject;
+  return *mObject;
 }
 
 bool cpsapiObject::set(const cpsapiObject::Property & property, const CDataValue & value, const CCore::Framework & framework)
@@ -89,7 +88,7 @@ bool cpsapiObject::set(const CData::Property & property, const CDataValue & valu
     {
     case CData::Property::OBJECT_NAME:
       if (value.getType() == CDataValue::Type::STRING)
-        success = mpObject->setObjectName(value.toString());
+        success = mObject->setObjectName(value.toString());
 
       break;
 
@@ -97,12 +96,10 @@ bool cpsapiObject::set(const CData::Property & property, const CDataValue & valu
       break;
     }
 
-  return success && cpsapiTransaction::synchronize(mpObject, framework);
+  return success && cpsapiTransaction::synchronize(*mObject, framework);
 }
 
 cpsapiObject::operator bool() const
 {
-  return mpObject != nullptr;
+  return mObject;
 }
-
-CPSAPI_NAMESPACE_END

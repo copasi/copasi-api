@@ -27,9 +27,6 @@ cpsapiSpecies::Properties cpsapiSpecies::SupportedProperties =
 cpsapiSpecies::cpsapiSpecies(CMetab * pSpecies)
   : base(pSpecies)
 {
-  if (dynamic_cast< CMetab * >(mpObject) == nullptr)
-    mpObject = nullptr;
-
   mpSupportedProperties = &SupportedProperties;
 }
 
@@ -49,7 +46,7 @@ bool cpsapiSpecies::set(const cpsapiSpecies::Property & property, const CDataVal
 // virtual
 bool cpsapiSpecies::set(const CData::Property & property, const CDataValue & value, const CCore::Framework & framework)
 {
-  if (mpObject == nullptr)
+  if (*mObject == nullptr)
     return false;
 
   if (!isValidProperty(property))
@@ -57,7 +54,7 @@ bool cpsapiSpecies::set(const CData::Property & property, const CDataValue & val
 
   CCore::Framework Framework(framework);
 
-  CMetab * pSpecies = static_cast< CMetab * >(mpObject);
+  CMetab * pSpecies = static_cast< CMetab * >(*mObject);
   bool success = false;
 
   CDataObject * pChangedObject = pSpecies;

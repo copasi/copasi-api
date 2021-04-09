@@ -20,10 +20,7 @@ CPSAPI_NAMESPACE_BEGIN
 
 cpsapiContainer::cpsapiContainer(CDataContainer * pContainer)
   :base(pContainer)
-{
-  if (dynamic_cast< CDataContainer * >(mpObject) == nullptr)
-    mpObject = nullptr;
-}
+{}
 
 cpsapiContainer::cpsapiContainer(const cpsapiContainer & src)
   :base(src)
@@ -38,7 +35,7 @@ void cpsapiContainer::accept(cpsapiVisitor & v)
 {
   base::accept(v);
 
-  CDataContainer * pContainer = static_cast< CDataContainer * >(mpObject);
+  CDataContainer * pContainer = static_cast< CDataContainer * >(*mObject);
 
   CDataContainer::objectMap & Objects = pContainer->getObjects();
   CDataContainer::objectMap::iterator it = Objects.begin();

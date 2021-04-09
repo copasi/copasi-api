@@ -18,6 +18,7 @@
 #include "cpsapi/core/cpsapiRoot.h"
 #include "cpsapi/model/cpsapiModel.h"
 #include "cpsapi/model/cpsapiCompartment.h"
+#include "cpsapi/model/cpsapiSpecies.h"
 
 using namespace std;
 CPSAPI_NAMESPACE_USE
@@ -28,14 +29,23 @@ TEST_CASE("Edit model", "[cpsapi]")
   REQUIRE(Model);
 
   cpsapiCompartment Compartment = Model.addCompartment("test_compartment");
-  
   REQUIRE(Compartment);
+  
+  cpsapiCompartment Copy(Compartment);
+  REQUIRE(Copy);
+
   REQUIRE(Model.compartment());
   REQUIRE(!Model.compartment("other"));
   REQUIRE(Model.getCompartments().size() == 1);
 
+  cpsapiSpecies Species = Compartment.addSpecies("test_species");
+  REQUIRE(Copy.getSpecies().size() == 1);
+
   REQUIRE(Model.deleteCompartment());
   REQUIRE(Model.getCompartments().size() == 0);
+  REQUIRE(!Species);
+  REQUIRE(!Compartment);
+  REQUIRE(!Copy);
 
   REQUIRE(cpsapiRoot::deleteModel("test_model"));
 }

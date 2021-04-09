@@ -51,7 +51,7 @@ public:
 
   cpsapiSpecies addSpecies(const std::string & name);
 
-  bool deleteSpecies(const std::string & name);
+  bool deleteSpecies(const std::string & name = "");
 
   cpsapiSpecies species(const std::string & name = "");
 
@@ -61,6 +61,8 @@ protected:
   virtual bool set(const CData::Property & property, const CDataValue & value, const CCore::Framework & framework) override;
 
 private:
+  CMetab * __species(const std::string & name) const;
+
   CMetab * mpDefaultSpecies;
   static Properties SupportedProperties;
 };

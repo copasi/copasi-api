@@ -14,6 +14,7 @@
 
 #include "cpsapi/model/cpsapiCompartment.h"
 #include "cpsapi/model/cpsapiSpecies.h"
+#include "cpsapi/model/cpsapiModel.h"
 
 #include "copasi/model/CCompartment.h"
 
@@ -30,9 +31,6 @@ cpsapiCompartment::cpsapiCompartment(CCompartment * pCompartment)
   : base(pCompartment)
   , mpDefaultSpecies(nullptr)
 {
-  if (dynamic_cast< CCompartment * >(mpObject) == nullptr)
-    mpObject = nullptr;
-
   mpSupportedProperties = &SupportedProperties;
 }
 
@@ -47,24 +45,29 @@ cpsapiCompartment::~cpsapiCompartment()
 
 cpsapiSpecies cpsapiCompartment::addSpecies(const std::string & name)
 {
-  if (mpObject == nullptr)
+  if (!mObject)
     return nullptr;
-    
-  return cpsapiSpecies(static_cast< CCompartment * >(mpObject)->createMetabolite(name));
+  
+  cpsapiSpecies Species = cpsapiModel(static_cast< CCompartment * >(*mObject)->getModel()).addSpecies(name, mObject->getObjectName());
+
+  if (Species)
+    mpDefaultSpecies = static_cast< CMetab * >(Species.getObject());
+
+  return Species;
 }
 
 bool cpsapiCompartment::deleteSpecies(const std::string & name)
 {
-  if (mpObject == nullptr)
+  CMetab * pSpecies = __species(name);
+
+  if (pSpecies == nullptr)
     return false;
-
-  CDataVectorNS< CMetab > & Species = static_cast< CCompartment * >(mpObject)->getMetabolites();
-
-  size_t Index = Species.getIndex(name);
-  if (Index == C_INVALID_INDEX)
-    return false;
-
-  CMetab * pSpecies = &Species[Index];
+  
+  if (mpDefaultSpecies == pSpecies)
+    mpDefaultSpecies = nullptr;
+  
+  cpsapiModel(static_cast< CCompartment * >(*mObject)->getModel()).deleteAllDependents(pSpecies);
+  cpsapiPointer::deleted(pSpecies);
   pdelete(pSpecies);
 
   return true;
@@ -72,37 +75,36 @@ bool cpsapiCompartment::deleteSpecies(const std::string & name)
 
 cpsapiSpecies cpsapiCompartment::species(const std::string & name)
 {
-  if (name.empty())
-    return cpsapiSpecies(mpDefaultSpecies);
+  CMetab * pSpecies = __species(name);
 
-  if (mpObject == nullptr)
-    return nullptr;
+  if (pSpecies != nullptr)
+    mpDefaultSpecies = pSpecies;
 
-  CDataVectorNS< CMetab > & Species = static_cast< CCompartment * >(mpObject)->getMetabolites();
-
-
-  size_t Index = Species.getIndex(name);
-
-  if (Index == C_INVALID_INDEX)
-    return nullptr;
-  
-  mpDefaultSpecies = &Species[Index];
-  return mpDefaultSpecies;
+  return pSpecies;
 }
 
 std::vector< cpsapiSpecies > cpsapiCompartment::getSpecies() const
 {
-  CDataVectorNS< CMetab > & Species = static_cast< CCompartment * >(mpObject)->getMetabolites();
-  std::vector< cpsapiSpecies > Result(Species.size());
+  if (!mObject)
+    return std::vector< cpsapiSpecies >();
 
-  std::vector< cpsapiSpecies >::iterator it = Result.begin();
-  std::vector< cpsapiSpecies >::iterator end = Result.end();
-  CDataVectorNS< CMetab >::iterator itSrc = Species.begin();
+  return convertVector< cpsapiSpecies >(static_cast< CCompartment * >(*mObject)->getMetabolites());
+}
 
-  for (; it != end; ++it, ++itSrc)
-    *it = &*itSrc;
+CMetab * cpsapiCompartment::__species(const std::string & name) const
+{ 
+  if (!mObject)
+    return nullptr;
+    
+  if (name.empty())
+    return mpDefaultSpecies;
 
-  return Result;
+  size_t Index = static_cast< CCompartment * >(*mObject)->getMetabolites().getIndex(name);
+
+  if (Index == C_INVALID_INDEX)
+    return nullptr;
+
+  return  &static_cast< CCompartment * >(*mObject)->getMetabolites()[Index];
 }
 
 bool cpsapiCompartment::set(const cpsapiCompartment::Property & property, const CDataValue & value, const CCore::Framework & framework)
@@ -113,7 +115,7 @@ bool cpsapiCompartment::set(const cpsapiCompartment::Property & property, const 
 // virtual
 bool cpsapiCompartment::set(const CData::Property & property, const CDataValue & value, const CCore::Framework & framework)
 {
-  if (mpObject == nullptr)
+  if (!mObject)
     return false;
 
   if (!isValidProperty(property))
@@ -121,7 +123,7 @@ bool cpsapiCompartment::set(const CData::Property & property, const CDataValue &
 
   CCore::Framework Framework(framework);
 
-  CCompartment * pCompartment = static_cast< CCompartment * >(mpObject);
+  CCompartment * pCompartment = static_cast< CCompartment * >(*mObject);
   bool success = false;
 
   CDataObject * pChangedObject = pCompartment;

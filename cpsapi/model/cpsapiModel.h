@@ -28,6 +28,7 @@ class CEvent;
 CPSAPI_NAMESPACE_BEGIN
 
 class cpsapiCompartment;
+class cpsapiSpecies;
 
 class cpsapiModel: public cpsapiModelEntity
 {
@@ -66,12 +67,22 @@ public:
 
   std::vector< cpsapiCompartment > getCompartments() const;
   
+  cpsapiSpecies addSpecies(const std::string & name, const std::string & compartment = "");
 
-private:
-  template < class CType > void deleteDependents(CType *& pDefault, const CDataObject::DataObjectSet & set);
+  bool deleteSpecies(const std::string & name = "", const std::string & compartment = "");
+
+  cpsapiSpecies species(const std::string & name = "", const std::string & compartment = "");
+
+  std::vector< cpsapiSpecies > getSpecies() const;
+  
   void deleteAllDependents(CDataContainer * pContainer);
 
+private:
   CCompartment * __compartment(const std::string & name) const;
+
+  CMetab * __species(const std::string & name, const std::string & compartment) const;
+
+  template < class CType > void deleteDependents(CType *& pDefault, const CDataObject::DataObjectSet & set);
 
   CCompartment * mpDefaultCompartment;
   CReaction * mpDefaultReaction;
@@ -91,6 +102,7 @@ void cpsapiModel::deleteDependents(CType *& pDefault, const CDataObject::DataObj
           && dynamic_cast< const CType * >(*it) != pDefault)
         pDefault = nullptr;
 
+      cpsapiPointer::deleted(*it);
       delete *it;
     }
 }

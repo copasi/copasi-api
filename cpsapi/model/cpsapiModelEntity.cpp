@@ -33,9 +33,6 @@ cpsapiModelEntity::Properties cpsapiModelEntity::SupportedProperties =
 cpsapiModelEntity::cpsapiModelEntity(CModelEntity * pObject)
   : base(pObject)
 {
-  if (dynamic_cast< CModelEntity * >(mpObject) == nullptr)
-    mpObject = nullptr;
-
   mpSupportedProperties = & cpsapiModelEntity::SupportedProperties;
 }
 
@@ -55,13 +52,13 @@ bool cpsapiModelEntity::set(const cpsapiModelEntity::Property & property, const 
 // virtual
 bool cpsapiModelEntity::set(const CData::Property & property, const CDataValue & value, const CCore::Framework & framework)
 {
-  if (mpObject == nullptr)
+  if (*mObject == nullptr)
     return false;
 
   if (!isValidProperty(property))
     return base::set(property, value, framework);
 
-  CModelEntity * pEntity = static_cast< CModelEntity * >(mpObject);
+  CModelEntity * pEntity = static_cast< CModelEntity * >(*mObject);
   bool success = false;
 
   CDataObject * pChangedObject = pEntity;

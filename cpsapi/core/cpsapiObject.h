@@ -16,9 +16,11 @@
 
 #include <set>
 #include <copasi/undo/CData.h>
+#include <copasi/core/CDataVector.h>
 
 #include "cpsapi/core/cpsapiTransaction.h"
 #include "cpsapi/core/cpsapiVisitor.h"
+#include "cpsapi/core/cpsapiPointer.h"
 
 class CDataObject;
 
@@ -59,11 +61,26 @@ protected:
 
   virtual bool set(const CData::Property & property, const CDataValue & value, const CCore::Framework & framework);
 
-  CDataObject * mpObject;
+  cpsapiPointer mObject;
   Properties * mpSupportedProperties;
 
 private:
   static Properties SupportedProperties;
 };
+
+template < typename Target, class SourceVector > std::vector< Target > convertVector(SourceVector  &src)
+{
+  std::vector< Target > Result(src.size());
+
+  typename std::vector< Target >::iterator it = Result.begin();
+  typename std::vector< Target >::iterator end = Result.end();
+  typename SourceVector::iterator itSrc = src.begin();
+
+  for (; it != end; ++it, ++itSrc)
+    *it = &*itSrc;
+
+  return Result;
+}
+
 
 CPSAPI_NAMESPACE_END

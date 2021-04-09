@@ -14,6 +14,7 @@
 
 #include "cpsapi/model/cpsapiModel.h"
 #include "cpsapi/model/cpsapiCompartment.h"
+#include "cpsapi/model/cpsapiSpecies.h"
 
 CPSAPI_NAMESPACE_BEGIN
 
@@ -23,10 +24,7 @@ cpsapiModel::cpsapiModel(CModel * pModel)
   , mpDefaultReaction(nullptr)
   , mpDefaultGlobalQuantity(nullptr)
   , mpDefaultEvent(nullptr)
-{
-  if (dynamic_cast< CModel * >(mpObject) == nullptr)
-    mpObject = nullptr;
-}
+{}
 
 cpsapiModel::cpsapiModel(const cpsapiModel & src)
   : base(src)
@@ -44,32 +42,32 @@ cpsapiModel::~cpsapiModel()
 
 void cpsapiModel::beginTransaction() const
 {
-  if (mpObject != nullptr)
-    cpsapiTransaction::beginTransaction(static_cast< CModel * >(mpObject));
+  if (mObject)
+    cpsapiTransaction::beginTransaction(static_cast< CModel * >(*mObject));
 }
 
 void cpsapiModel::endTransaction() const
 {
-  if (mpObject != nullptr)
-    cpsapiTransaction::endTransaction(static_cast< CModel * >(mpObject));
+  if (mObject)
+    cpsapiTransaction::endTransaction(static_cast< CModel * >(*mObject));
 }
 
 bool cpsapiModel::synchronize(std::set< const CDataObject * > & changedObjects)
 {
-  if (mpObject == nullptr)
+  if (!mObject)
     return false;
 
-  static_cast< CModel * >(mpObject)->updateInitialValues(changedObjects);
+  static_cast< CModel * >(*mObject)->updateInitialValues(changedObjects);
 
   return true; 
 }
 
 cpsapiCompartment cpsapiModel::addCompartment(const std::string & name)
 {
-  if (mpObject == nullptr)
+  if (!mObject)
     return nullptr;
 
-  CCompartment * pCompartment = static_cast< CModel * >(mpObject)->createCompartment(name);
+  CCompartment * pCompartment = static_cast< CModel * >(*mObject)->createCompartment(name);
 
   if (pCompartment != nullptr)
     mpDefaultCompartment = pCompartment;
@@ -79,9 +77,6 @@ cpsapiCompartment cpsapiModel::addCompartment(const std::string & name)
 
 bool cpsapiModel::deleteCompartment(const std::string & name)
 {
-  if (mpObject == nullptr)
-    return false;
-
   CCompartment * pCompartment = __compartment(name);
 
   if (pCompartment == nullptr)
@@ -91,6 +86,7 @@ bool cpsapiModel::deleteCompartment(const std::string & name)
     mpDefaultCompartment = nullptr;
 
   deleteAllDependents(pCompartment);
+  cpsapiPointer::deleted(pCompartment);
   delete pCompartment;
   
   return true;
@@ -108,40 +104,81 @@ cpsapiCompartment cpsapiModel::compartment(const std::string & name)
 
 std::vector< cpsapiCompartment > cpsapiModel::getCompartments() const
 {
-  if (mpObject == nullptr)
+  if (!mObject)
     return std::vector< cpsapiCompartment >();
 
-  CDataVectorNS< CCompartment > & Compartments = static_cast< CModel * >(mpObject)->getCompartments();
-  std::vector< cpsapiCompartment > Result(Compartments.size());
-
-  std::vector< cpsapiCompartment >::iterator it = Result.begin();
-  std::vector< cpsapiCompartment >::iterator end = Result.end();
-  CDataVectorNS< CCompartment >::iterator itSrc = Compartments.begin();
-
-  for (; it != end; ++it, ++itSrc)
-    *it = &*itSrc;
-
-  return Result;
+  return convertVector< cpsapiCompartment >(static_cast< CModel * >(*mObject)->getCompartments());
 }
 
 CCompartment * cpsapiModel::__compartment(const std::string & name) const
 {
-  if (mpObject == nullptr)
+  if (!mObject)
     return nullptr;
     
   if (name.empty())
     return mpDefaultCompartment;
 
-  size_t Index = static_cast< CModel * >(mpObject)->getCompartments().getIndex(name);
+  size_t Index = static_cast< CModel * >(*mObject)->getCompartments().getIndex(name);
 
   if (Index == C_INVALID_INDEX)
     return nullptr;
 
-  return  &static_cast< CModel * >(mpObject)->getCompartments()[Index];
+  return  &static_cast< CModel * >(*mObject)->getCompartments()[Index];
+}
+
+cpsapiSpecies cpsapiModel::addSpecies(const std::string & name, const std::string & compartment)
+{
+  if (!mObject)
+    return nullptr;
+
+  CCompartment * pCompartment = __compartment(compartment);
+
+  if (pCompartment == nullptr)
+    return nullptr;
+
+  return static_cast< CModel * >(*mObject)->createMetabolite(name, compartment);
+}
+
+bool cpsapiModel::deleteSpecies(const std::string & name, const std::string & compartment)
+{
+  cpsapiCompartment Compartment(__compartment(compartment));
+
+  if (!Compartment)
+    return false;
+  
+  return Compartment.deleteSpecies(name);
+}
+
+cpsapiSpecies cpsapiModel::species(const std::string & name, const std::string & compartment)
+{
+  return __species(name, compartment);
+}
+
+std::vector< cpsapiSpecies > cpsapiModel::getSpecies() const
+{
+  if (!mObject)
+    return std::vector< cpsapiSpecies >();
+
+  return convertVector< cpsapiSpecies >(static_cast< CModel * >(*mObject)->getMetabolites());
+}
+
+CMetab * cpsapiModel::__species(const std::string & name, const std::string & compartment) const
+{
+  cpsapiCompartment Compartment(__compartment(compartment));
+
+  if (!Compartment)
+    return nullptr;
+  
+  return static_cast< CMetab * >(Compartment.species(name).getObject());
 }
 
 void cpsapiModel::deleteAllDependents(CDataContainer * pContainer)
 {
+  if (!mObject)
+    return;
+  
+  static_cast< CModel * >(*mObject)->compileIfNecessary(nullptr);
+
   CModel::DataObjectSet DependentReactions;
   CModel::DataObjectSet DependentMetabolites;
   CModel::DataObjectSet DependentCompartments;
@@ -149,7 +186,7 @@ void cpsapiModel::deleteAllDependents(CDataContainer * pContainer)
   CModel::DataObjectSet DependentEvents;
   CModel::DataObjectSet DependentEventAssignments;
 
-  static_cast< CModel * >(mpObject)->appendAllDependents(*pContainer,
+  static_cast< CModel * >(*mObject)->appendAllDependents(*pContainer,
                                                          DependentReactions,
                                                          DependentMetabolites,
                                                          DependentCompartments,
@@ -161,12 +198,11 @@ void cpsapiModel::deleteAllDependents(CDataContainer * pContainer)
   CDataObject * pObject = nullptr;
 
   deleteDependents(mpDefaultReaction, DependentReactions);
-  deleteDependents(mpDefaultReaction, DependentMetabolites);
-  deleteDependents(pObject, DependentCompartments);
+  deleteDependents(pObject, DependentMetabolites);
+  deleteDependents(mpDefaultCompartment, DependentCompartments);
   deleteDependents(mpDefaultGlobalQuantity, DependentModelValues);
   deleteDependents(mpDefaultEvent, DependentEvents);
   deleteDependents(pObject, DependentEventAssignments);
-
 }
 
 CPSAPI_NAMESPACE_END
