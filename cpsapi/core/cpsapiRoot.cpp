@@ -12,15 +12,15 @@
 //   http://www.apache.org/licenses/LICENSE-2.0 
 // END: License 
 
-#include "cpsapi/core/cpsapiRoot.h"
-#include "cpsapi/model/cpsapiModel.h"
-#include "cpsapi/model/cpsapiCompartment.h"
-
 #define COPASI_MAIN
 
 #include <copasi/core/CRootContainer.h>
 #include <copasi/CopasiDataModel/CDataModel.h>
 #include <copasi/core/CDataVector.h>
+
+#include "cpsapi/core/cpsapiRoot.h"
+#include "cpsapi/model/cpsapiModel.h"
+#include "cpsapi/model/cpsapiCompartment.h"
 
 CPSAPI_NAMESPACE_BEGIN
 CPSAPI_NAMESPACE_USE
@@ -50,14 +50,15 @@ CFunction * cpsapiRoot::pDefaultFunction = nullptr;
 CUnitDefinition * cpsapiRoot::pDefaultUnitDefinition = nullptr;
 
 // static 
-bool cpsapiRoot::addModel(const std::string & name)
+cpsapiModel cpsapiRoot::addModel(const std::string & name)
 {
   if (DataModels.find(name) != DataModels.end())
-    return false;
+    return nullptr;
 
   changeDataModel(CRootContainer::addDatamodel());
+  DataModels.insert(std::make_pair(name, pDefaultDataModel));
 
-  return DataModels.insert(std::make_pair(name, pDefaultDataModel)).second;
+  return pDefaultDataModel->getModel();
 }
 
 // static
@@ -74,20 +75,6 @@ bool cpsapiRoot::deleteModel(const std::string & name)
   if (pDefaultDataModel == found->second)
     changeDataModel(nullptr);
 
-  return true;
-}
-
-// static 
-bool cpsapiRoot::selectModel(const std::string & name)
-{
-  std::map< std::string, CDataModel * >::iterator found = DataModels.find(name);
-
-  if (found == DataModels.end())
-    return false;
-
-  if (pDefaultDataModel != found->second)
-      changeDataModel(found->second);
-      
   return true;
 }
 
@@ -152,7 +139,7 @@ void cpsapiRoot::changeDataModel(CDataModel * pDataModel)
 }
 
 // static
-CModel * cpsapiRoot::model(const std::string & name)
+cpsapiModel cpsapiRoot::model(const std::string & name)
 {
   if (name.empty()
       && pDefaultModel != nullptr)
@@ -209,18 +196,7 @@ bool cpsapiRoot::deleteCompartment(const std::string & name, const std::string &
 }
 
 // static 
-bool cpsapiRoot::selectCompartment(const std::string & name, const std::string & modelName)
-{
-  cpsapiModel Model(model(modelName));
-
-  if (Model)
-    return Model.selectCompartment(name);
-
-  return false;
-}
-
-// static 
-CCompartment * cpsapiRoot::compartment(const std::string & name, const std::string & modelName)
+cpsapiCompartment cpsapiRoot::compartment(const std::string & name, const std::string & modelName)
 {
   cpsapiModel Model(model(modelName));
 

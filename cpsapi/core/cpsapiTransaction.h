@@ -19,6 +19,8 @@
 
 #include "cpsapi/cpsapiConfig.h"
 
+#include <copasi/core/CCore.h>
+
 class CModel;
 class CDataObject;
 
@@ -26,16 +28,28 @@ CPSAPI_NAMESPACE_BEGIN
 
 class cpsapiTransaction
 {
+friend class cpsapiObject;
+friend class cpsapiModelEntity;
+friend class cpsapiCompartment;
+friend class cpsapiSpecies;
+friend class cpsapiModel;
+
 private:
-  typedef std::map< CModel *, std::set< CDataObject * > > Map; 
+  struct sChangeInfo {
+    std::set< const CDataObject * > changed;
+    CCore::Framework framework = CCore::Framework::__SIZE;
+  };
+
+  typedef std::map< CModel *, sChangeInfo > Map; 
+
   static Map Transactions;
 
-public:
+private:
   static bool beginTransaction(CModel * pModel);
 
   static bool endTransaction(CModel * pModel);
   
-  static bool synchronize(CDataObject * pObject);
+  static bool synchronize(CDataObject * pObject, const CCore::Framework & framework);
 };
 
 CPSAPI_NAMESPACE_END

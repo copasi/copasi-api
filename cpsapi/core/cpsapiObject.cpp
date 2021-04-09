@@ -56,14 +56,14 @@ const CDataObject * cpsapiObject::getObject() const
   return mpObject;
 }
 
-bool cpsapiObject::set(const cpsapiObject::Property & property, const CDataValue & value)
+bool cpsapiObject::set(const cpsapiObject::Property & property, const CDataValue & value, const CCore::Framework & framework)
 {
-  return set(static_cast< CData::Property >(property), value);
+  return set(static_cast< CData::Property >(property), value, framework);
 }
 
-bool cpsapiObject::set(const std::string & property, const CDataValue & value)
+bool cpsapiObject::set(const std::string & property, const CDataValue & value, const std::string & framework)
 {
-  return set(CData::PropertyName.toEnum(property), value);
+  return set(CData::PropertyName.toEnum(property), value, CCore::FrameworkNames.toEnum(framework));
 }
 
 bool cpsapiObject::isValidProperty(const std::string & property) const
@@ -78,8 +78,7 @@ bool cpsapiObject::isValidProperty(const CData::Property & property) const
 }
 
 // virtual
-bool cpsapiObject::set(const CData::Property & property,
-                       const CDataValue & value)
+bool cpsapiObject::set(const CData::Property & property, const CDataValue & value, const CCore::Framework & framework)
 {
   if (!isValidProperty(property))
     return false;
@@ -98,7 +97,7 @@ bool cpsapiObject::set(const CData::Property & property,
       break;
     }
 
-  return success && cpsapiTransaction::synchronize(mpObject);
+  return success && cpsapiTransaction::synchronize(mpObject, framework);
 }
 
 cpsapiObject::operator bool() const

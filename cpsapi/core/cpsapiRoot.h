@@ -17,6 +17,9 @@
 #include <map>
 
 #include "cpsapi/core/cpsapiContainer.h"
+#include "cpsapi/model/cpsapiModel.h"
+#include "cpsapi/model/cpsapiCompartment.h"
+#include "cpsapi/model/cpsapiSpecies.h"
 
 class CRootContainer;
 class CDataModel;
@@ -34,8 +37,6 @@ class CUnitDefinition;
 
 CPSAPI_NAMESPACE_BEGIN
 
-class cpsapiCompartment;
-
 class cpsapiRoot: public cpsapiContainer
 {
 private:
@@ -52,11 +53,9 @@ public:
 
   static void release();
 
-  static bool addModel(const std::string & name = "");
+  static cpsapiModel addModel(const std::string & name = "");
 
   static bool deleteModel(const std::string & name);
-
-  static bool selectModel(const std::string & name);
 
   static CDataModel * dataModel(const std::string & name = "");
 
@@ -64,7 +63,7 @@ public:
 
   static bool loadModel(const std::string & src);
 
-  static CModel * model(const std::string & name = "");
+  static cpsapiModel model(const std::string & name = "");
 
   static void beginTransaction(const std::string & name = "");
 
@@ -74,9 +73,7 @@ public:
 
   static bool deleteCompartment(const std::string & name, const std::string & modelName = "");
 
-  static bool selectCompartment(const std::string & name, const std::string & modelName = "");
-
-  static CCompartment * compartment(const std::string & name = "", const std::string & modelName = "");
+  static cpsapiCompartment compartment(const std::string & name = "", const std::string & modelName = "");
 
   static std::vector< cpsapiCompartment > getCompartments(const std::string & modelName = "");
   

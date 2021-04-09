@@ -32,9 +32,7 @@ public:
     OBJECT_NAME = CData::Property::OBJECT_NAME
   };
 
-  cpsapiObject() = delete;
-
-  cpsapiObject(CDataObject * pObject);
+  cpsapiObject(CDataObject * pObject = nullptr);
 
   cpsapiObject(const cpsapiObject & src);
 
@@ -46,9 +44,9 @@ public:
 
   const CDataObject * getObject() const;
 
-  bool set(const Property & property, const CDataValue & value);
+  bool set(const Property & property, const CDataValue & value, const CCore::Framework & framework = CCore::Framework::__SIZE);
 
-  bool set(const std::string & property, const CDataValue & value);
+  bool set(const std::string & property, const CDataValue & value, const std::string & framework = "");
 
   bool isValidProperty(const std::string & property) const;
 
@@ -59,7 +57,7 @@ public:
 protected:
   typedef std::set< CData::Property > Properties;
 
-  virtual bool set(const CData::Property & property, const CDataValue & value);
+  virtual bool set(const CData::Property & property, const CDataValue & value, const CCore::Framework & framework);
 
   CDataObject * mpObject;
   Properties * mpSupportedProperties;

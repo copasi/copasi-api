@@ -16,4 +16,40 @@
 
 #include "cpsapi/model/cpsapiModelEntity.h"
 
-class cps
+class CMetab;
+
+CPSAPI_NAMESPACE_BEGIN
+
+class cpsapiSpecies: public cpsapiModelEntity
+{
+private:
+  typedef cpsapiModelEntity base;
+
+public:
+  enum class Property
+  {
+    EXPRESSION = CData::Property::EXPRESSION,
+    INITIAL_EXPRESSION = CData::Property::INITIAL_EXPRESSION,
+    INITIAL_VALUE = CData::Property::INITIAL_VALUE,
+    SIMULATION_TYPE = CData::Property::SIMULATION_TYPE,
+    ADD_NOISE = CData::Property::ADD_NOISE,
+    NOISE_EXPRESSION = CData::Property::NOISE_EXPRESSION,
+    OBJECT_NAME = CData::Property::OBJECT_NAME
+  };
+
+  cpsapiSpecies(CMetab * pSpecies = nullptr);
+
+  cpsapiSpecies(const cpsapiSpecies & src);
+
+  virtual ~cpsapiSpecies();
+
+  bool set(const Property & property, const CDataValue & value, const CCore::Framework & framework = CCore::Framework::Concentration);
+
+protected:
+  virtual bool set(const CData::Property & property, const CDataValue & value, const CCore::Framework & framework) override;
+
+private:
+  static Properties SupportedProperties;
+};
+
+CPSAPI_NAMESPACE_END

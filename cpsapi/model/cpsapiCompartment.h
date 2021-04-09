@@ -17,8 +17,11 @@
 #include "cpsapi/model/cpsapiModelEntity.h"
 
 class CCompartment;
+class CMetab;
 
 CPSAPI_NAMESPACE_BEGIN
+
+class cpsapiSpecies;
 
 class cpsapiCompartment: public cpsapiModelEntity
 {
@@ -28,7 +31,7 @@ private:
 public:
   enum class Property
   {
-    INITIAL_INTENSIVE_VALUE = CData::Property::INITIAL_INTENSIVE_VALUE,
+    DIMENSIONALITY = CData::Property::DIMENSIONALITY,
     EXPRESSION = CData::Property::EXPRESSION,
     INITIAL_EXPRESSION = CData::Property::INITIAL_EXPRESSION,
     INITIAL_VALUE = CData::Property::INITIAL_VALUE,
@@ -38,20 +41,27 @@ public:
     OBJECT_NAME = CData::Property::OBJECT_NAME
   };
 
-  cpsapiCompartment() = delete;
-
-  cpsapiCompartment(CCompartment * pCompartment);
+  cpsapiCompartment(CCompartment * pCompartment = nullptr);
 
   cpsapiCompartment(const cpsapiCompartment & src);
 
   virtual ~cpsapiCompartment();
 
-  bool set(const Property & property, const CDataValue & value);
+  bool set(const Property & property, const CDataValue & value, const CCore::Framework & framework = CCore::Framework::__SIZE);
 
+  cpsapiSpecies addSpecies(const std::string & name);
+
+  bool deleteSpecies(const std::string & name);
+
+  cpsapiSpecies species(const std::string & name = "");
+
+  std::vector< cpsapiSpecies > getSpecies() const;
+  
 protected:
-  virtual bool set(const CData::Property & property, const CDataValue & value) override;
+  virtual bool set(const CData::Property & property, const CDataValue & value, const CCore::Framework & framework) override;
 
 private:
+  CMetab * mpDefaultSpecies;
   static Properties SupportedProperties;
 };
 

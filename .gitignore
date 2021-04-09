@@ -4,3 +4,7 @@
 cpsapi/git-commit.h
 
 cpsapi/cpsapiConfig.h
+
+trace
+
+*.dot

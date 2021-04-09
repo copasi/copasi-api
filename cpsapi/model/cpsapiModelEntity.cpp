@@ -35,6 +35,8 @@ cpsapiModelEntity::cpsapiModelEntity(CModelEntity * pObject)
 {
   if (dynamic_cast< CModelEntity * >(mpObject) == nullptr)
     mpObject = nullptr;
+
+  mpSupportedProperties = & cpsapiModelEntity::SupportedProperties;
 }
 
 cpsapiModelEntity::cpsapiModelEntity(const cpsapiModelEntity & src)
@@ -45,20 +47,19 @@ cpsapiModelEntity::cpsapiModelEntity(const cpsapiModelEntity & src)
 cpsapiModelEntity::~cpsapiModelEntity()
 {}
 
-bool cpsapiModelEntity::set(const cpsapiModelEntity::Property & property, const CDataValue & value)
+bool cpsapiModelEntity::set(const cpsapiModelEntity::Property & property, const CDataValue & value, const CCore::Framework & framework)
 {
-  return set(static_cast<const CData::Property >(property), value);
+  return set(static_cast<const CData::Property >(property), value, framework);
 }
 
 // virtual
-bool cpsapiModelEntity::set(const CData::Property & property,
-                       const CDataValue & value)
+bool cpsapiModelEntity::set(const CData::Property & property, const CDataValue & value, const CCore::Framework & framework)
 {
   if (mpObject == nullptr)
     return false;
 
   if (!isValidProperty(property))
-    return base::set(property, value);
+    return base::set(property, value, framework);
 
   CModelEntity * pEntity = static_cast< CModelEntity * >(mpObject);
   bool success = false;
@@ -114,7 +115,7 @@ bool cpsapiModelEntity::set(const CData::Property & property,
       break;
     }
 
-  return success && cpsapiTransaction::synchronize(pChangedObject);
+  return success && cpsapiTransaction::synchronize(pChangedObject, framework);
 }
 
 CPSAPI_NAMESPACE_END

@@ -15,29 +15,27 @@
 #include "catch.hpp"
 #include <limits>
 
-#include <iostream>
-#include <string>
-#include <sstream>
-
-#include <cpsapi/cpsapiConfig.h>
-
-#include <copasi/CopasiTypes.h>
-
-extern std::string getTestFile(const std::string & fileName);
+#include "cpsapi/core/cpsapiRoot.h"
+#include "cpsapi/model/cpsapiModel.h"
+#include "cpsapi/model/cpsapiCompartment.h"
 
 using namespace std;
 CPSAPI_NAMESPACE_USE
 
-
-TEST_CASE("load copasi file and access via regular COPASI api", "[copasi]")
+TEST_CASE("Edit model", "[cpsapi]")
 {
-  auto fileName = getTestFile("test-data/brusselator.cps");
-  auto* dm = CRootContainer::addDatamodel();
-  REQUIRE(dm != NULL);
-    
-  REQUIRE(dm->loadModel(fileName, NULL) == true);
+  cpsapiModel Model = cpsapiRoot::addModel("test_model");
+  REQUIRE(Model);
 
-  auto * model = dm->getModel();
-  REQUIRE(model != NULL);
-  REQUIRE(model->getNumMetabs() == 6);
+  cpsapiCompartment Compartment = Model.addCompartment("test_compartment");
+  
+  REQUIRE(Compartment);
+  REQUIRE(Model.compartment());
+  REQUIRE(!Model.compartment("other"));
+  REQUIRE(Model.getCompartments().size() == 1);
+
+  REQUIRE(Model.deleteCompartment());
+  REQUIRE(Model.getCompartments().size() == 0);
+
+  REQUIRE(cpsapiRoot::deleteModel("test_model"));
 }

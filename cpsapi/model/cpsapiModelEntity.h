@@ -45,10 +45,10 @@ public:
 
   virtual ~cpsapiModelEntity();
 
-  bool set(const Property & property, const CDataValue & value);
+  bool set(const Property & property, const CDataValue & value, const CCore::Framework & framework = CCore::Framework::__SIZE);
 
 protected:
-  virtual bool set(const CData::Property & property, const CDataValue & value) override;
+  virtual bool set(const CData::Property & property, const CDataValue & value, const CCore::Framework & framework) override;
 
 private:
   static Properties SupportedProperties;

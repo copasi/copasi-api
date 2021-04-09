@@ -16,6 +16,8 @@
 
 #include "cpsapi/model/cpsapiModelEntity.h"
 
+#include <copasi/model/CModel.h> 
+
 class CModel;
 class CCompartment;
 class CMetab;
@@ -44,9 +46,7 @@ public:
     OBJECT_NAME = CData::Property::OBJECT_NAME
   };
 
-  cpsapiModel() = delete;
-
-  cpsapiModel(CModel * pModel);
+  cpsapiModel(CModel * pModel = nullptr);
 
   cpsapiModel(const cpsapiModel & src);
 
@@ -56,28 +56,43 @@ public:
 
   void endTransaction() const;
 
-  bool synchronize(const std::set< CDataObject * > & changedObjects);
+  bool synchronize(std::set< const CDataObject * > & changedObjects);
 
-  bool addCompartment(const std::string & name);
+  cpsapiCompartment addCompartment(const std::string & name);
 
-  bool deleteCompartment(const std::string & name);
+  bool deleteCompartment(const std::string & name = "");
 
-  bool selectCompartment(const std::string & name);
-
-  CCompartment * compartment(const std::string & name = "");
+  cpsapiCompartment compartment(const std::string & name = "");
 
   std::vector< cpsapiCompartment > getCompartments() const;
   
 
 private:
-  void changeCompartment(CCompartment * pCompartment);
-  void assertDefaultCompartment();
+  template < class CType > void deleteDependents(CType *& pDefault, const CDataObject::DataObjectSet & set);
+  void deleteAllDependents(CDataContainer * pContainer);
 
-  CCompartment * pDefaultCompartment;
-  CMetab * pDefaultSpecies;
-  CReaction * pDefaultReaction;
-  CModelValue * pDefaultGlobalQuantity;
-  CEvent * pDefaultEvent;
+  CCompartment * __compartment(const std::string & name) const;
+
+  CCompartment * mpDefaultCompartment;
+  CReaction * mpDefaultReaction;
+  CModelValue * mpDefaultGlobalQuantity;
+  CEvent * mpDefaultEvent;
 };
+
+template < class CType >
+void cpsapiModel::deleteDependents(CType *& pDefault, const CDataObject::DataObjectSet & set)
+{
+  CDataObject::DataObjectSet::const_iterator it = set.begin();
+  CDataObject::DataObjectSet::const_iterator end = set.end();
+
+  for (; it != end; ++it)
+    {
+      if (pDefault != nullptr
+          && dynamic_cast< const CType * >(*it) != pDefault)
+        pDefault = nullptr;
+
+      delete *it;
+    }
+}
 
 CPSAPI_NAMESPACE_END
