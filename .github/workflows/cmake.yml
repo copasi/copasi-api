@@ -63,7 +63,7 @@ jobs:
 
     - name: Update COPASI Version
       shell: bash
-      working-directory: ${{github.workspace}}/COPASi
+      working-directory: ${{github.workspace}}/COPASI
       run: ./gitTools/UpdateCopasiVersion
 
     - name: Configure COPASI
