@@ -14,6 +14,7 @@
 
 find_package(Git QUIET)
 
+include (CMakePackageConfigHelpers)
 
 ###############################################################################
 #
@@ -91,10 +92,10 @@ copy_if_different_and_remove(
   ${CMAKE_CURRENT_BINARY_DIR}/git-commit.h
 )
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cpsapiConfig.h.in ${CMAKE_CURRENT_SOURCE_DIR}/cpsapiConfig.h)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cpsapiConfig.h.in ${CMAKE_CURRENT_BINARY_DIR}/cpsapiConfig.h)
 
 set(CPSAPI_SOURCES)
-set(CPSAPI_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/cpsapiConfig.h)
+set(CPSAPI_HEADERS ${CMAKE_CURRENT_BINARY_DIR}/cpsapiConfig.h)
 
 include(core/CMakeLists.txt)
 include(model/CMakeLists.txt)
@@ -112,3 +113,35 @@ target_include_directories(cpsapi PUBLIC
 if (OPENMP_ENABLED)
 	target_compile_options(cpsapi PUBLIC ${OpenMP_CXX_FLAGS})
 endif (OPENMP_ENABLED)
+
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/git-commit.h DESTINATION include/cpsapi)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cpsapiConfig.h DESTINATION include/cpsapi)
+
+foreach (file ${CPSAPI_HEADERS})
+  get_filename_component(dir ${file} DIRECTORY)
+  string(REPLACE ${CMAKE_CURRENT_SOURCE_DIR} include/copasi destination ${dir})
+  install(FILES ${file} DESTINATION ${destination})
+endforeach()
+
+install(TARGETS cpsapi EXPORT cpsapi-config
+    RUNTIME DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
+    INCLUDES DESTINATION include
+    )
+
+install (EXPORT cpsapi-config
+    DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake
+    )
+
+WRITE_BASIC_PACKAGE_VERSION_FILE(
+    ${CMAKE_CURRENT_BINARY_DIR}/cpsapi-config-version.cmake
+    VERSION ${CMAKE_PROJECT_VERSION_MAJOR}.${CMAKE_PROJECT_VERSION_MINOR}.${CMAKE_PROJECT_VERSION_PATCH}
+    COMPATIBILITY AnyNewerVersion
+    )
+
+install (FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/cpsapi-config-version.cmake
+    DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake)
+
