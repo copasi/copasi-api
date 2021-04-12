@@ -34,9 +34,16 @@ jobs:
         curl -L https://github.com/copasi/copasi-dependencies/releases/download/v4.31.240/${{ matrix.platform }}.zip -o ${{ matrix.platform }}.zip
         unzip ${{ matrix.platform }}.zip -d dependencies
 
-    - name: Patch dependencies (linux / windows)
+    - name: Patch dependencies (windows)
       shell: bash
-      if: matrix.platform != 'macos-latest'
+      if: matrix.platform == 'windows-latest'
+      working-directory: ${{github.workspace}}/dependencies/lib/cmake
+      run: |
+        sed -i 's|D:/a/copasi-dependencies/copasi-dependencies/install/|${_IMPORT_PREFIX}/|g'  *.cmake
+
+    - name: Patch dependencies (ubuntu)
+      shell: bash
+      if: matrix.platform == 'ubuntu-latest'
       working-directory: ${{github.workspace}}/dependencies/lib/cmake
       run: |
         sed -i 's|/home/runner/work/copasi-dependencies/copasi-dependencies/install/|${_IMPORT_PREFIX}/|g'  *.cmake
@@ -46,7 +53,7 @@ jobs:
       if: matrix.platform == 'macos-latest'
       working-directory: ${{github.workspace}}/dependencies/lib/cmake
       run: |
-        sed -i '' 's|/home/runner/work/copasi-dependencies/copasi-dependencies/install/|${_IMPORT_PREFIX}/|g'  *.cmake
+        sed -i '.tmp' 's|/Users/runner/work/copasi-dependencies/copasi-dependencies/install/|${_IMPORT_PREFIX}/|g'  *.cmake
 
     - name: Download COPASI
       shell: bash
@@ -57,7 +64,7 @@ jobs:
     - name: Configure COPASI
       shell: bash
       working-directory: ${{github.workspace}}/build_copasi
-      run: cmake $GITHUB_WORKSPACE/COPASI -G Ninja -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCOPASI_INSTALL_C_API=OFF -DBUILD_GUI=OFF -DCOPASI_DEPENDENCY_DIR=../dependencies/ -DCMAKE_INSTALL_PREFIX=../dependencies/
+      run: cmake $GITHUB_WORKSPACE/COPASI -G Ninja -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCOPASI_INSTALL_C_API=ON -DBUILD_GUI=OFF -DCOPASI_DEPENDENCY_DIR=../dependencies/ -DCMAKE_INSTALL_PREFIX=../dependencies/
 
     - name: Build COPASI
       shell: bash
