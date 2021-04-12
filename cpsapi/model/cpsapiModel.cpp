@@ -18,13 +18,20 @@
 
 CPSAPI_NAMESPACE_BEGIN
 
+// static
+cpsapiModel::Properties cpsapiModel::SupportedProperties =
+  {
+  };
+
 cpsapiModel::cpsapiModel(CModel * pModel)
   : base(pModel)
   , mpDefaultCompartment(nullptr)
   , mpDefaultReaction(nullptr)
   , mpDefaultGlobalQuantity(nullptr)
   , mpDefaultEvent(nullptr)
-{}
+{
+  mpSupportedProperties = &SupportedProperties;
+}
 
 cpsapiModel::cpsapiModel(const cpsapiModel & src)
   : base(src)
@@ -33,7 +40,6 @@ cpsapiModel::cpsapiModel(const cpsapiModel & src)
   , mpDefaultGlobalQuantity(src.mpDefaultGlobalQuantity)
   , mpDefaultEvent(src.mpDefaultEvent)
 {
-  // TODO CRITICAL Implement me!
 }
 
 // virtual
@@ -205,4 +211,61 @@ void cpsapiModel::deleteAllDependents(CDataContainer * pContainer)
   deleteDependents(pObject, DependentEventAssignments);
 }
 
+bool cpsapiModel::set(const cpsapiModel::Property & property, const CDataValue & value, const CCore::Framework & framework)
+{
+  return set(static_cast<const CData::Property >(property), value, framework);
+}
+
+CDataValue cpsapiModel::get(const cpsapiModel::Property & property, const CCore::Framework & framework) const
+{
+  return get(static_cast<const CData::Property >(property), framework);
+}
+
+// virtual 
+bool cpsapiModel::set(const CData::Property & property, const CDataValue & value, const CCore::Framework & framework)
+{
+  if (!mpObject)
+    return false;
+
+  if (!isValidProperty(property))
+    return base::set(property, value, CCore::Framework::__SIZE);
+
+  CCore::Framework Framework(framework);
+  bool success = false;
+
+  CModel * pModel = static_cast< CModel * >(*mpObject);
+  CDataObject * pChangedObject = pModel;
+
+  switch (property)
+    {
+    default:
+      break;
+    }
+
+  return success && cpsapiTransaction::synchronize(pChangedObject, Framework);
+}
+
+// virtual 
+CDataValue cpsapiModel::get(const CData::Property & property, const CCore::Framework & framework) const
+{
+  if (!mpObject)
+    return CDataValue();
+
+  if (!isValidProperty(property))
+    return base::get(property, CCore::Framework::__SIZE);
+
+  CCore::Framework Framework(framework);
+  bool success = false;
+
+  CModel * pModel = static_cast< CModel * >(*mpObject);
+  CDataObject * pChangedObject = pModel;
+
+  switch (property)
+    {
+    default:
+      break;
+    }
+
+  return CDataValue();
+}
 CPSAPI_NAMESPACE_END

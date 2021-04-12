@@ -112,6 +112,11 @@ bool cpsapiCompartment::set(const cpsapiCompartment::Property & property, const 
   return set(static_cast< const CData::Property >(property), value, framework);
 }
 
+CDataValue cpsapiCompartment::get(const cpsapiCompartment::Property & property, const CCore::Framework & framework) const
+{
+  return get(static_cast< const CData::Property >(property), framework);
+}
+
 // virtual
 bool cpsapiCompartment::set(const CData::Property & property, const CDataValue & value, const CCore::Framework & framework)
 {
@@ -122,17 +127,16 @@ bool cpsapiCompartment::set(const CData::Property & property, const CDataValue &
     return base::set(property, value, CCore::Framework::__SIZE);
 
   CCore::Framework Framework(framework);
-
-  CCompartment * pCompartment = static_cast< CCompartment * >(*mpObject);
   bool success = false;
 
+  CCompartment * pCompartment = static_cast< CCompartment * >(*mpObject);
   CDataObject * pChangedObject = pCompartment;
 
   switch (property)
     {
     case CData::Property::DIMENSIONALITY:
       Framework = CCore::Framework::__SIZE;
-
+      
       if (value.getType() == CDataValue::Type::UINT)
         success = pCompartment->setDimensionality(value.toUint());
       else if (value.getType() == CDataValue::Type::INT)
@@ -152,4 +156,32 @@ bool cpsapiCompartment::set(const CData::Property & property, const CDataValue &
     }
 
   return success && cpsapiTransaction::synchronize(pChangedObject, Framework);
+}
+
+// virtual
+CDataValue cpsapiCompartment::get(const CData::Property & property, const CCore::Framework & framework) const
+{
+  if (!mpObject)
+    return CDataValue();
+
+  if (!isValidProperty(property))
+    return base::get(property, CCore::Framework::__SIZE);
+
+  CCompartment * pCompartment = static_cast< CCompartment * >(*mpObject);
+
+  switch (property)
+    {
+    case CData::Property::DIMENSIONALITY:
+      return pCompartment->getDimensionality();
+      break;
+
+    case CData::Property::INITIAL_VALUE:
+      return base::get(property, framework);
+      break;
+
+    default:
+      break;
+    }
+
+  return CDataValue();
 }

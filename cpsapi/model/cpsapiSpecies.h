@@ -43,10 +43,14 @@ public:
 
   virtual ~cpsapiSpecies();
 
-  bool set(const Property & property, const CDataValue & value, const CCore::Framework & framework = CCore::Framework::Concentration);
+  bool set(const Property & property, const CDataValue & value, const CCore::Framework & framework = CCore::Framework::__SIZE);
+
+  CDataValue get(const Property & property, const CCore::Framework & framework = CCore::Framework::__SIZE) const;
 
 protected:
   virtual bool set(const CData::Property & property, const CDataValue & value, const CCore::Framework & framework) override;
+
+  virtual CDataValue get(const CData::Property & property, const CCore::Framework & framework) const override;
 
 private:
   static Properties SupportedProperties;

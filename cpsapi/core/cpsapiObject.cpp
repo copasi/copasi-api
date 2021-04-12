@@ -67,6 +67,17 @@ bool cpsapiObject::set(const std::string & property, const CDataValue & value, c
   return set(CData::PropertyName.toEnum(property), value, CCore::FrameworkNames.toEnum(framework));
 }
 
+CDataValue cpsapiObject::get(const Property & property, const CCore::Framework & framework ) const
+{
+  return get(static_cast< CData::Property >(property), framework);
+}
+
+CDataValue cpsapiObject::get(const std::string & property, const std::string & framework) const
+{
+  return get(CData::PropertyName.toEnum(property), CCore::FrameworkNames.toEnum(framework));
+}
+
+
 bool cpsapiObject::isValidProperty(const std::string & property) const
 {
   return isValidProperty(CData::PropertyName.toEnum(property));
@@ -99,6 +110,25 @@ bool cpsapiObject::set(const CData::Property & property, const CDataValue & valu
     }
 
   return success && cpsapiTransaction::synchronize(*mpObject, framework);
+}
+
+// virtual 
+CDataValue cpsapiObject::get(const CData::Property & property, const CCore::Framework & framework) const
+{
+  if (!isValidProperty(property))
+    return CDataValue();
+
+  switch (property)
+    {
+    case CData::Property::OBJECT_NAME:
+      return CDataValue(mpObject->getObjectName());
+      break;
+
+    default:
+      break;
+    }
+
+  return CDataValue();
 }
 
 cpsapiObject::operator bool() const

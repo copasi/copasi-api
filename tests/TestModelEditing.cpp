@@ -16,6 +16,7 @@
 #include <limits>
 
 #include "cpsapi/core/cpsapiRoot.h"
+#include "cpsapi/core/cpsapiDataModel.h"
 #include "cpsapi/core/cpsapiValue.h"
 #include "cpsapi/model/cpsapiModel.h"
 #include "cpsapi/model/cpsapiCompartment.h"
@@ -26,7 +27,7 @@ CPSAPI_NAMESPACE_USE
 
 TEST_CASE("Edit model", "[cpsapi]")
 {
-  cpsapiModel Model = cpsapiRoot::addModel("test_model");
+  cpsapiModel Model = cpsapi::addDataModel("test_model").model();
   REQUIRE(Model);
 
   cpsapiCompartment Compartment = Model.addCompartment("test_compartment");
@@ -35,11 +36,11 @@ TEST_CASE("Edit model", "[cpsapi]")
   cpsapiCompartment Copy(Compartment);
   REQUIRE(Copy);
 
-  cpsapiCompartment Assignement;
-  REQUIRE(!Assignement);
+  cpsapiCompartment Assignment;
+  REQUIRE(!Assignment);
 
-  Assignement = Compartment;
-  REQUIRE(Assignement);
+  Assignment = Compartment;
+  REQUIRE(Assignment);
 
   cpsapiValue Value(static_cast< CCompartment * >(Compartment.getObject())->getInitialValueReference());
   REQUIRE(Value);
@@ -60,7 +61,7 @@ TEST_CASE("Edit model", "[cpsapi]")
   REQUIRE(!Species);
   REQUIRE(!Compartment);
   REQUIRE(!Copy);
-  REQUIRE(!Assignement);
+  REQUIRE(!Assignment);
 
-  REQUIRE(cpsapiRoot::deleteModel("test_model"));
+  REQUIRE(cpsapi::deleteDataModel("test_model"));
 }

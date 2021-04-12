@@ -51,6 +51,10 @@ public:
 
   bool set(const std::string & property, const CDataValue & value, const std::string & framework = "");
 
+  CDataValue get(const Property & property, const CCore::Framework & framework = CCore::Framework::__SIZE) const;
+
+  CDataValue get(const std::string & property, const std::string & framework = "") const;
+
   bool isValidProperty(const std::string & property) const;
 
   bool isValidProperty(const CData::Property & property) const;
@@ -61,6 +65,8 @@ protected:
   typedef std::set< CData::Property > Properties;
 
   virtual bool set(const CData::Property & property, const CDataValue & value, const CCore::Framework & framework);
+
+  virtual CDataValue get(const CData::Property & property, const CCore::Framework & framework) const;
 
   cpsapiPointer mpObject;
   Properties * mpSupportedProperties;

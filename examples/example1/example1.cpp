@@ -19,9 +19,9 @@ CPSAPI_NAMESPACE_USE
 
 int main(int argc, char *argv[])
 {
-  cpsapiRoot::init();
+  cpsapi::init();
 
-  cpsapiRoot::release();
+  cpsapi::release();
   
   return 0;
 }

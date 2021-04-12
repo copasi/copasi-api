@@ -26,7 +26,7 @@
 
 #if defined(__cplusplus) && defined(CPSAPI_USE_CPP_NAMESPACE) && !defined(SWIG)
   /* C++ namespace of CPSAPI */
-  #define CPSAPI_NAMESPACE            cpsapi
+  #define CPSAPI_NAMESPACE            CPSAPI
   #define CPSAPI_NAMESPACE_BEGIN      namespace CPSAPI_NAMESPACE {
   #define CPSAPI_NAMESPACE_END        }
   #define CPSAPI_NAMESPACE_USE        using namespace CPSAPI_NAMESPACE;

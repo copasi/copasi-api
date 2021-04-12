@@ -77,6 +77,15 @@ public:
   
   void deleteAllDependents(CDataContainer * pContainer);
 
+  bool set(const Property & property, const CDataValue & value, const CCore::Framework & framework = CCore::Framework::__SIZE);
+
+  CDataValue get(const Property & property, const CCore::Framework & framework = CCore::Framework::__SIZE) const;
+
+protected:
+  virtual bool set(const CData::Property & property, const CDataValue & value, const CCore::Framework & framework) override;
+
+  virtual CDataValue get(const CData::Property & property, const CCore::Framework & framework) const override;
+
 private:
   CCompartment * __compartment(const std::string & name) const;
 
@@ -88,6 +97,8 @@ private:
   CReaction * mpDefaultReaction;
   CModelValue * mpDefaultGlobalQuantity;
   CEvent * mpDefaultEvent;
+
+  static Properties SupportedProperties;
 };
 
 template < class CType >

@@ -19,6 +19,7 @@
 #include <copasi/core/CDataVector.h>
 
 #include "cpsapi/core/cpsapiRoot.h"
+#include "cpsapi/core/cpsapiDataModel.h"
 #include "cpsapi/model/cpsapiModel.h"
 #include "cpsapi/model/cpsapiCompartment.h"
 
@@ -26,45 +27,34 @@ CPSAPI_NAMESPACE_BEGIN
 CPSAPI_NAMESPACE_USE
 
 // static 
-std::map< std::string, CDataModel * > cpsapiRoot::DataModels;
+std::map< std::string, CDataModel * > cpsapi::DataModels;
 
 // static 
-CDataModel * cpsapiRoot::pDefaultDataModel = nullptr;
+CDataModel * cpsapi::pDefaultDataModel = nullptr;
 
 // static 
-CModel * cpsapiRoot::pDefaultModel = nullptr;
+CFunction * cpsapi::pDefaultFunction = nullptr;
 
 // static 
-CCopasiTask * cpsapiRoot::pDefaultTask = nullptr;
+CUnitDefinition * cpsapi::pDefaultUnitDefinition = nullptr;
 
 // static 
-CReportDefinition * cpsapiRoot::pDefaultReportDefinition = nullptr;
-
-// static 
-CPlotSpecification * cpsapiRoot::pDefaultPlotSpecification = nullptr;
-
-// static 
-CFunction * cpsapiRoot::pDefaultFunction = nullptr;
-
-// static 
-CUnitDefinition * cpsapiRoot::pDefaultUnitDefinition = nullptr;
-
-// static 
-cpsapiModel cpsapiRoot::addModel(const std::string & name)
+cpsapiDataModel cpsapi::addDataModel(const std::string & name)
 {
   if (DataModels.find(name) != DataModels.end())
     return nullptr;
 
-  changeDataModel(CRootContainer::addDatamodel());
+  pDefaultDataModel = CRootContainer::addDatamodel();
   DataModels.insert(std::make_pair(name, pDefaultDataModel));
 
+  // We start with the names being the same
   model().getObject()->setObjectName(name);
   
-  return pDefaultDataModel->getModel();
+  return pDefaultDataModel;
 }
 
 // static
-bool cpsapiRoot::deleteModel(const std::string & name)
+bool cpsapi::deleteDataModel(const std::string & name)
 {
   std::map< std::string, CDataModel * >::iterator found = DataModels.find(name);
 
@@ -75,29 +65,39 @@ bool cpsapiRoot::deleteModel(const std::string & name)
   DataModels.erase(found);
 
   if (pDefaultDataModel == found->second)
-    changeDataModel(nullptr);
+    pDefaultDataModel = nullptr;
 
   return true;
 }
 
 // static
-CDataModel * cpsapiRoot::dataModel(const std::string & name)
+cpsapiDataModel cpsapi::dataModel(const std::string & name)
 {
+  if (name.empty())
+    {
+      if (pDefaultDataModel == nullptr
+          && CRootContainer::getDatamodelList()->empty())
+        return addDataModel("default model");
+
+      return pDefaultDataModel;
+    }
+
   std::map< std::string, CDataModel * >::iterator found = DataModels.find(name);
 
   if (found != DataModels.end())
     return found->second;
 
-  if (!name.empty())
-    return nullptr;
+  return nullptr;
+}
 
-  assertDefaultDataModel();
-
-  return pDefaultDataModel;
+// static 
+std::vector< cpsapiDataModel > cpsapi::getDataModels()
+{
+  return convertVector< cpsapiDataModel >(*CRootContainer::getDatamodelList());
 }
 
 // static
-const std::set< std::string > cpsapiRoot::listModels()
+const std::set< std::string > cpsapi::listModelNames()
 {
   std::set< std::string > Set;
 
@@ -109,132 +109,62 @@ const std::set< std::string > cpsapiRoot::listModels()
 }
 
 // static
-bool cpsapiRoot::loadModel(const std::string & src)
+bool cpsapi::load(const std::string & src, const std::string & modelName)
 {
-  assertDefaultDataModel();
-
-  return pDefaultDataModel->loadModel(src, nullptr);
+  return dataModel(modelName).load(src);
 }
 
 // static
-void cpsapiRoot::assertDefaultDataModel()
+cpsapiModel cpsapi::model(const std::string & name)
 {
-  if (pDefaultDataModel != nullptr)
-    return;
-    
-  if (CRootContainer::getDatamodelList()->empty())
-    addModel("default model");
-  else
-    changeDataModel(&CRootContainer::getDatamodelList()->operator[](0));
+  return dataModel(name).model();
 }
 
 // static
-void cpsapiRoot::changeDataModel(CDataModel * pDataModel)
+void cpsapi::beginTransaction(const std::string & name)
 {
-  pDefaultDataModel = pDataModel;
-
-  pDefaultModel = nullptr;
-  pDefaultTask = nullptr;
-  pDefaultReportDefinition = nullptr;
-  pDefaultPlotSpecification = nullptr;
+  dataModel(name).beginTransaction();
 }
 
 // static
-cpsapiModel cpsapiRoot::model(const std::string & name)
+void cpsapi::endTransaction(const std::string & name)
+
 {
-  if (name.empty()
-      && pDefaultModel != nullptr)
-    return pDefaultModel;
-
-  CDataModel * pDataModel = dataModel(name);
-
-  if (pDataModel == nullptr)
-    return nullptr;
-
-  return pDataModel->getModel();
+  dataModel(name).endTransaction();
 }
 
 // static
-void cpsapiRoot::beginTransaction(const std::string & name)
+bool cpsapi::addCompartment(const std::string & name, const std::string & modelName)
 {
-  cpsapiModel Model(model(name));
-
-  if (Model)
-    Model.beginTransaction();
+  return dataModel(modelName).addCompartment(name);
 }
 
 // static
-void cpsapiRoot::endTransaction(const std::string & name)
-
+bool cpsapi::deleteCompartment(const std::string & name, const std::string & modelName)
 {
-  cpsapiModel Model(model(name));
-
-  if (Model)
-    Model.endTransaction();
-}
-
-// static
-bool cpsapiRoot::addCompartment(const std::string & name, const std::string & modelName)
-{
-  cpsapiModel Model(model(modelName));
-
-  if (Model)
-    return Model.addCompartment(name);
-
-  return false;
-
-}
-
-// static
-bool cpsapiRoot::deleteCompartment(const std::string & name, const std::string & modelName)
-{
-  cpsapiModel Model(model(modelName));
-
-  if (Model)
-    return Model.deleteCompartment(name);
-
-  return false;
+  return dataModel(modelName).deleteCompartment(name);
 }
 
 // static 
-cpsapiCompartment cpsapiRoot::compartment(const std::string & name, const std::string & modelName)
+cpsapiCompartment cpsapi::compartment(const std::string & name, const std::string & modelName)
 {
-  cpsapiModel Model(model(modelName));
-
-  if (Model)
-    return Model.compartment(name);
-
-  return nullptr;
+  return dataModel(modelName).compartment(name);
 }
 
 // static 
-std::vector< cpsapiCompartment > cpsapiRoot::getCompartments(const std::string & modelName)
+std::vector< cpsapiCompartment > cpsapi::getCompartments(const std::string & modelName)
 {
-  cpsapiModel Model(model(modelName));
-
-  if (Model)
-    return Model.getCompartments();
-
-  return std::vector< cpsapiCompartment >();
+  return dataModel(modelName).getCompartments();
 }
 
 // static 
-void changeCompartment(CCompartment * pCompartment);
-
-// static 
-void assertDefaultCompartment();
-
-// static 
-void cpsapiRoot::init()
+void cpsapi::init()
 {
   CRootContainer::init(0, nullptr);
-
-  if (!CRootContainer::getDatamodelList()->empty())
-    changeDataModel(&CRootContainer::getDatamodelList()->operator[](0));
 }
 
 // static 
-void cpsapiRoot::release()
+void cpsapi::release()
 {
   CRootContainer::destroy();
 }

@@ -43,6 +43,11 @@ bool cpsapiSpecies::set(const cpsapiSpecies::Property & property, const CDataVal
   return set(static_cast< const CData::Property >(property), value, framework);
 }
 
+CDataValue cpsapiSpecies::get(const Property & property, const CCore::Framework & framework) const
+{
+  return get(static_cast< const CData::Property >(property), framework);
+}
+
 // virtual
 bool cpsapiSpecies::set(const CData::Property & property, const CDataValue & value, const CCore::Framework & framework)
 {
@@ -90,3 +95,29 @@ bool cpsapiSpecies::set(const CData::Property & property, const CDataValue & val
   return success && cpsapiTransaction::synchronize(pChangedObject, Framework);
 }
 
+// virtual 
+CDataValue cpsapiSpecies::get(const CData::Property & property, const CCore::Framework & framework) const
+{
+  if (*mpObject == nullptr)
+    return CDataValue();
+
+  if (!isValidProperty(property))
+    return base::get(property, CCore::Framework::__SIZE);
+
+  CMetab * pSpecies = static_cast< CMetab * >(*mpObject);
+
+  switch (property)
+    {
+    case CData::Property::INITIAL_VALUE:
+      if (framework == CCore::Framework::ParticleNumbers)
+        return base::get(property, framework);
+      
+      return pSpecies->getInitialConcentration();
+      break;
+
+    default:
+      break;
+    }
+
+  return CDataValue();
+}

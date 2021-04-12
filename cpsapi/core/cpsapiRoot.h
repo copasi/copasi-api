@@ -37,31 +37,36 @@ class CUnitDefinition;
 
 CPSAPI_NAMESPACE_BEGIN
 
-class cpsapiRoot: public cpsapiContainer
+class cpsapiDataModel;
+class cpsapiModel;
+
+class cpsapi: public cpsapiContainer
 {
 private:
   typedef cpsapiContainer base;
 
 public:
-  cpsapiRoot() = delete;
+  cpsapi() = delete;
 
-  cpsapiRoot(const cpsapiRoot & src) = delete;
+  cpsapi(const cpsapi & src) = delete;
 
-  virtual ~cpsapiRoot();
+  virtual ~cpsapi();
 
   static void init();
 
   static void release();
 
-  static cpsapiModel addModel(const std::string & name = "");
+  static cpsapiDataModel addDataModel(const std::string & name = "");
 
-  static bool deleteModel(const std::string & name);
+  static bool deleteDataModel(const std::string & name = "");
 
-  static CDataModel * dataModel(const std::string & name = "");
+  static cpsapiDataModel dataModel(const std::string & name = "");
 
-  static const std::set< std::string > listModels();
+  static std::vector< cpsapiDataModel > getDataModels();
+  
+  static const std::set< std::string > listModelNames();
 
-  static bool loadModel(const std::string & src);
+  static bool load(const std::string & src, const std::string & modelName = "");
 
   static cpsapiModel model(const std::string & name = "");
 
@@ -78,15 +83,8 @@ public:
   static std::vector< cpsapiCompartment > getCompartments(const std::string & modelName = "");
   
 private:
-  static void changeDataModel(CDataModel * pDataModel);
-  static void assertDefaultDataModel();
-
   static std::map< std::string, CDataModel * > DataModels;
   static CDataModel * pDefaultDataModel;
-  static CModel * pDefaultModel;
-  static CCopasiTask * pDefaultTask;
-  static CReportDefinition * pDefaultReportDefinition;
-  static CPlotSpecification * pDefaultPlotSpecification;
   static CFunction * pDefaultFunction;
   static CUnitDefinition * pDefaultUnitDefinition;
 };

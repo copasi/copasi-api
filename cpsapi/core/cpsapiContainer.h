@@ -26,9 +26,7 @@ private:
   typedef cpsapiObject base;
 
 public:
-  cpsapiContainer() = delete;
-
-  cpsapiContainer(CDataContainer * pContainer);
+  cpsapiContainer(CDataContainer * pContainer = nullptr);
 
   cpsapiContainer(const cpsapiContainer & src);
 
