@@ -16,6 +16,7 @@
 #include <limits>
 
 #include "cpsapi/core/cpsapiRoot.h"
+#include "cpsapi/core/cpsapiValue.h"
 #include "cpsapi/model/cpsapiModel.h"
 #include "cpsapi/model/cpsapiCompartment.h"
 #include "cpsapi/model/cpsapiSpecies.h"
@@ -34,11 +35,24 @@ TEST_CASE("Edit model", "[cpsapi]")
   cpsapiCompartment Copy(Compartment);
   REQUIRE(Copy);
 
+  cpsapiCompartment Assignement;
+  REQUIRE(!Assignement);
+
+  Assignement = Compartment;
+  REQUIRE(Assignement);
+
+  cpsapiValue Value(static_cast< CCompartment * >(Compartment.getObject())->getInitialValueReference());
+  REQUIRE(Value);
+  REQUIRE(Value.setValue(5.0));
+  REQUIRE(!Value.setValue("wrong type"));
+
   REQUIRE(Model.compartment());
   REQUIRE(!Model.compartment("other"));
   REQUIRE(Model.getCompartments().size() == 1);
 
   cpsapiSpecies Species = Compartment.addSpecies("test_species");
+  REQUIRE(!Model.addSpecies("test_species"));
+  REQUIRE(!Copy.addSpecies("test_species"));
   REQUIRE(Copy.getSpecies().size() == 1);
 
   REQUIRE(Model.deleteCompartment());
@@ -46,6 +60,7 @@ TEST_CASE("Edit model", "[cpsapi]")
   REQUIRE(!Species);
   REQUIRE(!Compartment);
   REQUIRE(!Copy);
+  REQUIRE(!Assignement);
 
   REQUIRE(cpsapiRoot::deleteModel("test_model"));
 }

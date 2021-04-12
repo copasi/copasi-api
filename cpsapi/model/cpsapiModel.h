@@ -93,18 +93,14 @@ private:
 template < class CType >
 void cpsapiModel::deleteDependents(CType *& pDefault, const CDataObject::DataObjectSet & set)
 {
-  CDataObject::DataObjectSet::const_iterator it = set.begin();
-  CDataObject::DataObjectSet::const_iterator end = set.end();
+  std::for_each(set.begin(), set.end(), [&pDefault](const CDataObject * pObject) {
+    if (pDefault != nullptr
+        && dynamic_cast< const CType * >(pObject) != pDefault)
+      pDefault = nullptr;
 
-  for (; it != end; ++it)
-    {
-      if (pDefault != nullptr
-          && dynamic_cast< const CType * >(*it) != pDefault)
-        pDefault = nullptr;
-
-      cpsapiPointer::deleted(*it);
-      delete *it;
-    }
+    cpsapiPointer::deleted(pObject);
+    delete pObject;
+  });
 }
 
 CPSAPI_NAMESPACE_END

@@ -25,12 +25,12 @@ cpsapiObject::Properties cpsapiObject::SupportedProperties =
 };
 
 cpsapiObject::cpsapiObject(CDataObject * pObject)
-  : mObject(pObject)
+  : mpObject(pObject)
   , mpSupportedProperties(&SupportedProperties)
 {}
 
 cpsapiObject::cpsapiObject(const cpsapiObject & src)
-  : mObject(src.mObject)
+  : mpObject(src.mpObject)
   , mpSupportedProperties(src.mpSupportedProperties)
 {}
 
@@ -41,18 +41,20 @@ cpsapiObject::~cpsapiObject()
 // virtual 
 void cpsapiObject::accept(cpsapiVisitor& v)
 {
+  if (!mpObject)
+    return;
+
   v.visit(*this);
 }
-
   
 CDataObject * cpsapiObject::getObject()
 {
-  return *mObject;
+  return *mpObject;
 }
 
 const CDataObject * cpsapiObject::getObject() const
 {
-  return *mObject;
+  return *mpObject;
 }
 
 bool cpsapiObject::set(const cpsapiObject::Property & property, const CDataValue & value, const CCore::Framework & framework)
@@ -88,7 +90,7 @@ bool cpsapiObject::set(const CData::Property & property, const CDataValue & valu
     {
     case CData::Property::OBJECT_NAME:
       if (value.getType() == CDataValue::Type::STRING)
-        success = mObject->setObjectName(value.toString());
+        success = mpObject->setObjectName(value.toString());
 
       break;
 
@@ -96,10 +98,10 @@ bool cpsapiObject::set(const CData::Property & property, const CDataValue & valu
       break;
     }
 
-  return success && cpsapiTransaction::synchronize(*mObject, framework);
+  return success && cpsapiTransaction::synchronize(*mpObject, framework);
 }
 
 cpsapiObject::operator bool() const
 {
-  return mObject;
+  return mpObject;
 }

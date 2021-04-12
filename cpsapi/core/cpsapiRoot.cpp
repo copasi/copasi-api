@@ -58,6 +58,8 @@ cpsapiModel cpsapiRoot::addModel(const std::string & name)
   changeDataModel(CRootContainer::addDatamodel());
   DataModels.insert(std::make_pair(name, pDefaultDataModel));
 
+  model().getObject()->setObjectName(name);
+  
   return pDefaultDataModel->getModel();
 }
 
@@ -98,11 +100,10 @@ CDataModel * cpsapiRoot::dataModel(const std::string & name)
 const std::set< std::string > cpsapiRoot::listModels()
 {
   std::set< std::string > Set;
-  std::map< std::string, CDataModel * >::const_iterator it = DataModels.begin();
-  std::map< std::string, CDataModel * >::const_iterator end = DataModels.end();
 
-  for (; it != end; ++it)
-    Set.insert(it->first);
+  std::for_each(DataModels.begin(), DataModels.end(), [&Set](const std::pair< std::string, CDataModel * > & mapIterator){
+    Set.insert(mapIterator.first);
+  });
 
   return Set;
 }

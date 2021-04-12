@@ -16,6 +16,8 @@
 
 #include <copasi/core/CDataContainer.h>
 
+#include <algorithm>
+
 CPSAPI_NAMESPACE_BEGIN
 
 cpsapiContainer::cpsapiContainer(CDataContainer * pContainer)
@@ -33,19 +35,19 @@ cpsapiContainer::~cpsapiContainer()
 // virtual 
 void cpsapiContainer::accept(cpsapiVisitor & v)
 {
+  if (!mpObject)
+    return;
+
   base::accept(v);
 
-  CDataContainer * pContainer = static_cast< CDataContainer * >(*mObject);
+  CDataContainer::objectMap & Objects = static_cast< CDataContainer * >(*mpObject)->getObjects();
 
-  CDataContainer::objectMap & Objects = pContainer->getObjects();
-  CDataContainer::objectMap::iterator it = Objects.begin();
-  CDataContainer::objectMap::iterator end = Objects.end();
-
-  for (; it != end; ++it)
-    if (it->hasFlag(CDataObject::Flag::Container))
-      cpsapiContainer(static_cast< CDataContainer * >(*it)).accept(v);
+  std::for_each(Objects.begin(),Objects.end(), [&v](CDataObject * pObject){
+    if (pObject->hasFlag(CDataObject::Flag::Container))
+      cpsapiContainer(static_cast< CDataContainer * >(pObject)).accept(v);
     else
-      cpsapiObject(*it).accept(v);
+      cpsapiObject(pObject).accept(v);
+  });
 }
 
 CPSAPI_NAMESPACE_END

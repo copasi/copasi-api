@@ -42,32 +42,32 @@ cpsapiModel::~cpsapiModel()
 
 void cpsapiModel::beginTransaction() const
 {
-  if (mObject)
-    cpsapiTransaction::beginTransaction(static_cast< CModel * >(*mObject));
+  if (mpObject)
+    cpsapiTransaction::beginTransaction(static_cast< CModel * >(*mpObject));
 }
 
 void cpsapiModel::endTransaction() const
 {
-  if (mObject)
-    cpsapiTransaction::endTransaction(static_cast< CModel * >(*mObject));
+  if (mpObject)
+    cpsapiTransaction::endTransaction(static_cast< CModel * >(*mpObject));
 }
 
 bool cpsapiModel::synchronize(std::set< const CDataObject * > & changedObjects)
 {
-  if (!mObject)
+  if (!mpObject)
     return false;
 
-  static_cast< CModel * >(*mObject)->updateInitialValues(changedObjects);
+  static_cast< CModel * >(*mpObject)->updateInitialValues(changedObjects);
 
   return true; 
 }
 
 cpsapiCompartment cpsapiModel::addCompartment(const std::string & name)
 {
-  if (!mObject)
+  if (!mpObject)
     return nullptr;
 
-  CCompartment * pCompartment = static_cast< CModel * >(*mObject)->createCompartment(name);
+  CCompartment * pCompartment = static_cast< CModel * >(*mpObject)->createCompartment(name);
 
   if (pCompartment != nullptr)
     mpDefaultCompartment = pCompartment;
@@ -104,31 +104,31 @@ cpsapiCompartment cpsapiModel::compartment(const std::string & name)
 
 std::vector< cpsapiCompartment > cpsapiModel::getCompartments() const
 {
-  if (!mObject)
+  if (!mpObject)
     return std::vector< cpsapiCompartment >();
 
-  return convertVector< cpsapiCompartment >(static_cast< CModel * >(*mObject)->getCompartments());
+  return convertVector< cpsapiCompartment >(static_cast< CModel * >(*mpObject)->getCompartments());
 }
 
 CCompartment * cpsapiModel::__compartment(const std::string & name) const
 {
-  if (!mObject)
+  if (!mpObject)
     return nullptr;
     
   if (name.empty())
     return mpDefaultCompartment;
 
-  size_t Index = static_cast< CModel * >(*mObject)->getCompartments().getIndex(name);
+  size_t Index = static_cast< CModel * >(*mpObject)->getCompartments().getIndex(name);
 
   if (Index == C_INVALID_INDEX)
     return nullptr;
 
-  return  &static_cast< CModel * >(*mObject)->getCompartments()[Index];
+  return  &static_cast< CModel * >(*mpObject)->getCompartments()[Index];
 }
 
 cpsapiSpecies cpsapiModel::addSpecies(const std::string & name, const std::string & compartment)
 {
-  if (!mObject)
+  if (!mpObject)
     return nullptr;
 
   CCompartment * pCompartment = __compartment(compartment);
@@ -136,7 +136,7 @@ cpsapiSpecies cpsapiModel::addSpecies(const std::string & name, const std::strin
   if (pCompartment == nullptr)
     return nullptr;
 
-  return static_cast< CModel * >(*mObject)->createMetabolite(name, compartment);
+  return static_cast< CModel * >(*mpObject)->createMetabolite(name, compartment);
 }
 
 bool cpsapiModel::deleteSpecies(const std::string & name, const std::string & compartment)
@@ -156,10 +156,10 @@ cpsapiSpecies cpsapiModel::species(const std::string & name, const std::string &
 
 std::vector< cpsapiSpecies > cpsapiModel::getSpecies() const
 {
-  if (!mObject)
+  if (!mpObject)
     return std::vector< cpsapiSpecies >();
 
-  return convertVector< cpsapiSpecies >(static_cast< CModel * >(*mObject)->getMetabolites());
+  return convertVector< cpsapiSpecies >(static_cast< CModel * >(*mpObject)->getMetabolites());
 }
 
 CMetab * cpsapiModel::__species(const std::string & name, const std::string & compartment) const
@@ -174,10 +174,10 @@ CMetab * cpsapiModel::__species(const std::string & name, const std::string & co
 
 void cpsapiModel::deleteAllDependents(CDataContainer * pContainer)
 {
-  if (!mObject)
+  if (!mpObject)
     return;
   
-  static_cast< CModel * >(*mObject)->compileIfNecessary(nullptr);
+  static_cast< CModel * >(*mpObject)->compileIfNecessary(nullptr);
 
   CModel::DataObjectSet DependentReactions;
   CModel::DataObjectSet DependentMetabolites;
@@ -186,7 +186,7 @@ void cpsapiModel::deleteAllDependents(CDataContainer * pContainer)
   CModel::DataObjectSet DependentEvents;
   CModel::DataObjectSet DependentEventAssignments;
 
-  static_cast< CModel * >(*mObject)->appendAllDependents(*pContainer,
+  static_cast< CModel * >(*mpObject)->appendAllDependents(*pContainer,
                                                          DependentReactions,
                                                          DependentMetabolites,
                                                          DependentCompartments,
