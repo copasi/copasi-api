@@ -58,7 +58,7 @@ jobs:
     - name: Download COPASI
       shell: bash
       run: |
-        git clone https://github.com/copasi/COPASI
+        git clone --single-branch --branch release/Version-4.31 https://github.com/copasi/COPASI
         cmake -E make_directory ${{github.workspace}}/build_copasi
 
     - name: Update COPASI Version
