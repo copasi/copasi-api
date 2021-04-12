@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [windows-latest, macos-latest, ubuntu-latest]
+        platform: [ubuntu-latest] # [windows-latest, macos-latest, ubuntu-latest]
 
     runs-on: ${{ matrix.platform }}
 
@@ -84,7 +84,7 @@ jobs:
       # Note the current convention is to use the -S and -B options here to specify source 
       # and build directories, but this is only available with CMake 3.13 and higher.  
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: cmake $GITHUB_WORKSPACE -G Ninja -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBUILD_UI_DEPS=OFF -DCMAKE_INSTALL_PREFIX=../install/ -DCOPASI_DEPENDENCY_DIR=../dependencies/
+      run: cmake $GITHUB_WORKSPACE -G Ninja -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBUILD_UI_DEPS=OFF -DLIBSBML_DIR=../dependencies/lib/cmake -DCMAKE_INSTALL_PREFIX=../install/ -DCOPASI_DEPENDENCY_DIR=../dependencies/
 
     - name: Build
       working-directory: ${{github.workspace}}/build
