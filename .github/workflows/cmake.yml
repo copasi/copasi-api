@@ -61,6 +61,11 @@ jobs:
         git clone https://github.com/copasi/COPASI
         cmake -E make_directory ${{github.workspace}}/build_copasi
 
+    - name: Update COPASI Version
+      shell: bash
+      working-directory: ${{github.workspace}}/COPASi
+      run: ./gitTools/UpdateCopasiVersion
+
     - name: Configure COPASI
       shell: bash
       working-directory: ${{github.workspace}}/build_copasi
