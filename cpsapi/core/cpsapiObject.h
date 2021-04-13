@@ -81,7 +81,8 @@ template < typename Target, class SourceVector > std::vector< Target > convertVe
   typename SourceVector::iterator itSrc = src.begin();
 
   std::for_each(Result.begin(), Result.end(), [&itSrc](Target & target){
-    target = &*itSrc++;
+    target = &*itSrc;
+    ++itSrc;
   });
 
   return Result;
