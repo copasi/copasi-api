@@ -16,6 +16,13 @@ cmake_minimum_required (VERSION 3.1.3)
 
 project(CPSAPI VERSION "0.0.1")
 
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+if(NOT CYGWIN)
+  set(CMAKE_CXX_EXTENSIONS OFF)
+endif()
+
+
 include(GNUInstallDirs)
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules ${CMAKE_MODULE_PATH})
