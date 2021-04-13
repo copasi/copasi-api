@@ -61,11 +61,11 @@ bool cpsapi::deleteDataModel(const std::string & name)
   if (found == DataModels.end())
     return false;
 
-  delete found->second;
-  DataModels.erase(found);
-
   if (pDefaultDataModel == found->second)
     pDefaultDataModel = nullptr;
+
+  delete found->second;
+  DataModels.erase(found);
 
   return true;
 }
