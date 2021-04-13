@@ -46,7 +46,9 @@ public:
   
   CDataValue::Type getType() const;
 
-  template < typename result > operator result() const;
+  operator bool() const;
+  operator int() const;
+  operator double() const;
 };
 
 CPSAPI_NAMESPACE_END

@@ -102,7 +102,7 @@ CDataValue cpsapiValue::getValue() const
   return CDataValue();
 }
 
-template <> cpsapiValue::operator double () const
+cpsapiValue::operator double () const
 {
   if (getType() == CDataValue::Type::DOUBLE)
     return *(double *) mpObject->getValuePointer();
@@ -110,7 +110,7 @@ template <> cpsapiValue::operator double () const
   return std::numeric_limits<double>::quiet_NaN();
 }
 
-template <> cpsapiValue::operator int () const
+cpsapiValue::operator int () const
 {
   if (getType() == CDataValue::Type::INT)
     return *(int *) mpObject->getValuePointer();
@@ -118,7 +118,7 @@ template <> cpsapiValue::operator int () const
   return std::numeric_limits<int>::max();
 }
 
-template <> cpsapiValue::operator bool () const
+cpsapiValue::operator bool () const
 {
   if (getType() == CDataValue::Type::BOOL)
     return *(bool *) mpObject->getValuePointer();
