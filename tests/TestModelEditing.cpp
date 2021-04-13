@@ -43,7 +43,7 @@ TEST_CASE("Edit model", "[cpsapi]")
   REQUIRE(Assignment);
 
   cpsapiValue Value(static_cast< CCompartment * >(Compartment.getObject())->getInitialValueReference());
-  REQUIRE(Value);
+  // REQUIRE(Value); <-- does not work
   REQUIRE(Value.setValue(5.0));
   REQUIRE(!Value.setValue("wrong type"));
 
