@@ -47,6 +47,30 @@ public:
   CDataValue::Type getType() const;
 
   template < typename result > operator result() const;
+
+  operator double() const
+  {
+    if (getType() == CDataValue::Type::DOUBLE)
+      return *(double *) mpObject->getValuePointer();
+
+    return std::numeric_limits< double >::quiet_NaN();
+  }
+
+  operator int() const
+  {
+    if (getType() == CDataValue::Type::INT)
+      return *(int *) mpObject->getValuePointer();
+
+    return std::numeric_limits< int >::max();
+  }
+
+  operator bool() const
+  {
+    if (getType() == CDataValue::Type::BOOL)
+      return *(bool *) mpObject->getValuePointer();
+
+    return false;
+  }
 };
 
 CPSAPI_NAMESPACE_END
