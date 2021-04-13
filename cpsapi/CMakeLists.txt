@@ -102,7 +102,7 @@ include(model/CMakeLists.txt)
 
 add_library (cpsapi STATIC ${CPSAPI_SOURCES} ${CPSAPI_HEADERS})
 set_target_properties(cpsapi PROPERTIES
-    CXX_STANDARD 11
+    CXX_STANDARD 14
     CXX_STANDARD_REQUIRED YES
     CXX_EXTENSIONS NO
 )
