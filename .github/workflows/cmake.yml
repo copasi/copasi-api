@@ -36,7 +36,7 @@ jobs:
 
     - name: Patch dependencies (windows)
       shell: bash
-      if: false # matrix.platform == 'windows-latest'
+      if: matrix.platform == 'windows-latest'
       working-directory: ${{github.workspace}}/dependencies/lib/cmake
       run: |
         sed -i 's|D:/a/copasi-dependencies/copasi-dependencies/install/|${_IMPORT_PREFIX}/|g'  *.cmake
@@ -67,8 +67,8 @@ jobs:
     - name: Download COPASI
       shell: bash
       run: |
-        git clone --single-branch --branch release/Version-4.31 https://github.com/copasi/COPASI
         cmake -E make_directory ${{github.workspace}}/build_copasi
+        git clone --single-branch --branch release/Version-4.31 https://github.com/copasi/COPASI
 
     - name: Update COPASI Version
       shell: bash
@@ -79,7 +79,6 @@ jobs:
       shell: bash
       working-directory: ${{github.workspace}}/build_copasi
       run: |
-        echo $GITHUB_WORKSPACE/COPASI
         cmake $GITHUB_WORKSPACE/COPASI -G Ninja -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCOPASI_INSTALL_C_API=ON -DBUILD_GUI=OFF -DCOPASI_DEPENDENCY_DIR=../dependencies/ -DCMAKE_INSTALL_PREFIX=../dependencies/
 
     - name: Build COPASI
