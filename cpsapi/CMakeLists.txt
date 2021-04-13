@@ -101,6 +101,11 @@ include(core/CMakeLists.txt)
 include(model/CMakeLists.txt)
 
 add_library (cpsapi STATIC ${CPSAPI_SOURCES} ${CPSAPI_HEADERS})
+set_target_properties(cpsapi PROPERTIES
+    CXX_STANDARD 11
+    CXX_STANDARD_REQUIRED YES
+    CXX_EXTENSIONS NO
+)
 target_link_libraries(cpsapi ${LIBCOPASISE_LIBRARY_NAME})
 
 # set include directory, so that binary dir will be included during build
