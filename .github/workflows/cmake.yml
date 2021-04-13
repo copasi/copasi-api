@@ -31,7 +31,6 @@ jobs:
       shell: bash
       run: |
         cmake --version
-        cmake -E make_directory ${{github.workspace}}/build
         curl -L https://github.com/copasi/copasi-dependencies/releases/download/v4.31.240/${{ matrix.platform }}.zip -o ${{ matrix.platform }}.zip
         unzip ${{ matrix.platform }}.zip -d dependencies
 
@@ -68,7 +67,6 @@ jobs:
     - name: Download COPASI
       shell: bash
       run: |
-        cmake -E make_directory ${{github.workspace}}/build_copasi
         git clone --single-branch --branch release/Version-4.31 https://github.com/copasi/COPASI
 
     - name: Update COPASI Version
@@ -95,11 +93,10 @@ jobs:
       # Use a bash shell so we can use the same syntax for environment variable
       # access regardless of the host operating system
       shell: bash
-      working-directory: ${{github.workspace}}/build
       # Note the current convention is to use the -S and -B options here to specify source 
       # and build directories, but this is only available with CMake 3.13 and higher.  
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: cmake $GITHUB_WORKSPACE -G Ninja -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_PREFIX_PATH=../dependencies/CMakeModules -DCMAKE_INSTALL_PREFIX=../install/ -DCOPASI_DEPENDENCY_DIR=../dependencies/
+      run: cmake $GITHUB_WORKSPACE -G Ninja -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_PREFIX_PATH=./dependencies/CMakeModules -DCMAKE_INSTALL_PREFIX=./install/ -DCOPASI_DEPENDENCY_DIR=./dependencies/ -S .  -B ./build
 
     - name: Build
       working-directory: ${{github.workspace}}/build
