@@ -66,6 +66,8 @@ bool cpsapiCompartment::deleteSpecies(const std::string & name)
   if (mpDefaultSpecies == pSpecies)
     mpDefaultSpecies = nullptr;
   
+  cpsapiTransaction::beginStructureChange(static_cast< CCompartment * >(*mpObject)->getModel());
+
   cpsapiModel(static_cast< CCompartment * >(*mpObject)->getModel()).deleteAllDependents(pSpecies);
   cpsapiPointer::deleted(pSpecies);
   pdelete(pSpecies);
@@ -127,10 +129,10 @@ bool cpsapiCompartment::set(const CData::Property & property, const CDataValue &
     return base::set(property, value, CCore::Framework::__SIZE);
 
   CCore::Framework Framework(framework);
-  bool success = false;
 
   CCompartment * pCompartment = static_cast< CCompartment * >(*mpObject);
   CDataObject * pChangedObject = pCompartment;
+  bool success = cpsapiTransaction::endStructureChange(pCompartment->getModel());
 
   switch (property)
     {
@@ -148,7 +150,15 @@ bool cpsapiCompartment::set(const CData::Property & property, const CDataValue &
       if (Framework == CCore::Framework::__SIZE)
         Framework = CCore::Framework::Concentration;
 
-      success = base::set(property, value, Framework);
+      if (value.getType() == CDataValue::Type::DOUBLE)
+        {
+          pChangedObject = pCompartment->getInitialValueReference();
+          pCompartment->setInitialValue(value.toDouble());
+          success = true;
+        }
+      else
+        success = false;
+        
       break;
 
     default:

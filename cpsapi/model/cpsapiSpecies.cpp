@@ -60,9 +60,8 @@ bool cpsapiSpecies::set(const CData::Property & property, const CDataValue & val
   CCore::Framework Framework(framework);
 
   CMetab * pSpecies = static_cast< CMetab * >(*mpObject);
-  bool success = false;
-
   CDataObject * pChangedObject = pSpecies;
+  bool success = cpsapiTransaction::endStructureChange(pSpecies->getModel());
 
   switch (property)
     {

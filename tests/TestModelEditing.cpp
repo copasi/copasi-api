@@ -45,13 +45,23 @@ TEST_CASE("Edit model", "[cpsapi]")
   cpsapiValue Value(static_cast< CCompartment * >(Compartment.getObject())->getInitialValueReference());
   // REQUIRE(Value); <-- does not work
   REQUIRE(Value.setValue(5.0));
+  REQUIRE(Compartment.get(cpsapiCompartment::Property::INITIAL_VALUE).toDouble() == 5.0);
   REQUIRE(!Value.setValue("wrong type"));
-
+  
   REQUIRE(Model.compartment());
   REQUIRE(!Model.compartment("other"));
   REQUIRE(Model.getCompartments().size() == 1);
 
   cpsapiSpecies Species = Compartment.addSpecies("test_species");
+
+  double ParticleNumber = Species.get(cpsapiSpecies::Property::INITIAL_VALUE, CCore::Framework::ParticleNumbers).toDouble();
+
+  cpsapi::beginTransaction();
+  Compartment.set(cpsapiCompartment::Property::INITIAL_VALUE, 1e-10, CCore::Framework::Concentration);
+  REQUIRE(ParticleNumber == Species.get(cpsapiSpecies::Property::INITIAL_VALUE, CCore::Framework::ParticleNumbers).toDouble());
+  cpsapi::endTransaction();
+  REQUIRE(ParticleNumber != Species.get(cpsapiSpecies::Property::INITIAL_VALUE, CCore::Framework::ParticleNumbers).toDouble());
+
   REQUIRE(!Model.addSpecies("test_species"));
   REQUIRE(!Copy.addSpecies("test_species"));
   REQUIRE(Copy.getSpecies().size() == 1);

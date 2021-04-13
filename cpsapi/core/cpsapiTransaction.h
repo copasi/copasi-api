@@ -44,12 +44,20 @@ private:
 
   static Map Transactions;
 
+  typedef std::map< CModel *, bool > MapStructureChange; 
+
+  static MapStructureChange StructureChange;
+
 private:
   static bool beginTransaction(CModel * pModel);
 
   static bool endTransaction(CModel * pModel);
   
   static bool synchronize(CDataObject * pObject, const CCore::Framework & framework);
+
+  static bool beginStructureChange(CModel * pModel);
+
+  static bool endStructureChange(CModel * pModel);
 };
 
 CPSAPI_NAMESPACE_END

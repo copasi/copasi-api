@@ -57,7 +57,9 @@ public:
 
   void endTransaction() const;
 
-  bool synchronize(std::set< const CDataObject * > & changedObjects);
+  bool synchronize(std::set< const CDataObject * > & changedObjects, const CCore::Framework & framework);
+
+  bool compile();
 
   cpsapiCompartment addCompartment(const std::string & name);
 

@@ -64,9 +64,8 @@ bool cpsapiModelEntity::set(const CData::Property & property, const CDataValue &
     return base::set(property, value, framework);
 
   CModelEntity * pEntity = static_cast< CModelEntity * >(*mpObject);
-  bool success = false;
-
   CDataObject * pChangedObject = pEntity;
+  bool success = cpsapiTransaction::endStructureChange(pEntity->getModel());
 
   switch (property)
     {

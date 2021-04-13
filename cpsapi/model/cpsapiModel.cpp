@@ -58,20 +58,30 @@ void cpsapiModel::endTransaction() const
     cpsapiTransaction::endTransaction(static_cast< CModel * >(*mpObject));
 }
 
-bool cpsapiModel::synchronize(std::set< const CDataObject * > & changedObjects)
+bool cpsapiModel::synchronize(std::set< const CDataObject * > & /* changedObjects */, const CCore::Framework & framework)
 {
   if (!mpObject)
     return false;
 
-  static_cast< CModel * >(*mpObject)->updateInitialValues(changedObjects);
+  static_cast< CModel * >(*mpObject)->updateInitialValues(framework != CCore::Framework::__SIZE ? framework : CCore::Framework::Concentration);
 
   return true; 
+}
+
+bool cpsapiModel::compile()
+{
+  if (!mpObject)
+    return false;
+
+  return static_cast< CModel * >(*mpObject)->compileIfNecessary(nullptr);
 }
 
 cpsapiCompartment cpsapiModel::addCompartment(const std::string & name)
 {
   if (!mpObject)
     return nullptr;
+
+  cpsapiTransaction::beginStructureChange(static_cast< CModel * >(*mpObject));
 
   CCompartment * pCompartment = static_cast< CModel * >(*mpObject)->createCompartment(name);
 
@@ -90,6 +100,8 @@ bool cpsapiModel::deleteCompartment(const std::string & name)
 
   if (mpDefaultCompartment == pCompartment)
     mpDefaultCompartment = nullptr;
+
+  cpsapiTransaction::beginStructureChange(static_cast< CModel * >(*mpObject));
 
   deleteAllDependents(pCompartment);
   cpsapiPointer::deleted(pCompartment);
@@ -142,7 +154,10 @@ cpsapiSpecies cpsapiModel::addSpecies(const std::string & name, const std::strin
   if (pCompartment == nullptr)
     return nullptr;
 
-  return static_cast< CModel * >(*mpObject)->createMetabolite(name, compartment);
+  cpsapiTransaction::beginStructureChange(static_cast< CModel * >(*mpObject));
+  CMetab * pMetab = static_cast< CModel * >(*mpObject)->createMetabolite(name, compartment);
+
+  return pMetab;
 }
 
 bool cpsapiModel::deleteSpecies(const std::string & name, const std::string & compartment)
@@ -231,10 +246,10 @@ bool cpsapiModel::set(const CData::Property & property, const CDataValue & value
     return base::set(property, value, CCore::Framework::__SIZE);
 
   CCore::Framework Framework(framework);
-  bool success = false;
 
   CModel * pModel = static_cast< CModel * >(*mpObject);
   CDataObject * pChangedObject = pModel;
+  bool success = cpsapiTransaction::endStructureChange(pModel);
 
   switch (property)
     {
