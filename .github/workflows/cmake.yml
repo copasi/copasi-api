@@ -78,9 +78,8 @@ jobs:
 
     - name: Configure COPASI
       shell: bash
-      working-directory: ${{github.workspace}}/build_copasi
       run: |
-        cmake -G Ninja -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCOPASI_INSTALL_C_API=ON -DBUILD_GUI=OFF -DCOPASI_DEPENDENCY_DIR=../dependencies/ -DCMAKE_INSTALL_PREFIX=../dependencies/ ../COPASI 
+        cmake -G Ninja -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCOPASI_INSTALL_C_API=ON -DBUILD_GUI=OFF -DCOPASI_DEPENDENCY_DIR=../dependencies/ -DCMAKE_INSTALL_PREFIX=../dependencies/ -S ./COPASI  -B ./build_copasi
 
     - name: Build COPASI
       shell: bash
