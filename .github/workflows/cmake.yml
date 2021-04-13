@@ -36,7 +36,7 @@ jobs:
 
     - name: Patch dependencies (windows)
       shell: bash
-      if: matrix.platform == 'windows-latest'
+      if: false # matrix.platform == 'windows-latest'
       working-directory: ${{github.workspace}}/dependencies/lib/cmake
       run: |
         sed -i 's|D:/a/copasi-dependencies/copasi-dependencies/install/|${_IMPORT_PREFIX}/|g'  *.cmake
@@ -57,9 +57,11 @@ jobs:
         rm lapack*
         rm ../libblas.a
         rm ../liblapack.a
+        rm ../libf2c.a
         rm ../../include/clapack.h
         rm ../../include/lapack.h
         rm ../../include/blaswrap.h
+        rm ../../include/f2c.h
         
 
     - name: Download COPASI
@@ -70,7 +72,6 @@ jobs:
 
     - name: Update COPASI Version
       shell: bash
-      if: matrix.platform != 'windows-latest'
       working-directory: ${{github.workspace}}/COPASI
       run: ./gitTools/UpdateCopasiVersion
 
