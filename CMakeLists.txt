@@ -61,6 +61,10 @@ find_package(LIBCOPASISE REQUIRED)
 include_directories(BEFORE ${LIBCOPASISE_INCLUDE_DIR})
 
 add_subdirectory(cpsapi)
+option (WITH_DOCUMENTATION "Build the documentation." OFF)
+if (WITH_DOCUMENTATION)
+add_subdirectory (docs)
+endif()
 add_subdirectory(examples)
 
 include(CTest)
@@ -71,19 +75,20 @@ get_directory_property(DirDefs COMPILE_DEFINITIONS)
 message(STATUS "-----------------------------------------------------------
  Building ${CMAKE_PROJECT_NAME} ${CMAKE_PROJECT_VERSION} (${CMAKE_BUILD_TYPE})
 
-   Source Dir           = ${CMAKE_SOURCE_DIR}
-   Binary Dir           = ${CMAKE_BINARY_DIR}
-   Install Prefix       = ${CMAKE_INSTALL_PREFIX}
+   Source Dir             = ${CMAKE_SOURCE_DIR}
+   Binary Dir             = ${CMAKE_BINARY_DIR}
+   Install Prefix         = ${CMAKE_INSTALL_PREFIX}
 
  Dependencies:
-   libCOPASISE include  = ${LIBCOPASISE_INCLUDE_DIR}
-   libCOPASISE Libs     = ${LIBCOPASISE_LIBRARY}
-   libCOPASISE LDFLAGS  = ${LIBCOPASISE_LINKER_FLAGS}
+   libCOPASISE include    = ${LIBCOPASISE_INCLUDE_DIR}
+   libCOPASISE Libs       = ${LIBCOPASISE_LIBRARY}
+   libCOPASISE LDFLAGS    = ${LIBCOPASISE_LINKER_FLAGS}
 
-   COPASI dependencies  = ${COPASI_DEPENDENCY_DIR}
+   COPASI dependencies    = ${COPASI_DEPENDENCY_DIR}
 
  Options:
 
-   Enable namespace     = ${ENABLE_CPP_NAMESPACE}
-   Additional Defines   = ${DirDefs}
+   Enable namespace       = ${ENABLE_CPP_NAMESPACE}
+   Generate documentation = ${WITH_DOCUMENTATION}
+   Additional Defines     = ${DirDefs}
 ")

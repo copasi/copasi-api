@@ -1,5 +1,8 @@
 
 .vscode/
+build
+dependencies
+venv
 
 cpsapi/git-commit.h
 
@@ -8,3 +11,7 @@ cpsapi/cpsapiConfig.h
 trace
 
 *.dot
+
+docs/html
+docs/latex
+docs/_build
