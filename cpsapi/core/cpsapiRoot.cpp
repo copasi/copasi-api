@@ -23,7 +23,6 @@
 #include "cpsapi/model/cpsapiModel.h"
 #include "cpsapi/model/cpsapiCompartment.h"
 
-CPSAPI_NAMESPACE_BEGIN
 CPSAPI_NAMESPACE_USE
 
 // static 
@@ -168,5 +167,3 @@ void cpsapi::release()
 {
   CRootContainer::destroy();
 }
-
-CPSAPI_NAMESPACE_END

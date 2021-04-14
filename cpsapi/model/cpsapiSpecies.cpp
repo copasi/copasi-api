@@ -13,6 +13,7 @@
 // END: License 
 
 #include "cpsapi/model/cpsapiSpecies.h"
+#include "cpsapi/model/cpsapiTransaction.h"
 
 #include "copasi/model/CMetab.h"
 
@@ -21,7 +22,8 @@ CPSAPI_NAMESPACE_USE
 // static
 cpsapiSpecies::Properties cpsapiSpecies::SupportedProperties =
   {
-    CData::Property::INITIAL_VALUE
+    CData::Property::INITIAL_VALUE,
+    CData::Property::UNIT // READ ONLY
   };
 
 cpsapiSpecies::cpsapiSpecies(CMetab * pSpecies)
@@ -87,6 +89,10 @@ bool cpsapiSpecies::set(const CData::Property & property, const CDataValue & val
 
       break;
 
+    case CData::Property::UNIT:
+      success = false;
+      break;
+
     default:
       break;
     }
@@ -109,11 +115,15 @@ CDataValue cpsapiSpecies::get(const CData::Property & property, const CCore::Fra
     {
     case CData::Property::INITIAL_VALUE:
       if (framework == CCore::Framework::ParticleNumbers)
-        return base::get(property, framework);
+        return pSpecies->getInitialValue();
       
       return pSpecies->getInitialConcentration();
       break;
 
+    case CData::Property::UNIT:
+      return pSpecies->getUnits();
+      break;
+      
     default:
       break;
     }

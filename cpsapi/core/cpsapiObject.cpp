@@ -109,7 +109,7 @@ bool cpsapiObject::set(const CData::Property & property, const CDataValue & valu
       break;
     }
 
-  return success && cpsapiTransaction::synchronize(*mpObject, framework);
+  return success;
 }
 
 // virtual 

@@ -12,8 +12,8 @@
 //   https://opensource.org/licenses/Artistic-2.0 
 // END: License 
 
-#include "cpsapi/core/cpsapiTransaction.h"
 #include "cpsapi/model/cpsapiModel.h"
+#include "cpsapi/model/cpsapiTransaction.h"
 
 #include <copasi/core/CDataObject.h>
 #include <copasi/model/CModel.h>
@@ -50,7 +50,7 @@ bool cpsapiTransaction::endTransaction(CModel * pModel)
 }
 
 // static
-bool cpsapiTransaction::synchronize(CDataObject * pObject, const CCore::Framework & framework)
+bool cpsapiTransaction::synchronize(const CDataObject * pObject, const CCore::Framework & framework)
 {
   CModel * pModel = dynamic_cast< CModel * >(pObject->getObjectAncestor("Model"));
   Map::iterator found = Transactions.find(pModel);

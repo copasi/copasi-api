@@ -42,9 +42,15 @@ public:
     INITIAL_EXPRESSION = CData::Property::INITIAL_EXPRESSION,
     INITIAL_VALUE = CData::Property::INITIAL_VALUE,
     SIMULATION_TYPE = CData::Property::SIMULATION_TYPE,
-    ADD_NOISE = CData::Property::ADD_NOISE,
-    NOISE_EXPRESSION = CData::Property::NOISE_EXPRESSION,
-    OBJECT_NAME = CData::Property::OBJECT_NAME
+    OBJECT_NAME = CData::Property::OBJECT_NAME,
+    UNIT = CData::Property::UNIT,
+    VOLUME_UNIT = CData::Property::VOLUME_UNIT,
+    AREA_UNIT = CData::Property::AREA_UNIT,
+    LENGTH_UNIT = CData::Property::LENGTH_UNIT,
+    TIME_UNIT = CData::Property::TIME_UNIT,
+    QUANTITY_UNIT = CData::Property::QUANTITY_UNIT,
+    MODEL_TYPE = CData::Property::MODEL_TYPE,
+    AVOGADRO_NUMBER = CData::Property::AVOGADRO_NUMBER
   };
 
   cpsapiModel(CModel * pModel = nullptr);

@@ -34,7 +34,8 @@ public:
     SIMULATION_TYPE = CData::Property::SIMULATION_TYPE,
     ADD_NOISE = CData::Property::ADD_NOISE,
     NOISE_EXPRESSION = CData::Property::NOISE_EXPRESSION,
-    OBJECT_NAME = CData::Property::OBJECT_NAME
+    OBJECT_NAME = CData::Property::OBJECT_NAME,
+    UNIT = CData::Property::UNIT
   };
 
   cpsapiSpecies(CMetab * pSpecies = nullptr);

@@ -35,7 +35,7 @@ public:
     ADD_NOISE = CData::Property::ADD_NOISE,
     NOISE_EXPRESSION = CData::Property::NOISE_EXPRESSION,
     OBJECT_NAME = CData::Property::OBJECT_NAME
-  };
+};
 
   cpsapiModelEntity() = delete;
 

@@ -18,7 +18,7 @@
 
 #include <algorithm>
 
-CPSAPI_NAMESPACE_BEGIN
+CPSAPI_NAMESPACE_USE
 
 cpsapiContainer::cpsapiContainer(CDataContainer * pContainer)
   :base(pContainer)
@@ -49,5 +49,3 @@ void cpsapiContainer::accept(cpsapiVisitor & v)
       cpsapiObject(pObject).accept(v);
   });
 }
-
-CPSAPI_NAMESPACE_END

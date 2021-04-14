@@ -19,7 +19,6 @@
 #include <copasi/undo/CData.h>
 #include <copasi/core/CDataVector.h>
 
-#include "cpsapi/core/cpsapiTransaction.h"
 #include "cpsapi/core/cpsapiVisitor.h"
 #include "cpsapi/core/cpsapiPointer.h"
 
@@ -27,42 +26,112 @@ class CDataObject;
 
 CPSAPI_NAMESPACE_BEGIN
 
-class cpsapiObject 
+/**
+ * The cpsapiObject class is the base class for all COPASI CDataObjects exposed in the cpsapi.
+ */
+class cpsapiObject
 {
 public:
+  /**
+   * Enumeration of the exposed properties
+   */ 
   enum class Property
   {
     OBJECT_NAME = CData::Property::OBJECT_NAME
   };
 
+  /**
+   * Default constructor
+   * @param CDataObject * pObject (default: nullptr)
+   */
   cpsapiObject(CDataObject * pObject = nullptr);
 
+  /**
+   * Copy constructor
+   * @param const cpsapiObject & src
+   */
   cpsapiObject(const cpsapiObject & src);
 
+  /**
+   * Destructor
+   */
   virtual ~cpsapiObject();
 
-  virtual void accept(cpsapiVisitor& v);
+  /**
+   * Conversion to bool indicating whether the underlying COPASI CDataObject is accessible.
+   * The underlying CDataObject might have been deleted, e.g., a species if the parent 
+   * compartment has been deleted
+   */
+  operator bool() const;
 
+  /**
+   * A a virtual accept method implementing a visitor pattern. 
+   * Valid cpsapiObjects will call:  visitor.visit(*this)
+   * Visitors have read and write access to the object.
+   * @param accept(cpsapiVisitor& visitor)
+   */
+  virtual void accept(cpsapiVisitor& visitor);
+
+  /**
+   * Retrieve the pointer to the underlying COPASI CDataObject. 
+   * @return CDataObject * pObject
+   */
   CDataObject * getObject();
 
+  /**
+   * Retrieve the pointer to the underlying COPASI CDataObject. 
+   * @return const CDataObject * pObject
+   */
   const CDataObject * getObject() const;
 
+  /**
+   * Set a property of the object to the provided value under the given framework.
+   * The value must match the underlying value of the property.
+   * The default framework is unspecified 
+   * @param const Property & property
+   * @param const CDataValue & value
+   * @param const CCore::Framework & framework (default: CCore::Framework::__SIZE)
+   * @return bool success
+   */
   bool set(const Property & property, const CDataValue & value, const CCore::Framework & framework = CCore::Framework::__SIZE);
 
+  /**
+   * Set a property of the object to the provided value under the given framework.
+   * The property must be the string in CData::PropertyNames
+   * The value must match the underlying value of the property.
+   * The framework must be string in CCore::FrameworkNames 
+   * @param const std::string & property
+   * @param const CDataValue & value
+   * @param const std::string & framework (default: "")
+   * @return bool success
+   */
   bool set(const std::string & property, const CDataValue & value, const std::string & framework = "");
 
+  /**
+   * Retrieve a property of the object to the provided value under the given framework.
+   * The default framework is unspecified 
+   * @param const Property & property
+   * @param const CCore::Framework & framework (default: CCore::Framework::__SIZE)
+   * @return CDataValue value
+   */
   CDataValue get(const Property & property, const CCore::Framework & framework = CCore::Framework::__SIZE) const;
 
+  /**
+   * Retrieve a property of the object to the provided value under the given framework.
+   * The property must be the string in CData::PropertyNames
+   * The framework must be string in CCore::FrameworkNames 
+   * @param const std::string & property
+   * @param const std::string & framework (default: "")
+   * @return CDataValue value
+   */
   CDataValue get(const std::string & property, const std::string & framework = "") const;
+
+protected:
+  typedef std::set< CData::Property > Properties;
 
   bool isValidProperty(const std::string & property) const;
 
   bool isValidProperty(const CData::Property & property) const;
-
-  operator bool() const;
-
-protected:
-  typedef std::set< CData::Property > Properties;
 
   virtual bool set(const CData::Property & property, const CDataValue & value, const CCore::Framework & framework);
 

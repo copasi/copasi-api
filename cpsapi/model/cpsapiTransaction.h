@@ -28,6 +28,9 @@ CPSAPI_NAMESPACE_BEGIN
 
 class cpsapiTransaction
 {
+  /**
+   * Transactions
+   */ 
 friend class cpsapiObject;
 friend class cpsapiModelEntity;
 friend class cpsapiCompartment;
@@ -53,7 +56,7 @@ private:
 
   static bool endTransaction(CModel * pModel);
   
-  static bool synchronize(CDataObject * pObject, const CCore::Framework & framework);
+  static bool synchronize(const CDataObject * pObject, const CCore::Framework & framework);
 
   static bool beginStructureChange(CModel * pModel);
 

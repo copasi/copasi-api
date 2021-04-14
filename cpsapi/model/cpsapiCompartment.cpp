@@ -15,6 +15,7 @@
 #include "cpsapi/model/cpsapiCompartment.h"
 #include "cpsapi/model/cpsapiSpecies.h"
 #include "cpsapi/model/cpsapiModel.h"
+#include "cpsapi/model/cpsapiTransaction.h"
 
 #include "copasi/model/CCompartment.h"
 
@@ -24,7 +25,8 @@ CPSAPI_NAMESPACE_USE
 cpsapiCompartment::Properties cpsapiCompartment::SupportedProperties =
   {
     CData::Property::DIMENSIONALITY,
-    CData::Property::INITIAL_VALUE
+    CData::Property::INITIAL_VALUE,
+    CData::Property::UNIT // READ ONLY
   };
 
 cpsapiCompartment::cpsapiCompartment(CCompartment * pCompartment)
@@ -161,6 +163,10 @@ bool cpsapiCompartment::set(const CData::Property & property, const CDataValue &
         
       break;
 
+    case CData::Property::UNIT:
+      success = false;
+      break;
+
     default:
       break;
     }
@@ -186,9 +192,13 @@ CDataValue cpsapiCompartment::get(const CData::Property & property, const CCore:
       break;
 
     case CData::Property::INITIAL_VALUE:
-      return base::get(property, framework);
+      return pCompartment->getInitialValue();
       break;
 
+    case CData::Property::UNIT:
+      return pCompartment->getUnits();
+      break;
+      
     default:
       break;
     }

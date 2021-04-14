@@ -15,12 +15,23 @@
 #include "cpsapi/model/cpsapiModel.h"
 #include "cpsapi/model/cpsapiCompartment.h"
 #include "cpsapi/model/cpsapiSpecies.h"
+#include "cpsapi/model/cpsapiTransaction.h"
 
-CPSAPI_NAMESPACE_BEGIN
+#include <copasi/utilities/CValidatedUnit.h>
+
+CPSAPI_NAMESPACE_USE
 
 // static
 cpsapiModel::Properties cpsapiModel::SupportedProperties =
   {
+    CData::Property::UNIT, // Synonym for TIME_UNIT 
+    CData::Property::VOLUME_UNIT,
+    CData::Property::AREA_UNIT,
+    CData::Property::LENGTH_UNIT,
+    CData::Property::TIME_UNIT,
+    CData::Property::QUANTITY_UNIT,
+    CData::Property::MODEL_TYPE,
+    CData::Property::AVOGADRO_NUMBER
   };
 
 cpsapiModel::cpsapiModel(CModel * pModel)
@@ -39,8 +50,7 @@ cpsapiModel::cpsapiModel(const cpsapiModel & src)
   , mpDefaultReaction(src.mpDefaultReaction)
   , mpDefaultGlobalQuantity(src.mpDefaultGlobalQuantity)
   , mpDefaultEvent(src.mpDefaultEvent)
-{
-}
+{}
 
 // virtual
 cpsapiModel::~cpsapiModel()
@@ -248,11 +258,116 @@ bool cpsapiModel::set(const CData::Property & property, const CDataValue & value
   CCore::Framework Framework(framework);
 
   CModel * pModel = static_cast< CModel * >(*mpObject);
-  CDataObject * pChangedObject = pModel;
+  const CDataObject * pChangedObject = pModel;
+
   bool success = cpsapiTransaction::endStructureChange(pModel);
 
   switch (property)
     {
+    case CData::Property::VOLUME_UNIT:
+      if (value.getType() == CDataValue::STRING)
+        {
+          CUnit Unit;
+          success &= !Unit.setExpression(value.toString());
+          success &= Unit.isEquivalent(CUnit("m^3")) || Unit.isDimensionless();
+
+          if (success)
+            success &= pModel->setVolumeUnit(value.toString());
+        }
+      else 
+        success = false;
+        
+      break;
+
+    case CData::Property::AREA_UNIT:
+      if (value.getType() == CDataValue::STRING)
+        {
+          CUnit Unit;
+          success &= !Unit.setExpression(value.toString());
+          success &= Unit.isEquivalent(CUnit("m^2")) || Unit.isDimensionless();
+
+          if (success)
+            success &= pModel->setAreaUnit(value.toString());
+        }
+      else 
+        success = false;
+        
+      break;
+
+    case CData::Property::LENGTH_UNIT:
+      if (value.getType() == CDataValue::STRING)
+        {
+          CUnit Unit;
+          success &= !Unit.setExpression(value.toString());
+          success &= Unit.isEquivalent(CUnit("m")) || Unit.isDimensionless();
+
+          if (success)
+            success &= pModel->setLengthUnit(value.toString());
+        }
+      else 
+        success = false;
+        
+      break;
+
+    case CData::Property::UNIT:
+    case CData::Property::TIME_UNIT:
+      if (value.getType() == CDataValue::STRING)
+        {
+          CUnit Unit;
+          success &= !Unit.setExpression(value.toString());
+          success &= Unit.isEquivalent(CUnit("s")) || Unit.isDimensionless();
+
+          if (success)
+            success &= pModel->setTimeUnit(value.toString());
+        }
+      else 
+        success = false;
+        
+      break;
+
+    case CData::Property::QUANTITY_UNIT:
+      if (value.getType() == CDataValue::STRING)
+        {
+          if (Framework == CCore::Framework::__SIZE)
+            Framework = CCore::Framework::Concentration;
+
+          pChangedObject = CObjectInterface::DataObject(pModel->getObject(CCommonName("Reference=Quantity Conversion Factor")));
+
+          CUnit Unit;
+          success &= !Unit.setExpression(value.toString());
+          success &= Unit.isEquivalent(CUnit("#")) || Unit.isDimensionless();
+
+          if (success)
+            success &= pModel->setQuantityUnit(value.toString(), Framework);
+        }
+      else 
+        success = false;
+        
+      break;
+
+    case CData::Property::MODEL_TYPE:
+      if (value.getType() == CDataValue::STRING &&
+          CModel::ModelTypeNames.toEnum(value.toString()) != CModel::ModelType::__SIZE)
+        pModel->setModelType(CModel::ModelTypeNames.toEnum(value.toString()));
+      else 
+        success = false;
+
+      break;
+
+    case CData::Property::AVOGADRO_NUMBER:
+      if (value.getType() == CDataValue::DOUBLE)
+        {
+          if (Framework == CCore::Framework::__SIZE)
+            Framework = CCore::Framework::Concentration;
+
+          pChangedObject = CObjectInterface::DataObject(pModel->getObject(CCommonName("Reference=Avogadro Constant")));
+          pModel->setAvogadro(value.toDouble(), Framework);
+        }
+      else
+        success = false;
+
+      break;
+
     default:
       break;
     }
@@ -277,10 +392,41 @@ CDataValue cpsapiModel::get(const CData::Property & property, const CCore::Frame
 
   switch (property)
     {
+    case CData::Property::UNIT:
+      return pModel->getUnits();
+      break;
+
+    case CData::Property::VOLUME_UNIT:
+      return pModel->getVolumeUnit();
+      break;
+
+    case CData::Property::AREA_UNIT:
+      return pModel->getAreaUnit();
+      break;
+
+    case CData::Property::LENGTH_UNIT:
+      return pModel->getLengthUnit();
+      break;
+
+    case CData::Property::TIME_UNIT:
+      return pModel->getTimeUnit();
+      break;
+
+    case CData::Property::QUANTITY_UNIT:
+      return pModel->getQuantityUnit();
+      break;
+
+    case CData::Property::MODEL_TYPE:
+      return pModel->CModel::ModelTypeNames[pModel->getModelType()];
+      break;
+
+    case CData::Property::AVOGADRO_NUMBER:
+      return pModel->getAvogadro();
+      break;
+
     default:
       break;
     }
 
   return CDataValue();
 }
-CPSAPI_NAMESPACE_END

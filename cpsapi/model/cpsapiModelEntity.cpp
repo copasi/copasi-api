@@ -13,10 +13,10 @@
 // END: License 
 
 #include "cpsapi/model/cpsapiModelEntity.h"
+#include "cpsapi/model/cpsapiTransaction.h"
 
 #include <copasi/model/CModelValue.h>
 
-CPSAPI_NAMESPACE_BEGIN
 CPSAPI_NAMESPACE_USE
 
 // static
@@ -167,5 +167,3 @@ CDataValue cpsapiModelEntity::get(const CData::Property & property, const CCore:
 
   return CDataValue();
 }
-
-CPSAPI_NAMESPACE_END
