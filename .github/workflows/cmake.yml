@@ -119,7 +119,16 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name:
-          ${{ matrix.platform }}
+          cpsapi-${{ matrix.platform }}
         path: ${{github.workspace}}/install/*
+        retention-days: 1
+        if-no-files-found: error
+
+    - name: binary dependency archive
+      uses: actions/upload-artifact@v2
+      with:
+        name:
+          dependencies-${{ matrix.platform }}
+        path: ${{github.workspace}}/dependencies/*
         retention-days: 1
         if-no-files-found: error
