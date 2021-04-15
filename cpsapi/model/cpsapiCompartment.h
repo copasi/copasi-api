@@ -25,10 +25,9 @@ class cpsapiSpecies;
 
 class cpsapiCompartment: public cpsapiModelEntity
 {
-private:
+public:
   typedef cpsapiModelEntity base;
 
-public:
   enum class Property
   {
     DIMENSIONALITY = CData::Property::DIMENSIONALITY,
@@ -42,11 +41,15 @@ public:
     UNIT = CData::Property::UNIT
   };
 
+  static const Properties SupportedProperties;
+
   cpsapiCompartment(CCompartment * pCompartment = nullptr);
 
   cpsapiCompartment(const cpsapiCompartment & src);
 
   virtual ~cpsapiCompartment();
+
+  virtual void accept(cpsapiVisitor & visitor) override;
 
   cpsapiSpecies addSpecies(const std::string & name);
 
@@ -69,7 +72,6 @@ private:
   CMetab * __species(const std::string & name) const;
 
   CMetab * mpDefaultSpecies;
-  static Properties SupportedProperties;
 };
 
 CPSAPI_NAMESPACE_END

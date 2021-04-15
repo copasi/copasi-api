@@ -52,7 +52,14 @@ bool cpsapiTransaction::endTransaction(CModel * pModel)
 // static
 bool cpsapiTransaction::synchronize(const CDataObject * pObject, const CCore::Framework & framework)
 {
-  CModel * pModel = dynamic_cast< CModel * >(pObject->getObjectAncestor("Model"));
+  CModel * pModel = const_cast< CModel * >(dynamic_cast< const CModel * >(pObject));
+
+  if (pModel == nullptr)
+    pModel = dynamic_cast< CModel * >(pObject->getObjectAncestor("Model"));
+
+  if (pModel == nullptr)
+    return false;
+
   Map::iterator found = Transactions.find(pModel);
 
   if (found == Transactions.end())

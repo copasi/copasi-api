@@ -19,7 +19,7 @@
 #include "cpsapi/core/cpsapiDataModel.h"
 #include "cpsapi/core/cpsapiValue.h"
 #include "cpsapi/model/cpsapiModel.h"
-#include "cpsapi/model/cpsapiCompartment.h"
+#include "cpsapi/model/cpsapiSpecies.h"
 #include "cpsapi/model/cpsapiSpecies.h"
 
 using namespace std;
@@ -27,9 +27,17 @@ CPSAPI_NAMESPACE_USE
 
 TEST_CASE("Edit model", "[cpsapi]")
 {
+  REQUIRE(cpsapiObject::AllSupportedProperties< cpsapiObject >().size() == 1);
+  REQUIRE(cpsapiObject::AllSupportedProperties< cpsapiContainer >().size() == 1);
+  REQUIRE(cpsapiObject::AllSupportedProperties< cpsapiDataModel >().size() == 1);
+  REQUIRE(cpsapiObject::AllSupportedProperties< cpsapiModelEntity >().size() == 7);
+  REQUIRE(cpsapiObject::AllSupportedProperties< cpsapiCompartment >().size() == 9);
+  REQUIRE(cpsapiObject::AllSupportedProperties< cpsapiSpecies >().size() == 8);
+  REQUIRE(cpsapiObject::AllSupportedProperties< cpsapiModel >().size() == 10);
+
   cpsapiModel Model = cpsapi::addDataModel("test_model").model();
   REQUIRE(Model);
-
+  
   cpsapiCompartment Compartment = Model.addCompartment("test_compartment");
   REQUIRE(Compartment);
   
@@ -37,19 +45,20 @@ TEST_CASE("Edit model", "[cpsapi]")
   REQUIRE(Copy);
 
   cpsapiCompartment Assignment;
-  REQUIRE(!Assignment);
+  REQUIRE_FALSE(Assignment);
 
   Assignment = Compartment;
   REQUIRE(Assignment);
+  REQUIRE(Assignment == Compartment);
 
   cpsapiValue Value(static_cast< CCompartment * >(Compartment.getObject())->getInitialValueReference());
-  // REQUIRE(Value); <-- does not work
+  REQUIRE(Value.valid());
   REQUIRE(Value.setValue(5.0));
   REQUIRE(Compartment.get(cpsapiCompartment::Property::INITIAL_VALUE).toDouble() == 5.0);
-  REQUIRE(!Value.setValue("wrong type"));
+  REQUIRE_FALSE(Value.setValue("wrong type"));
   
   REQUIRE(Model.compartment());
-  REQUIRE(!Model.compartment("other"));
+  REQUIRE_FALSE(Model.compartment("other"));
   REQUIRE(Model.getCompartments().size() == 1);
 
   cpsapiSpecies Species = Compartment.addSpecies("test_species");
@@ -57,21 +66,24 @@ TEST_CASE("Edit model", "[cpsapi]")
   double ParticleNumber = Species.get(cpsapiSpecies::Property::INITIAL_VALUE, CCore::Framework::ParticleNumbers).toDouble();
 
   cpsapi::beginTransaction();
+  
   Compartment.set(cpsapiCompartment::Property::INITIAL_VALUE, 1e-10, CCore::Framework::Concentration);
   REQUIRE(ParticleNumber == Species.get(cpsapiSpecies::Property::INITIAL_VALUE, CCore::Framework::ParticleNumbers).toDouble());
+  
   cpsapi::endTransaction();
-  REQUIRE(ParticleNumber != Species.get(cpsapiSpecies::Property::INITIAL_VALUE, CCore::Framework::ParticleNumbers).toDouble());
 
-  REQUIRE(!Model.addSpecies("test_species"));
-  REQUIRE(!Copy.addSpecies("test_species"));
+  REQUIRE_FALSE(ParticleNumber == Species.get(cpsapiSpecies::Property::INITIAL_VALUE, CCore::Framework::ParticleNumbers).toDouble());
+
+  REQUIRE_FALSE(Model.addSpecies("test_species"));
+  REQUIRE_FALSE(Copy.addSpecies("test_species"));
   REQUIRE(Copy.getSpecies().size() == 1);
 
   REQUIRE(Model.deleteCompartment());
   REQUIRE(Model.getCompartments().size() == 0);
-  REQUIRE(!Species);
-  REQUIRE(!Compartment);
-  REQUIRE(!Copy);
-  REQUIRE(!Assignment);
+  REQUIRE_FALSE(Species);
+  REQUIRE_FALSE(Compartment);
+  REQUIRE_FALSE(Copy);
+  REQUIRE_FALSE(Assignment);
 
   REQUIRE(cpsapi::deleteDataModel("test_model"));
 }

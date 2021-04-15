@@ -32,16 +32,12 @@ class cpsapiSpecies;
 
 class cpsapiModel: public cpsapiModelEntity
 {
-private:
+public:
   typedef cpsapiModelEntity base;
 
-public:
   enum class Property
   {
-    EXPRESSION = CData::Property::EXPRESSION,
-    INITIAL_EXPRESSION = CData::Property::INITIAL_EXPRESSION,
     INITIAL_VALUE = CData::Property::INITIAL_VALUE,
-    SIMULATION_TYPE = CData::Property::SIMULATION_TYPE,
     OBJECT_NAME = CData::Property::OBJECT_NAME,
     UNIT = CData::Property::UNIT,
     VOLUME_UNIT = CData::Property::VOLUME_UNIT,
@@ -53,11 +49,17 @@ public:
     AVOGADRO_NUMBER = CData::Property::AVOGADRO_NUMBER
   };
 
+  static const Properties SupportedProperties;
+
+  static const Properties HiddenProperties;
+
   cpsapiModel(CModel * pModel = nullptr);
 
   cpsapiModel(const cpsapiModel & src);
 
   virtual ~cpsapiModel();
+
+  virtual void accept(cpsapiVisitor & visitor) override;
 
   void beginTransaction() const;
 
@@ -105,8 +107,6 @@ private:
   CReaction * mpDefaultReaction;
   CModelValue * mpDefaultGlobalQuantity;
   CEvent * mpDefaultEvent;
-
-  static Properties SupportedProperties;
 };
 
 template < class CType >

@@ -40,12 +40,13 @@ cpsapiDataModel::~cpsapiDataModel()
 {}
 
 // virtual 
-void cpsapiDataModel::accept(cpsapiVisitor & v)
+void cpsapiDataModel::accept(cpsapiVisitor & visitor)
 {
   if (!mpObject)
     return;
 
-  v.visit(*this);
+  visitor.visit(*this);
+  base::accept(visitor);
 }
 
 bool cpsapiDataModel::load(const std::string & src)

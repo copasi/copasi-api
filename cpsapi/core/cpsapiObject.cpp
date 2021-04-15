@@ -19,19 +19,21 @@
 CPSAPI_NAMESPACE_USE
 
 // static
-cpsapiObject::Properties cpsapiObject::SupportedProperties = 
+const cpsapiObject::Properties cpsapiObject::SupportedProperties = 
 {
   CData::Property::OBJECT_NAME
 };
 
+// static
+const cpsapiObject::Properties cpsapiObject::HiddenProperties = 
+{};
+
 cpsapiObject::cpsapiObject(CDataObject * pObject)
   : mpObject(pObject)
-  , mpSupportedProperties(&SupportedProperties)
 {}
 
 cpsapiObject::cpsapiObject(const cpsapiObject & src)
   : mpObject(src.mpObject)
-  , mpSupportedProperties(src.mpSupportedProperties)
 {}
 
 // virtual
@@ -39,12 +41,12 @@ cpsapiObject::~cpsapiObject()
 {}
 
 // virtual 
-void cpsapiObject::accept(cpsapiVisitor& v)
+void cpsapiObject::accept(cpsapiVisitor& visitor)
 {
   if (!mpObject)
     return;
 
-  v.visit(*this);
+  visitor.visit(*this);
 }
   
 CDataObject * cpsapiObject::getObject()
@@ -77,22 +79,10 @@ CDataValue cpsapiObject::get(const std::string & property, const std::string & f
   return get(CData::PropertyName.toEnum(property), CCore::FrameworkNames.toEnum(framework));
 }
 
-
-bool cpsapiObject::isValidProperty(const std::string & property) const
-{
-  return isValidProperty(CData::PropertyName.toEnum(property));
-}
-
-// virtual
-bool cpsapiObject::isValidProperty(const CData::Property & property) const
-{
-  return mpSupportedProperties->find(property) != mpSupportedProperties->end();
-}
-
 // virtual
 bool cpsapiObject::set(const CData::Property & property, const CDataValue & value, const CCore::Framework & framework)
 {
-  if (!isValidProperty(property))
+  if (!isValidProperty<cpsapiObject>(property))
     return false;
 
   bool success = false;
@@ -115,7 +105,7 @@ bool cpsapiObject::set(const CData::Property & property, const CDataValue & valu
 // virtual 
 CDataValue cpsapiObject::get(const CData::Property & property, const CCore::Framework & framework) const
 {
-  if (!isValidProperty(property))
+  if (!isValidProperty<cpsapiObject>(property))
     return CDataValue();
 
   switch (property)

@@ -22,7 +22,7 @@
 CPSAPI_NAMESPACE_USE
 
 // static
-cpsapiModel::Properties cpsapiModel::SupportedProperties =
+const cpsapiModel::Properties cpsapiModel::SupportedProperties =
   {
     CData::Property::UNIT, // Synonym for TIME_UNIT 
     CData::Property::VOLUME_UNIT,
@@ -34,15 +34,23 @@ cpsapiModel::Properties cpsapiModel::SupportedProperties =
     CData::Property::AVOGADRO_NUMBER
   };
 
+// static
+const cpsapiModel::Properties cpsapiModel::HiddenProperties =
+  {
+    CData::Property::INITIAL_EXPRESSION,
+    CData::Property::EXPRESSION,
+    CData::Property::SIMULATION_TYPE,
+    CData::Property::ADD_NOISE,
+    CData::Property::NOISE_EXPRESSION
+  };
+
 cpsapiModel::cpsapiModel(CModel * pModel)
   : base(pModel)
   , mpDefaultCompartment(nullptr)
   , mpDefaultReaction(nullptr)
   , mpDefaultGlobalQuantity(nullptr)
   , mpDefaultEvent(nullptr)
-{
-  mpSupportedProperties = &SupportedProperties;
-}
+{}
 
 cpsapiModel::cpsapiModel(const cpsapiModel & src)
   : base(src)
@@ -55,6 +63,16 @@ cpsapiModel::cpsapiModel(const cpsapiModel & src)
 // virtual
 cpsapiModel::~cpsapiModel()
 {}
+
+// virtual 
+void cpsapiModel::accept(cpsapiVisitor & visitor)
+{
+  if (!mpObject)
+    return;
+
+  visitor.visit(*this);
+  base::accept(visitor);
+}
 
 void cpsapiModel::beginTransaction() const
 {
@@ -252,7 +270,7 @@ bool cpsapiModel::set(const CData::Property & property, const CDataValue & value
   if (!mpObject)
     return false;
 
-  if (!isValidProperty(property))
+  if (!isValidProperty<cpsapiModel>(property))
     return base::set(property, value, CCore::Framework::__SIZE);
 
   CCore::Framework Framework(framework);
@@ -381,7 +399,7 @@ CDataValue cpsapiModel::get(const CData::Property & property, const CCore::Frame
   if (!mpObject)
     return CDataValue();
 
-  if (!isValidProperty(property))
+  if (!isValidProperty<cpsapiModel>(property))
     return base::get(property, CCore::Framework::__SIZE);
 
   CCore::Framework Framework(framework);

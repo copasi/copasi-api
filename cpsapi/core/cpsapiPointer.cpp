@@ -33,9 +33,8 @@ void cpsapiPointer::deleted(const CDataObject * pObject)
     return;
   
   Map::iterator foundNull = Manager.insert(std::make_pair(nullptr, std::set< cpsapiPointer * >())).first;
-  
-  std::for_each(found->second.begin(), found->second.end(), [foundNull](cpsapiPointer * pPointer)
-  {
+
+  std::for_each(found->second.begin(), found->second.end(), [foundNull](cpsapiPointer * pPointer) {
     pPointer->mpObject = foundNull;
   });
 

@@ -36,19 +36,17 @@ public:
 
   virtual ~cpsapiValue();
 
-  virtual void accept(cpsapiVisitor & v) override;
+  virtual void accept(cpsapiVisitor & visitor) override;
 
   bool setValue(const CDataValue & value);
 
   CDataValue getValue() const;
 
+  operator CDataValue() const;
+
   bool valid() const;
   
   CDataValue::Type getType() const;
-
-  operator bool() const;
-  operator int() const;
-  operator double() const;
 };
 
 CPSAPI_NAMESPACE_END

@@ -22,10 +22,9 @@ CPSAPI_NAMESPACE_BEGIN
 
 class cpsapiModelEntity: public cpsapiContainer
 {
-private:
+public:
   typedef cpsapiContainer base;
 
-public:
   enum class Property
   {
     EXPRESSION = CData::Property::EXPRESSION,
@@ -35,7 +34,9 @@ public:
     ADD_NOISE = CData::Property::ADD_NOISE,
     NOISE_EXPRESSION = CData::Property::NOISE_EXPRESSION,
     OBJECT_NAME = CData::Property::OBJECT_NAME
-};
+  };
+
+  static const Properties SupportedProperties;
 
   cpsapiModelEntity() = delete;
 
@@ -45,17 +46,22 @@ public:
 
   virtual ~cpsapiModelEntity();
 
+  virtual void accept(cpsapiVisitor & visitor) override;
+
   bool set(const Property & property, const CDataValue & value, const CCore::Framework & framework = CCore::Framework::__SIZE);
 
   CDataValue get(const Property & property, const CCore::Framework & framework = CCore::Framework::__SIZE) const;
+
+  /**
+   * Return the properties supported 
+   * @return const Properties & supportedProperties
+   */ 
+  static const Properties & supportedProperties();
 
 protected:
   virtual bool set(const CData::Property & property, const CDataValue & value, const CCore::Framework & framework) override;
 
   virtual CDataValue get(const CData::Property & property, const CCore::Framework & framework) const override;
-
-private:
-  static Properties SupportedProperties;
 };
 
 CPSAPI_NAMESPACE_END

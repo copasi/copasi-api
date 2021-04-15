@@ -20,7 +20,7 @@
 CPSAPI_NAMESPACE_USE
 
 // static
-cpsapiModelEntity::Properties cpsapiModelEntity::SupportedProperties =
+const cpsapiModelEntity::Properties cpsapiModelEntity::SupportedProperties =
   {
     CData::Property::EXPRESSION,
     CData::Property::INITIAL_EXPRESSION,
@@ -32,9 +32,7 @@ cpsapiModelEntity::Properties cpsapiModelEntity::SupportedProperties =
 
 cpsapiModelEntity::cpsapiModelEntity(CModelEntity * pObject)
   : base(pObject)
-{
-  mpSupportedProperties = & cpsapiModelEntity::SupportedProperties;
-}
+{}
 
 cpsapiModelEntity::cpsapiModelEntity(const cpsapiModelEntity & src)
   : base(src)
@@ -43,6 +41,16 @@ cpsapiModelEntity::cpsapiModelEntity(const cpsapiModelEntity & src)
 // virtual
 cpsapiModelEntity::~cpsapiModelEntity()
 {}
+
+// virtual 
+void cpsapiModelEntity::accept(cpsapiVisitor & visitor)
+{
+  if (!mpObject)
+    return;
+
+  visitor.visit(*this);
+  base::accept(visitor);
+}
 
 bool cpsapiModelEntity::set(const cpsapiModelEntity::Property & property, const CDataValue & value, const CCore::Framework & framework)
 {
@@ -60,7 +68,7 @@ bool cpsapiModelEntity::set(const CData::Property & property, const CDataValue &
   if (*mpObject == nullptr)
     return false;
 
-  if (!isValidProperty(property))
+  if (!isValidProperty<cpsapiModelEntity>(property))
     return base::set(property, value, framework);
 
   CModelEntity * pEntity = static_cast< CModelEntity * >(*mpObject);
@@ -125,7 +133,7 @@ CDataValue cpsapiModelEntity::get(const CData::Property & property, const CCore:
   if (*mpObject == nullptr)
     return CDataValue();
 
-  if (!isValidProperty(property))
+  if (!isValidProperty<cpsapiModelEntity>(property))
     return base::get(property, framework);
 
   CModelEntity * pEntity = static_cast< CModelEntity * >(*mpObject);

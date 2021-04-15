@@ -22,10 +22,9 @@ CPSAPI_NAMESPACE_BEGIN
 
 class cpsapiSpecies: public cpsapiModelEntity
 {
-private:
+public:
   typedef cpsapiModelEntity base;
 
-public:
   enum class Property
   {
     EXPRESSION = CData::Property::EXPRESSION,
@@ -38,11 +37,15 @@ public:
     UNIT = CData::Property::UNIT
   };
 
+  static const Properties SupportedProperties;
+
   cpsapiSpecies(CMetab * pSpecies = nullptr);
 
   cpsapiSpecies(const cpsapiSpecies & src);
 
   virtual ~cpsapiSpecies();
+
+  virtual void accept(cpsapiVisitor & visitor) override;
 
   bool set(const Property & property, const CDataValue & value, const CCore::Framework & framework = CCore::Framework::__SIZE);
 
@@ -52,9 +55,6 @@ protected:
   virtual bool set(const CData::Property & property, const CDataValue & value, const CCore::Framework & framework) override;
 
   virtual CDataValue get(const CData::Property & property, const CCore::Framework & framework) const override;
-
-private:
-  static Properties SupportedProperties;
 };
 
 CPSAPI_NAMESPACE_END

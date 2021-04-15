@@ -34,17 +34,16 @@ class cpsapiCompartment;
 
 class cpsapiDataModel : public cpsapiContainer
 {
-private:
+public:
   typedef cpsapiContainer base;
 
-public:
   cpsapiDataModel(CDataModel * pDataModel = nullptr);
 
   cpsapiDataModel(const cpsapiDataModel & src);
 
   virtual ~cpsapiDataModel();
 
-  virtual void accept(cpsapiVisitor & v) override;
+  virtual void accept(cpsapiVisitor & visitor) override;
 
   bool load(const std::string & src);
 

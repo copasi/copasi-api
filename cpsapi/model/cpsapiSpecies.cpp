@@ -20,7 +20,7 @@
 CPSAPI_NAMESPACE_USE
 
 // static
-cpsapiSpecies::Properties cpsapiSpecies::SupportedProperties =
+const cpsapiSpecies::Properties cpsapiSpecies::SupportedProperties =
   {
     CData::Property::INITIAL_VALUE,
     CData::Property::UNIT // READ ONLY
@@ -28,9 +28,7 @@ cpsapiSpecies::Properties cpsapiSpecies::SupportedProperties =
 
 cpsapiSpecies::cpsapiSpecies(CMetab * pSpecies)
   : base(pSpecies)
-{
-  mpSupportedProperties = &SupportedProperties;
-}
+{}
 
 cpsapiSpecies::cpsapiSpecies(const cpsapiSpecies & src)
   : base(src)
@@ -39,6 +37,16 @@ cpsapiSpecies::cpsapiSpecies(const cpsapiSpecies & src)
 // virtual
 cpsapiSpecies::~cpsapiSpecies()
 {}
+
+// virtual 
+void cpsapiSpecies::accept(cpsapiVisitor & visitor)
+{
+  if (!mpObject)
+    return;
+
+  visitor.visit(*this);
+  base::accept(visitor);
+}
 
 bool cpsapiSpecies::set(const cpsapiSpecies::Property & property, const CDataValue & value, const CCore::Framework & framework)
 {
@@ -56,7 +64,7 @@ bool cpsapiSpecies::set(const CData::Property & property, const CDataValue & val
   if (*mpObject == nullptr)
     return false;
 
-  if (!isValidProperty(property))
+  if (!isValidProperty<cpsapiSpecies>(property))
     return base::set(property, value, CCore::Framework::__SIZE);
 
   CCore::Framework Framework(framework);
@@ -106,7 +114,7 @@ CDataValue cpsapiSpecies::get(const CData::Property & property, const CCore::Fra
   if (*mpObject == nullptr)
     return CDataValue();
 
-  if (!isValidProperty(property))
+  if (!isValidProperty<cpsapiSpecies>(property))
     return base::get(property, CCore::Framework::__SIZE);
 
   CMetab * pSpecies = static_cast< CMetab * >(*mpObject);

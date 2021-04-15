@@ -42,10 +42,9 @@ class cpsapiModel;
 
 class cpsapi: public cpsapiContainer
 {
-private:
+public:
   typedef cpsapiContainer base;
 
-public:
   cpsapi() = delete;
 
   cpsapi(const cpsapi & src) = delete;

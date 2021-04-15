@@ -21,10 +21,9 @@ class CModelValue;
 CPSAPI_NAMESPACE_BEGIN
 class cpsapiGlobalQuantity: public cpsapiModelEntity
 {
-private:
+public:
   typedef cpsapiModelEntity base;
 
-public:
   enum class Property
   {
     EXPRESSION = CData::Property::EXPRESSION,
@@ -37,17 +36,23 @@ public:
     UNIT = CData::Property::UNIT
 };
 
-  cpsapiGlobalQuantity() = delete;
-
-  cpsapiGlobalQuantity(CModelValue * pModelValue);
+  cpsapiGlobalQuantity(CModelValue * pModelValue = nullptr);
 
   cpsapiGlobalQuantity(const cpsapiGlobalQuantity & src);
 
   virtual ~cpsapiGlobalQuantity();
 
+  virtual void accept(cpsapiVisitor & visitor) override;
+
   bool set(const Property & property, const CDataValue & value, const CCore::Framework & framework = CCore::Framework::__SIZE);
 
   CDataValue get(const Property & property, const CCore::Framework & framework = CCore::Framework::__SIZE) const;
+
+  /**
+   * Return the properties supported 
+   * @return const Properties & supportedProperties
+   */ 
+  virtual const Properties & supportedProperties() const override;
 
 protected:
   virtual bool set(const CData::Property & property, const CDataValue & value, const CCore::Framework & framework) override;
@@ -55,7 +60,7 @@ protected:
   virtual CDataValue get(const CData::Property & property, const CCore::Framework & framework) const override;
 
 private:
-  static Properties SupportedProperties;
+  static const Properties SupportedProperties;
 };
 
 CPSAPI_NAMESPACE_END

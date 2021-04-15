@@ -20,6 +20,9 @@
 
 CPSAPI_NAMESPACE_USE
 
+// static
+const cpsapiObject::Properties cpsapiContainer::SupportedProperties = {};
+
 cpsapiContainer::cpsapiContainer(CDataContainer * pContainer)
   :base(pContainer)
 {}
@@ -33,19 +36,21 @@ cpsapiContainer::~cpsapiContainer()
 {}
 
 // virtual 
-void cpsapiContainer::accept(cpsapiVisitor & v)
+void cpsapiContainer::accept(cpsapiVisitor & visitor)
 {
   if (!mpObject)
     return;
 
-  base::accept(v);
+  visitor.visit(*this);
+
+  base::accept(visitor);
 
   CDataContainer::objectMap & Objects = static_cast< CDataContainer * >(*mpObject)->getObjects();
 
-  std::for_each(Objects.begin(),Objects.end(), [&v](CDataObject * pObject){
+  std::for_each(Objects.begin(), Objects.end(), [&visitor](CDataObject * pObject) {
     if (pObject->hasFlag(CDataObject::Flag::Container))
-      cpsapiContainer(static_cast< CDataContainer * >(pObject)).accept(v);
+      cpsapiContainer(static_cast< CDataContainer * >(pObject)).accept(visitor);
     else
-      cpsapiObject(pObject).accept(v);
+      cpsapiObject(pObject).accept(visitor);
   });
 }

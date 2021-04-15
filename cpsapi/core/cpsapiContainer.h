@@ -22,17 +22,23 @@ CPSAPI_NAMESPACE_BEGIN
 
 class cpsapiContainer : public cpsapiObject
 {
-private:
+public:
   typedef cpsapiObject base;
 
-public:
+  /**
+   * Enumeration of the exposed properties
+   */ 
+  enum class Property {};
+
+  static const Properties SupportedProperties;
+
   cpsapiContainer(CDataContainer * pContainer = nullptr);
 
   cpsapiContainer(const cpsapiContainer & src);
 
   virtual ~cpsapiContainer();
 
-  virtual void accept(cpsapiVisitor & v) override;
+  virtual void accept(cpsapiVisitor & visitor) override;
 };
 
 CPSAPI_NAMESPACE_END

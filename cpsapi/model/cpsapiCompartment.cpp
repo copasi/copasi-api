@@ -22,7 +22,7 @@
 CPSAPI_NAMESPACE_USE
 
 // static
-cpsapiCompartment::Properties cpsapiCompartment::SupportedProperties =
+const cpsapiCompartment::Properties cpsapiCompartment::SupportedProperties =
   {
     CData::Property::DIMENSIONALITY,
     CData::Property::INITIAL_VALUE,
@@ -32,9 +32,7 @@ cpsapiCompartment::Properties cpsapiCompartment::SupportedProperties =
 cpsapiCompartment::cpsapiCompartment(CCompartment * pCompartment)
   : base(pCompartment)
   , mpDefaultSpecies(nullptr)
-{
-  mpSupportedProperties = &SupportedProperties;
-}
+{}
 
 cpsapiCompartment::cpsapiCompartment(const cpsapiCompartment & src)
   : base(src)
@@ -44,6 +42,16 @@ cpsapiCompartment::cpsapiCompartment(const cpsapiCompartment & src)
 // virtual
 cpsapiCompartment::~cpsapiCompartment()
 {}
+
+// virtual 
+void cpsapiCompartment::accept(cpsapiVisitor & visitor)
+{
+  if (!mpObject)
+    return;
+
+  visitor.visit(*this);
+  base::accept(visitor);
+}
 
 cpsapiSpecies cpsapiCompartment::addSpecies(const std::string & name)
 {
@@ -127,7 +135,7 @@ bool cpsapiCompartment::set(const CData::Property & property, const CDataValue &
   if (!mpObject)
     return false;
 
-  if (!isValidProperty(property))
+  if (!isValidProperty<cpsapiCompartment>(property))
     return base::set(property, value, CCore::Framework::__SIZE);
 
   CCore::Framework Framework(framework);
@@ -180,7 +188,7 @@ CDataValue cpsapiCompartment::get(const CData::Property & property, const CCore:
   if (!mpObject)
     return CDataValue();
 
-  if (!isValidProperty(property))
+  if (!isValidProperty<cpsapiCompartment>(property))
     return base::get(property, CCore::Framework::__SIZE);
 
   CCompartment * pCompartment = static_cast< CCompartment * >(*mpObject);
