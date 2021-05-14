@@ -44,7 +44,7 @@ void cpsapiSpecies::accept(cpsapiVisitor & visitor)
   if (!mpObject)
     return;
 
-  visitor.visit(*this);
+  visitor.visit(this, cpsapiVisitor::TypeId::cpsapiSpecies);
   base::accept(visitor);
 }
 

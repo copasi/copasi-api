@@ -20,6 +20,10 @@
 #include <sstream>
 
 #include <cpsapi/cpsapiConfig.h>
+#include <cpsapi/core/cpsapiRoot.h>
+#include <cpsapi/core/cpsapiDataModel.h>
+#include <cpsapi/model/cpsapiModel.h>
+#include <cpsapi/model/cpsapiSpecies.h>
 
 #include <copasi/CopasiTypes.h>
 
@@ -29,15 +33,12 @@ using namespace std;
 CPSAPI_NAMESPACE_USE
 
 
-TEST_CASE("load copasi file and access via regular COPASI api", "[copasi]")
+TEST_CASE("load COPASI file and access via cpsapi", "[cpsapi]")
 {
-  auto fileName = getTestFile("test-data/brusselator.cps");
-  auto* dm = CRootContainer::addDatamodel();
-  REQUIRE(dm != NULL);
-    
-  REQUIRE(dm->loadModel(fileName, NULL) == true);
+  std::string fileName = getTestFile("test-data/brusselator.cps");
 
-  auto * model = dm->getModel();
-  REQUIRE(model != NULL);
-  REQUIRE(model->getNumMetabs() == 6);
+  REQUIRE(cpsapi::addDataModel() == true);
+  REQUIRE(cpsapi::loadFromFile(fileName) == true);
+  REQUIRE(cpsapi::model() == true);
+  REQUIRE(cpsapi::model().getSpecies().size() == 6);
 }

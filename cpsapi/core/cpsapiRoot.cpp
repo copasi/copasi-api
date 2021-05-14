@@ -29,7 +29,7 @@ CPSAPI_NAMESPACE_USE
 std::map< std::string, CDataModel * > cpsapi::DataModels;
 
 // static 
-CDataModel * cpsapi::pDefaultDataModel = nullptr;
+cpsapiDataModel cpsapi::DefaultDataModel(nullptr);
 
 // static 
 CFunction * cpsapi::pDefaultFunction = nullptr;
@@ -38,18 +38,23 @@ CFunction * cpsapi::pDefaultFunction = nullptr;
 CUnitDefinition * cpsapi::pDefaultUnitDefinition = nullptr;
 
 // static 
-cpsapiDataModel cpsapi::addDataModel(const std::string & name)
+cpsapiDataModel & cpsapi::addDataModel(const std::string & name)
 {
   if (DataModels.find(name) != DataModels.end())
-    return nullptr;
+    {
+      DefaultDataModel = cpsapiDataModel(nullptr);
+      return DefaultDataModel;
+    }
 
-  pDefaultDataModel = CRootContainer::addDatamodel();
+  CDataModel * pDefaultDataModel = CRootContainer::addDatamodel();
   DataModels.insert(std::make_pair(name, pDefaultDataModel));
+
+  DefaultDataModel = cpsapiDataModel(pDefaultDataModel);
 
   // We start with the names being the same
   model().getObject()->setObjectName(name);
   
-  return pDefaultDataModel;
+  return DefaultDataModel;
 }
 
 // static
@@ -60,8 +65,8 @@ bool cpsapi::deleteDataModel(const std::string & name)
   if (found == DataModels.end())
     return false;
 
-  if (pDefaultDataModel == found->second)
-    pDefaultDataModel = nullptr;
+  if (DefaultDataModel.getObject() == found->second)
+    DefaultDataModel = cpsapiDataModel(nullptr);
 
   delete found->second;
   DataModels.erase(found);
@@ -70,23 +75,29 @@ bool cpsapi::deleteDataModel(const std::string & name)
 }
 
 // static
-cpsapiDataModel cpsapi::dataModel(const std::string & name)
+cpsapiDataModel & cpsapi::dataModel(const std::string & name)
 {
   if (name.empty())
     {
-      if (pDefaultDataModel == nullptr
+      if (!DefaultDataModel
           && CRootContainer::getDatamodelList()->empty())
         return addDataModel("default model");
 
-      return pDefaultDataModel;
+      return DefaultDataModel;
     }
 
   std::map< std::string, CDataModel * >::iterator found = DataModels.find(name);
 
   if (found != DataModels.end())
-    return found->second;
+    {
+      DefaultDataModel = cpsapiDataModel(found->second);
+    }
+  else
+    {
+      DefaultDataModel = cpsapiDataModel(nullptr);
+    }
 
-  return nullptr;
+  return DefaultDataModel;
 }
 
 // static 
@@ -108,13 +119,19 @@ const std::set< std::string > cpsapi::listModelNames()
 }
 
 // static
-bool cpsapi::load(const std::string & src, const std::string & modelName)
+bool cpsapi::loadFromFile(const std::string & fileName, const std::string & modelName)
 {
-  return dataModel(modelName).load(src);
+  return dataModel(modelName).loadFromFile(fileName);
 }
 
 // static
-cpsapiModel cpsapi::model(const std::string & name)
+bool cpsapi::loadFromString(const std::string & content, const std::string & referenceDir, const std::string & modelName)
+{
+  return dataModel(modelName).loadFromString(content, referenceDir);
+}
+
+// static
+cpsapiModel & cpsapi::model(const std::string & name)
 {
   return dataModel(name).model();
 }

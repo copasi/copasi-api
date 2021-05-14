@@ -15,6 +15,7 @@
 #pragma once
 
 #include "cpsapi/core/cpsapiContainer.h"
+#include "cpsapi/model/cpsapiModel.h"
 
 class CDataModel;
 class CModel;
@@ -45,9 +46,11 @@ public:
 
   virtual void accept(cpsapiVisitor & visitor) override;
 
-  bool load(const std::string & src);
+  bool loadFromFile(const std::string & fileName);
 
-  cpsapiModel model();
+  bool loadFromString(const std::string & content, const std::string & referenceDir = "");
+
+  cpsapiModel & model();
 
   void beginTransaction();
 
@@ -62,6 +65,7 @@ public:
   std::vector< cpsapiCompartment > getCompartments();
 
 private:
+  cpsapiModel mDefaultModel;
   CCopasiTask * mpDefaultTask;
   CReportDefinition * mpDefaultReportDefinition;
   CPlotSpecification * mpDefaultPlotSpecification;

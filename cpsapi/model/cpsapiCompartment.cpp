@@ -49,7 +49,7 @@ void cpsapiCompartment::accept(cpsapiVisitor & visitor)
   if (!mpObject)
     return;
 
-  visitor.visit(*this);
+  visitor.visit(this, cpsapiVisitor::TypeId::cpsapiCompartment);
   base::accept(visitor);
 }
 

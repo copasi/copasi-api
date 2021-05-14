@@ -33,12 +33,12 @@ cpsapiValue::~cpsapiValue()
 {}
 
 // virtual 
-void cpsapiValue::accept(cpsapiVisitor& v)
+void cpsapiValue::accept(cpsapiVisitor & visitor)
 {
   if (!mpObject)
     return;
 
-  v.visit(*this);
+  visitor.visit(this, cpsapiVisitor::TypeId::cpsapiValue);
 }
 
 bool cpsapiValue::setValue(const CDataValue & value)

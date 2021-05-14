@@ -14,32 +14,22 @@
 
 #pragma once
 
-#include "cpsapi/cpsapiConfig.h"
+#include <cpsapi/core/cpsapiVisitor.h>
+#include <cpsapi/core/cpsapiContainer.h>
+#include <cpsapi/core/cpsapiDataModel.h>
+#include <cpsapi/core/cpsapiValue.h>
+#include <cpsapi/model/cpsapiModel.h>
 
-#include <cstddef>
+#include <iostream>
 
 CPSAPI_NAMESPACE_BEGIN
 
-class cpsapiObject;
-
-class cpsapiVisitor
+class Visitor : public cpsapiVisitor 
 {
 public:
-  enum struct TypeId {
-    cpsapiObject,
-    cpsapiValue,
-    cpsapiContainer,
-    cpsapiModelEntity,
-    cpsapiModel,
-    cpsapiCompartment,
-    cpsapiSpecies,
-    cpsapiDataModel
-  };
+  virtual ~Visitor() {}
 
-  virtual void visit(cpsapiObject * pObject, const TypeId & typeId) = 0;
-
-protected:
-  virtual ~cpsapiVisitor() {}
+  virtual void visit(cpsapiObject * pObject, const cpsapiVisitor::TypeId & typeId);
 };
 
 CPSAPI_NAMESPACE_END

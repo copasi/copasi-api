@@ -55,19 +55,21 @@ public:
 
   static void release();
 
-  static cpsapiDataModel addDataModel(const std::string & name = "");
+  static cpsapiDataModel & addDataModel(const std::string & name = "");
 
   static bool deleteDataModel(const std::string & name = "");
 
-  static cpsapiDataModel dataModel(const std::string & name = "");
+  static cpsapiDataModel & dataModel(const std::string & name = "");
 
   static std::vector< cpsapiDataModel > getDataModels();
   
   static const std::set< std::string > listModelNames();
 
-  static bool load(const std::string & src, const std::string & modelName = "");
+  static bool loadFromFile(const std::string & fileName, const std::string & modelName = "");
 
-  static cpsapiModel model(const std::string & name = "");
+  static bool loadFromString(const std::string & content, const std::string & referenceDir = "", const std::string & modelName = "");
+
+  static cpsapiModel & model(const std::string & name = "");
 
   static void beginTransaction(const std::string & name = "");
 
@@ -83,7 +85,7 @@ public:
   
 private:
   static std::map< std::string, CDataModel * > DataModels;
-  static CDataModel * pDefaultDataModel;
+  static cpsapiDataModel DefaultDataModel;
   static CFunction * pDefaultFunction;
   static CUnitDefinition * pDefaultUnitDefinition;
 };

@@ -16,7 +16,6 @@
 
 #include <set>
 #include <algorithm>
-#include <type_traits>
 
 #include <copasi/undo/CData.h>
 #include <copasi/core/CDataVector.h>
@@ -48,6 +47,7 @@ public:
 
   static const Properties HiddenProperties;
 
+protected:
   /**
    * Default constructor
    * @param CDataObject * pObject (default: nullptr)
@@ -60,6 +60,7 @@ public:
    */
   cpsapiObject(const cpsapiObject & src);
 
+public:
   /**
    * Destructor
    */
@@ -78,7 +79,7 @@ public:
    * Visitors have read and write access to the object.
    * @param accept(cpsapiVisitor& visitor)
    */
-  virtual void accept(cpsapiVisitor& visitor);
+  virtual void accept(cpsapiVisitor& visitor) = 0;
 
   /**
    * Retrieve the pointer to the underlying COPASI CDataObject.
@@ -190,6 +191,5 @@ bool cpsapiObject::isValidProperty(const CData::Property & property)
 {
   return CType::SupportedProperties.find(property) != CType::SupportedProperties.end();
 }
-
 
 CPSAPI_NAMESPACE_END

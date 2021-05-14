@@ -16,13 +16,13 @@
 #include <copasi/core/CDataVector.h>
 
 #include "cpsapi/core/cpsapiDataModel.h"
-#include "cpsapi/model/cpsapiModel.h"
 #include "cpsapi/model/cpsapiCompartment.h"
 
 CPSAPI_NAMESPACE_USE
 
 cpsapiDataModel::cpsapiDataModel(CDataModel * pDataModel)
   : base(pDataModel)
+  , mDefaultModel(nullptr)
   , mpDefaultTask(nullptr)
   , mpDefaultReportDefinition(nullptr)
   , mpDefaultPlotSpecification(nullptr)
@@ -30,6 +30,7 @@ cpsapiDataModel::cpsapiDataModel(CDataModel * pDataModel)
 
 cpsapiDataModel::cpsapiDataModel(const cpsapiDataModel & src)
   : base(src)
+  , mDefaultModel(src.mDefaultModel)
   , mpDefaultTask(src.mpDefaultTask)
   , mpDefaultReportDefinition(src.mpDefaultReportDefinition)
   , mpDefaultPlotSpecification(src.mpDefaultPlotSpecification)
@@ -45,24 +46,42 @@ void cpsapiDataModel::accept(cpsapiVisitor & visitor)
   if (!mpObject)
     return;
 
-  visitor.visit(*this);
+  visitor.visit(this, cpsapiVisitor::TypeId::cpsapiDataModel);
   base::accept(visitor);
 }
 
-bool cpsapiDataModel::load(const std::string & src)
+bool cpsapiDataModel::loadFromFile(const std::string & fileName)
 {
-  if (mpObject)
-    return static_cast< CDataModel * >(*mpObject)->loadModel(src, nullptr);
+  bool success = false;
 
-  return false;
+  if (mpObject)
+    {
+      success = static_cast< CDataModel * >(*mpObject)->loadFromFile(fileName);
+      mDefaultModel = cpsapiModel(static_cast< CDataModel * >(*mpObject)->getModel());
+    }
+
+  return success;
 }
 
-cpsapiModel cpsapiDataModel::model()
+bool cpsapiDataModel::loadFromString(const std::string & content, const std::string & referenceDir)
 {
-  if (mpObject)
-    return static_cast< CDataModel * >(*mpObject)->getModel();
+  bool success = false;
 
-  return nullptr;
+  if (mpObject)
+    {
+      success = static_cast< CDataModel * >(*mpObject)->loadFromString(content, referenceDir);
+      mDefaultModel = cpsapiModel(static_cast< CDataModel * >(*mpObject)->getModel());
+    }
+
+  return success;
+}
+
+cpsapiModel & cpsapiDataModel::model()
+{
+  if (!mDefaultModel && mpObject)
+    mDefaultModel = static_cast< CDataModel * >(*mpObject)->getModel();
+
+  return mDefaultModel;
 }
 
 void cpsapiDataModel::beginTransaction()

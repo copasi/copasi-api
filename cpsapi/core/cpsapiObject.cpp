@@ -40,15 +40,6 @@ cpsapiObject::cpsapiObject(const cpsapiObject & src)
 cpsapiObject::~cpsapiObject()
 {}
 
-// virtual 
-void cpsapiObject::accept(cpsapiVisitor& visitor)
-{
-  if (!mpObject)
-    return;
-
-  visitor.visit(*this);
-}
-  
 CDataObject * cpsapiObject::getObject()
 {
   return *mpObject;

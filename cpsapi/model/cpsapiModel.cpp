@@ -70,7 +70,7 @@ void cpsapiModel::accept(cpsapiVisitor & visitor)
   if (!mpObject)
     return;
 
-  visitor.visit(*this);
+  visitor.visit(this, cpsapiVisitor::TypeId::cpsapiModel);
   base::accept(visitor);
 }
 

@@ -14,6 +14,13 @@
 
 cmake_minimum_required (VERSION 3.1.3)
 
-add_subdirectory(example1)
-add_subdirectory(visitor)
+file(GLOB CURRENT_DIR_HEADERS *.h)
+file(GLOB CURRENT_DIR_SOURCES *.cpp)
+
+# create source group for IDEs
+source_group(visitor FILES ${CURRENT_DIR_SOURCES} ${CURRENT_DIR_HEADERS})
+
+add_executable(visitor ${CURRENT_DIR_SOURCES})
+
+target_link_libraries(visitor cpsapi ${LIBCOPASISE_LIBRARY})
 
