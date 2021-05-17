@@ -44,68 +44,98 @@ void cpsapiPointer::deleted(const CDataObject * pObject)
 }
 
 cpsapiPointer::cpsapiPointer(CDataObject * pObject)
-  : mpObject()
+  : mpObject(Manager.end())
 {
-  mpObject = Manager.insert(std::make_pair(pObject, std::set< cpsapiPointer * >())).first;
-  mpObject->second.insert(this);
+  if (pObject != nullptr)
+    {
+      mpObject = Manager.insert(std::make_pair(pObject, std::set< cpsapiPointer * >())).first;
+      mpObject->second.insert(this);
+    }
 }
 
 cpsapiPointer::cpsapiPointer(const cpsapiPointer & src)
   : mpObject(src.mpObject)
 {
-  mpObject->second.insert(this);
+  if (mpObject != Manager.end())
+    mpObject->second.insert(this);
 }
 
 cpsapiPointer::~cpsapiPointer()
 {
-  mpObject->second.erase(this);
-  
-  if (mpObject->second.empty())
-    Manager.erase(mpObject);
+  if (mpObject != Manager.end())
+    {
+      mpObject->second.erase(this);
+
+      if (mpObject->second.empty())
+        Manager.erase(mpObject);
+    }
 }
 
 cpsapiPointer & cpsapiPointer::operator= (const cpsapiPointer & rhs)
 {
   if (this == &rhs) return *this;
 
-  mpObject->second.erase(this);
-  
-  if (mpObject->second.empty())
-    Manager.erase(mpObject);
+  if (mpObject != Manager.end())
+    {
+      mpObject->second.erase(this);
+
+      if (mpObject->second.empty())
+        Manager.erase(mpObject);
+    }
 
   mpObject = rhs.mpObject;
-  mpObject->second.insert(this);
+
+  if (mpObject != Manager.end())
+    mpObject->second.insert(this);
 
   return *this;
 }
 
 cpsapiPointer & cpsapiPointer::operator= (CDataObject * pObject)
 {
-  if (mpObject->first == pObject)
+  if ((mpObject == Manager.end() && pObject == nullptr)
+      || mpObject->first == pObject)
     return *this;
 
-  mpObject->second.erase(this);
-  
-  if (mpObject->second.empty())
-    Manager.erase(mpObject);
+  if (mpObject != Manager.end())
+    {
+      mpObject->second.erase(this);
 
-  mpObject = Manager.insert(std::make_pair(pObject, std::set< cpsapiPointer * >())).first;
-  mpObject->second.insert(this);
+      if (mpObject->second.empty())
+        Manager.erase(mpObject);
+    }
+
+  mpObject = Manager.end();
+
+  if (pObject != nullptr)
+    {
+      mpObject = Manager.insert(std::make_pair(pObject, std::set< cpsapiPointer * >())).first;
+      mpObject->second.insert(this);
+    }
 
   return *this;
 }
 
 CDataObject * cpsapiPointer::operator->() const
 {
-  return mpObject->first;
+  if (mpObject != Manager.end())
+    return mpObject->first;
+
+  return nullptr;
 }
 
 CDataObject * cpsapiPointer::operator*() const
 {
-  return mpObject->first;
+  if (mpObject != Manager.end())
+    return mpObject->first;
+
+  return nullptr;
 }
 
 cpsapiPointer::operator bool() const
 {
-  return mpObject->first != nullptr;
+  if (mpObject != Manager.end())
+    return mpObject->first != nullptr;
+
+  return false;
 }

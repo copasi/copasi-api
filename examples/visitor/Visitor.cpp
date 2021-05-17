@@ -16,7 +16,7 @@
 
 #include <cpsapi/core/cpsapiRoot.h>
 
-#include <typeindex>
+#include <type_traits>
 
 CPSAPI_NAMESPACE_USE
 
@@ -42,6 +42,10 @@ int main(int argc, char *argv[])
 // virtual
 void Visitor::visit(cpsapiObject * pObject, const cpsapiVisitor::TypeId & typeId)
 {
+  // Sanity check
+  if (pObject == nullptr || !*pObject)
+    return;
+
   switch (typeId)
     {
     case TypeId::cpsapiModel:
@@ -65,7 +69,7 @@ void Visitor::visit(cpsapiObject * pObject, const cpsapiVisitor::TypeId & typeId
       break;
 
     default:
-      std::cout << "visit unhandled (" << (int) typeId << "): " << static_cast< cpsapiValue * >(pObject)->getObject()->getCN() << std::endl;
+      std::cout << "visit unhandled (" << (std::underlying_type< cpsapiVisitor::TypeId >::type) typeId << "): " << static_cast< cpsapiValue * >(pObject)->getObject()->getCN() << std::endl;
       break;
     }
 }
