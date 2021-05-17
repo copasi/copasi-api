@@ -50,7 +50,7 @@ public:
   operator bool () const;
 
 private:
-  Map::iterator mpObject;
+  Map::iterator mItObject;
 };
 
 CPSAPI_NAMESPACE_END
