@@ -120,12 +120,12 @@ if (OPENMP_ENABLED)
 endif (OPENMP_ENABLED)
 
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/git-commit.h DESTINATION include/cpsapi)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cpsapiConfig.h DESTINATION include/cpsapi)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/git-commit.h DESTINATION include/cpsapi)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cpsapiConfig.h DESTINATION include/cpsapi)
 
 foreach (file ${CPSAPI_HEADERS})
   get_filename_component(dir ${file} DIRECTORY)
-  string(REPLACE ${CMAKE_CURRENT_SOURCE_DIR} include/copasi destination ${dir})
+  string(REPLACE ${CMAKE_CURRENT_SOURCE_DIR} include/cpsapi destination ${dir})
   install(FILES ${file} DESTINATION ${destination})
 endforeach()
 
