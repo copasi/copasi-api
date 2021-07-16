@@ -72,8 +72,8 @@ set (GIT_COMMIT_OUT "#define GIT_COMMIT \"${GIT_COMMIT_OUT}\"")
 
 # read existing string from file
 set (CURRENT)
-if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/git-commit.h)
-	file(STRINGS ${CMAKE_CURRENT_BINARY_DIR}/git-commit.h CURRENT)
+if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/git-commit.h)
+	file(STRINGS ${CMAKE_CURRENT_SOURCE_DIR}/git-commit.h CURRENT)
 endif()
 
 # DEBUG
@@ -81,21 +81,21 @@ endif()
 # 
 # 	GIT_COMMIT_OUT: ${GIT_COMMIT_OUT}
 # 	CURRENT: ${CURRENT}
-# 	CMAKE_CURRENT_BINARY_DIR: ${CMAKE_CURRENT_BINARY_DIR}
+# 	CMAKE_CURRENT_BINARY_DIR: ${CMAKE_CURRENT_SOURCE_DIR}
 # ")
 
 
-file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/git-commit.h.new ${GIT_COMMIT_OUT})
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/git-commit.h ${GIT_COMMIT_OUT})
 
 copy_if_different_and_remove(
-  ${CMAKE_CURRENT_BINARY_DIR}/git-commit.h.new
   ${CMAKE_CURRENT_BINARY_DIR}/git-commit.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/git-commit.h
 )
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cpsapiConfig.h.in ${CMAKE_CURRENT_BINARY_DIR}/cpsapiConfig.h)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cpsapiConfig.h.in ${CMAKE_CURRENT_SOURCE_DIR}/cpsapiConfig.h)
 
 set(CPSAPI_SOURCES)
-set(CPSAPI_HEADERS ${CMAKE_CURRENT_BINARY_DIR}/cpsapiConfig.h)
+set(CPSAPI_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/cpsapiConfig.h)
 
 include(core/CMakeLists.txt)
 include(model/CMakeLists.txt)

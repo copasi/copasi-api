@@ -22,6 +22,17 @@ CPSAPI_NAMESPACE_USE
 cpsapiPointer::Map cpsapiPointer::Manager;
 
 // static 
+cpsapiPointer::Map::iterator cpsapiPointer::findOrInsert(const CDataObject * pObject)
+{
+  Map::iterator found = Manager.insert(std::make_pair(pObject, nullptr)).first;
+  
+  if (found->second == nullptr)
+    found->second = new References;
+
+  return found;
+}
+
+// static 
 void cpsapiPointer::deleted(const CDataObject * pObject)
 {
   if (pObject == nullptr)
@@ -32,110 +43,98 @@ void cpsapiPointer::deleted(const CDataObject * pObject)
   if (found == Manager.end())
     return;
   
-  Map::iterator foundNull = Manager.insert(std::make_pair(nullptr, std::set< cpsapiPointer * >())).first;
+  Map::iterator foundNull = findOrInsert(pObject);
 
-  std::for_each(found->second.begin(), found->second.end(), [foundNull](cpsapiPointer * pPointer) {
-    pPointer->mItObject = foundNull;
+  std::for_each(found->second->begin(), found->second->end(), [foundNull](cpsapiPointer * pPointer) {
+    pPointer->mpObject = nullptr;
+    pPointer->mpReferences = foundNull->second;
   });
 
-  foundNull->second.insert(found->second.begin(), found->second.end());
+  foundNull->second->insert(found->second->begin(), found->second->end());
 
   Manager.erase(found);
 }
 
 cpsapiPointer::cpsapiPointer(CDataObject * pObject)
-  : mItObject(Manager.end())
+  : mpObject(pObject)
+  , mpReferences(nullptr)
 {
-  if (pObject != nullptr)
-    {
-      mItObject = Manager.insert(std::make_pair(pObject, std::set< cpsapiPointer * >())).first;
-      mItObject->second.insert(this);
-    }
+  addToReferences();
 }
 
 cpsapiPointer::cpsapiPointer(const cpsapiPointer & src)
-  : mItObject(src.mItObject)
+  : mpObject(src.mpObject)
+  , mpReferences(nullptr)
 {
-  if (mItObject != Manager.end())
-    mItObject->second.insert(this);
+  addToReferences();
 }
 
 cpsapiPointer::~cpsapiPointer()
 {
-  if (mItObject != Manager.end())
-    {
-      mItObject->second.erase(this);
-
-      if (mItObject->second.empty())
-        Manager.erase(mItObject);
-    }
+  removeFromReferences();
 }
 
 cpsapiPointer & cpsapiPointer::operator= (const cpsapiPointer & rhs)
 {
   if (this == &rhs) return *this;
 
-  if (mItObject != Manager.end())
-    {
-      mItObject->second.erase(this);
+  removeFromReferences();
 
-      if (mItObject->second.empty())
-        Manager.erase(mItObject);
-    }
+  mpObject = rhs.mpObject;
 
-  mItObject = rhs.mItObject;
-
-  if (mItObject != Manager.end())
-    mItObject->second.insert(this);
+  addToReferences();
 
   return *this;
 }
 
 cpsapiPointer & cpsapiPointer::operator= (CDataObject * pObject)
 {
-  if ((mItObject == Manager.end() && pObject == nullptr)
-      || (mItObject != Manager.end() && mItObject->first == pObject))
+  if (mpObject == pObject)
     return *this;
 
-  if (mItObject != Manager.end())
-    {
-      mItObject->second.erase(this);
+  removeFromReferences();
 
-      if (mItObject->second.empty())
-        Manager.erase(mItObject);
-    }
+  mpObject = pObject;
 
-  mItObject = Manager.end();
-
-  if (pObject != nullptr)
-    {
-      mItObject = Manager.insert(std::make_pair(pObject, std::set< cpsapiPointer * >())).first;
-      mItObject->second.insert(this);
-    }
+  addToReferences();
 
   return *this;
 }
 
 CDataObject * cpsapiPointer::operator->() const
 {
-  if (mItObject != Manager.end())
-    return mItObject->first;
-
-  return nullptr;
+  return mpObject;
 }
 
 CDataObject * cpsapiPointer::operator*() const
 {
-  if (mItObject != Manager.end())
-    return mItObject->first;
-
-  return nullptr;
+  return mpObject;
 }
 
 cpsapiPointer::operator bool() const
 {
-  if (mItObject != Manager.end())
-    return mItObject->first != nullptr;
-
-  return false;
+  return mpObject != nullptr;
 }
+
+void cpsapiPointer::addToReferences()
+{
+  if (mpObject != nullptr)
+    {
+      mpReferences = findOrInsert(mpObject)->second;
+      mpReferences->insert(this);
+    }
+}
+
+void cpsapiPointer::removeFromReferences()
+{
+  if (mpReferences != nullptr)
+    {
+      mpReferences->erase(this);
+
+      if (mpReferences->empty())
+        Manager.erase(mpObject);
+
+      mpReferences = nullptr;
+    }
+}
+

@@ -93,6 +93,10 @@ bool cpsapiSpecies::set(const CData::Property & property, const CDataValue & val
             pSpecies->setInitialValue(value.toDouble());
             success = true;
             break;
+
+          case CCore::Framework::__SIZE:
+            success = false;
+            break;
           }
 
       break;

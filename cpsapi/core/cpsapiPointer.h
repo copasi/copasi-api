@@ -20,16 +20,19 @@
 #include "cpsapi/cpsapiConfig.h"
 
 class CDataObject;
-// #include <copasi/core/CDataObject.h>
 
 CPSAPI_NAMESPACE_BEGIN
 
 class cpsapiPointer
 {
 private:
-  typedef std::map< CDataObject *, std::set< cpsapiPointer * > > Map; 
+  typedef std::set< cpsapiPointer * > References;
+  typedef std::map< const CDataObject *, References * > Map; 
+
   static Map Manager;
 
+  static Map::iterator findOrInsert(const CDataObject * pObject);
+  
 public:
   static void deleted(const CDataObject * pObject);
 
@@ -50,7 +53,12 @@ public:
   operator bool () const;
 
 private:
-  Map::iterator mItObject;
+  void addToReferences();
+
+  void removeFromReferences();
+
+  CDataObject * mpObject;
+  References * mpReferences;
 };
 
 CPSAPI_NAMESPACE_END
