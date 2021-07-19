@@ -22,6 +22,7 @@
 #include "cpsapi/core/cpsapiDataModel.h"
 #include "cpsapi/model/cpsapiModel.h"
 #include "cpsapi/model/cpsapiCompartment.h"
+#include "cpsapi/model/cpsapiSpecies.h"
 
 CPSAPI_NAMESPACE_USE
 
@@ -171,6 +172,54 @@ cpsapiCompartment cpsapi::compartment(const std::string & name, const std::strin
 std::vector< cpsapiCompartment > cpsapi::getCompartments(const std::string & modelName)
 {
   return dataModel(modelName).getCompartments();
+}
+
+// static
+bool cpsapi::addSpecies(const std::string & name, const std::string & compartmentName, const std::string & modelName)
+{
+  return dataModel(modelName).addSpecies(name, compartmentName);
+}
+
+// static
+bool cpsapi::deleteSpecies(const std::string & name, const std::string & compartmentName, const std::string & modelName)
+{
+  return dataModel(modelName).deleteSpecies(name, compartmentName);
+}
+
+// static 
+cpsapiSpecies cpsapi::species(const std::string & name, const std::string & compartmentName, const std::string & modelName)
+{
+  return dataModel(modelName).species(name, compartmentName);
+}
+
+// static 
+std::vector< cpsapiSpecies > cpsapi::getSpecies(const std::string & modelName)
+{
+  return dataModel(modelName).getSpecies();
+}
+
+// static
+bool cpsapi::addGlobalQuantity(const std::string & name, const std::string & modelName)
+{
+  return dataModel(modelName).addGlobalQuantity(name);
+}
+
+// static
+bool cpsapi::deleteGlobalQuantity(const std::string & name, const std::string & modelName)
+{
+  return dataModel(modelName).deleteGlobalQuantity(name);
+}
+
+// static 
+cpsapiGlobalQuantity cpsapi::globalQuantity(const std::string & name, const std::string & modelName)
+{
+  return dataModel(modelName).globalQuantity(name);
+}
+
+// static 
+std::vector< cpsapiGlobalQuantity > cpsapi::getGlobalQuantities(const std::string & modelName)
+{
+  return dataModel(modelName).getGlobalQuantities();
 }
 
 // static 

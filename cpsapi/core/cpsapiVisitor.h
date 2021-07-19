@@ -33,6 +33,7 @@ public:
     cpsapiModel,
     cpsapiCompartment,
     cpsapiSpecies,
+    cpsapiGlobalQuantity,
     cpsapiDataModel
   };
 

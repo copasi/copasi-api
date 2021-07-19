@@ -29,6 +29,7 @@ CPSAPI_NAMESPACE_BEGIN
 
 class cpsapiCompartment;
 class cpsapiSpecies;
+class cpsapiGlobalQuantity;
 
 class cpsapiModel: public cpsapiModelEntity
 {
@@ -85,6 +86,14 @@ public:
 
   std::vector< cpsapiSpecies > getSpecies() const;
   
+  cpsapiGlobalQuantity addGlobalQuantity(const std::string & name);
+
+  bool deleteGlobalQuantity(const std::string & name = "");
+
+  cpsapiGlobalQuantity globalQuantity(const std::string & name = "");
+
+  std::vector< cpsapiGlobalQuantity > getGlobalQuantities() const;
+  
   void deleteAllDependents(CDataContainer * pContainer);
 
   bool set(const Property & property, const CDataValue & value, const CCore::Framework & framework = CCore::Framework::__SIZE);
@@ -100,6 +109,8 @@ private:
   CCompartment * __compartment(const std::string & name) const;
 
   CMetab * __species(const std::string & name, const std::string & compartment) const;
+
+  CModelValue * __globalQuantity(const std::string & name) const;
 
   template < class CType > void deleteDependents(CType *& pDefault, const CDataObject::DataObjectSet & set);
 

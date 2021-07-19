@@ -17,6 +17,8 @@
 
 #include "cpsapi/core/cpsapiDataModel.h"
 #include "cpsapi/model/cpsapiCompartment.h"
+#include "cpsapi/model/cpsapiSpecies.h"
+#include "cpsapi/model/cpsapiGlobalQuantity.h"
 
 CPSAPI_NAMESPACE_USE
 
@@ -112,5 +114,45 @@ cpsapiCompartment cpsapiDataModel::compartment(const std::string & name)
 std::vector< cpsapiCompartment > cpsapiDataModel::getCompartments()
 {
   return model().getCompartments();
+}
+
+bool cpsapiDataModel::addSpecies(const std::string & name, const std::string & compartmentName)
+{
+  return model().addSpecies(name, compartmentName);
+}
+
+bool cpsapiDataModel::deleteSpecies(const std::string & name, const std::string & compartmentName)
+{
+  return model().deleteSpecies(name, compartmentName);
+}
+
+cpsapiSpecies cpsapiDataModel::species(const std::string & name, const std::string & compartmentName)
+{
+  return model().species(name, compartmentName);
+}
+
+std::vector< cpsapiSpecies > cpsapiDataModel::getSpecies()
+{
+  return model().getSpecies();
+}
+
+bool cpsapiDataModel::addGlobalQuantity(const std::string & name)
+{
+  return model().addGlobalQuantity(name);
+}
+
+bool cpsapiDataModel::deleteGlobalQuantity(const std::string & name)
+{
+  return model().deleteGlobalQuantity(name);
+}
+
+cpsapiGlobalQuantity cpsapiDataModel::globalQuantity(const std::string & name)
+{
+  return model().globalQuantity(name);
+}
+
+std::vector< cpsapiGlobalQuantity > cpsapiDataModel::getGlobalQuantities()
+{
+  return model().getGlobalQuantities();
 }
 

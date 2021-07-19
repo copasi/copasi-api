@@ -19,8 +19,9 @@
 #include "cpsapi/core/cpsapiDataModel.h"
 #include "cpsapi/core/cpsapiValue.h"
 #include "cpsapi/model/cpsapiModel.h"
+#include "cpsapi/model/cpsapiCompartment.h"
 #include "cpsapi/model/cpsapiSpecies.h"
-#include "cpsapi/model/cpsapiSpecies.h"
+#include "cpsapi/model/cpsapiGlobalQuantity.h"
 
 using namespace std;
 CPSAPI_NAMESPACE_USE
@@ -32,6 +33,7 @@ TEST_CASE("Edit model", "[cpsapi]")
   REQUIRE(cpsapiObject::AllSupportedProperties< cpsapiDataModel >().size() == 1);
   REQUIRE(cpsapiObject::AllSupportedProperties< cpsapiModelEntity >().size() == 7);
   REQUIRE(cpsapiObject::AllSupportedProperties< cpsapiCompartment >().size() == 9);
+  REQUIRE(cpsapiObject::AllSupportedProperties< cpsapiSpecies >().size() == 8);
   REQUIRE(cpsapiObject::AllSupportedProperties< cpsapiSpecies >().size() == 8);
   REQUIRE(cpsapiObject::AllSupportedProperties< cpsapiModel >().size() == 10);
 
@@ -78,6 +80,14 @@ TEST_CASE("Edit model", "[cpsapi]")
   REQUIRE_FALSE(Copy.addSpecies("test_species"));
   REQUIRE(Copy.getSpecies().size() == 1);
 
+  REQUIRE_FALSE(Model.globalQuantity());
+  REQUIRE(Model.addGlobalQuantity("test_global_quantity"));
+  REQUIRE_FALSE(Model.addGlobalQuantity("test_global_quantity"));
+  REQUIRE(Model.globalQuantity());
+  REQUIRE(Model.getGlobalQuantities().size() == 1);
+  REQUIRE(Model.deleteGlobalQuantity());
+  REQUIRE(Model.getGlobalQuantities().size() == 0);
+  
   REQUIRE(Model.deleteCompartment());
   REQUIRE(Model.getCompartments().size() == 0);
   REQUIRE_FALSE(Species);

@@ -1,20 +1,21 @@
-// BEGIN: Copyright 
-// Copyright (C) 2021 by Pedro Mendes, Rector and Visitors of the 
-// University of Virginia, University of Heidelberg, and University 
-// of Connecticut School of Medicine. 
-// All rights reserved 
-// END: Copyright 
+// BEGIN: Copyright
+// Copyright (C) 2021 by Pedro Mendes, Rector and Visitors of the
+// University of Virginia, University of Heidelberg, and University
+// of Connecticut School of Medicine.
+// All rights reserved
+// END: Copyright
 
-// BEGIN: License 
-// Licensed under the Artistic License 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-//   https://opensource.org/licenses/Artistic-2.0 
-// END: License 
+// BEGIN: License
+// Licensed under the Artistic License 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//   https://opensource.org/licenses/Artistic-2.0
+// END: License
 
 #include "cpsapi/model/cpsapiModel.h"
 #include "cpsapi/model/cpsapiCompartment.h"
 #include "cpsapi/model/cpsapiSpecies.h"
+#include "cpsapi/model/cpsapiGlobalQuantity.h"
 #include "cpsapi/model/cpsapiTransaction.h"
 
 #include <copasi/utilities/CValidatedUnit.h>
@@ -24,15 +25,14 @@ CPSAPI_NAMESPACE_USE
 // static
 const cpsapiModel::Properties cpsapiModel::SupportedProperties =
   {
-    CData::Property::UNIT, // Synonym for TIME_UNIT 
+    CData::Property::UNIT, // Synonym for TIME_UNIT
     CData::Property::VOLUME_UNIT,
     CData::Property::AREA_UNIT,
     CData::Property::LENGTH_UNIT,
     CData::Property::TIME_UNIT,
     CData::Property::QUANTITY_UNIT,
     CData::Property::MODEL_TYPE,
-    CData::Property::AVOGADRO_NUMBER
-  };
+    CData::Property::AVOGADRO_NUMBER};
 
 // static
 const cpsapiModel::Properties cpsapiModel::HiddenProperties =
@@ -41,8 +41,7 @@ const cpsapiModel::Properties cpsapiModel::HiddenProperties =
     CData::Property::EXPRESSION,
     CData::Property::SIMULATION_TYPE,
     CData::Property::ADD_NOISE,
-    CData::Property::NOISE_EXPRESSION
-  };
+    CData::Property::NOISE_EXPRESSION};
 
 cpsapiModel::cpsapiModel(CModel * pModel)
   : base(pModel)
@@ -64,7 +63,7 @@ cpsapiModel::cpsapiModel(const cpsapiModel & src)
 cpsapiModel::~cpsapiModel()
 {}
 
-// virtual 
+// virtual
 void cpsapiModel::accept(cpsapiVisitor & visitor)
 {
   if (!mpObject)
@@ -93,7 +92,7 @@ bool cpsapiModel::synchronize(std::set< const CDataObject * > & /* changedObject
 
   static_cast< CModel * >(*mpObject)->updateInitialValues(framework != CCore::Framework::__SIZE ? framework : CCore::Framework::Concentration);
 
-  return true; 
+  return true;
 }
 
 bool cpsapiModel::compile()
@@ -134,7 +133,7 @@ bool cpsapiModel::deleteCompartment(const std::string & name)
   deleteAllDependents(pCompartment);
   cpsapiPointer::deleted(pCompartment);
   delete pCompartment;
-  
+
   return true;
 }
 
@@ -160,7 +159,7 @@ CCompartment * cpsapiModel::__compartment(const std::string & name) const
 {
   if (!mpObject)
     return nullptr;
-    
+
   if (name.empty())
     return mpDefaultCompartment;
 
@@ -169,7 +168,7 @@ CCompartment * cpsapiModel::__compartment(const std::string & name) const
   if (Index == C_INVALID_INDEX)
     return nullptr;
 
-  return  &static_cast< CModel * >(*mpObject)->getCompartments()[Index];
+  return &static_cast< CModel * >(*mpObject)->getCompartments()[Index];
 }
 
 cpsapiSpecies cpsapiModel::addSpecies(const std::string & name, const std::string & compartment)
@@ -194,7 +193,7 @@ bool cpsapiModel::deleteSpecies(const std::string & name, const std::string & co
 
   if (!Compartment)
     return false;
-  
+
   return Compartment.deleteSpecies(name);
 }
 
@@ -217,15 +216,83 @@ CMetab * cpsapiModel::__species(const std::string & name, const std::string & co
 
   if (!Compartment)
     return nullptr;
-  
+
   return static_cast< CMetab * >(Compartment.species(name).getObject());
+}
+
+cpsapiGlobalQuantity cpsapiModel::addGlobalQuantity(const std::string & name)
+{
+  if (!mpObject)
+    return nullptr;
+
+  cpsapiTransaction::beginStructureChange(static_cast< CModel * >(*mpObject));
+
+  CModelValue * pGlobalQuantity = static_cast< CModel * >(*mpObject)->createModelValue(name);
+
+  if (pGlobalQuantity != nullptr)
+    mpDefaultGlobalQuantity = pGlobalQuantity;
+
+  return pGlobalQuantity;
+}
+
+bool cpsapiModel::deleteGlobalQuantity(const std::string & name)
+{
+  CModelValue * pGlobalQuantity = __globalQuantity(name);
+
+  if (pGlobalQuantity == nullptr)
+    return false;
+
+  if (mpDefaultGlobalQuantity == pGlobalQuantity)
+    mpDefaultGlobalQuantity = nullptr;
+
+  cpsapiTransaction::beginStructureChange(static_cast< CModel * >(*mpObject));
+
+  deleteAllDependents(pGlobalQuantity);
+  cpsapiPointer::deleted(pGlobalQuantity);
+  delete pGlobalQuantity;
+
+  return true;
+}
+
+cpsapiGlobalQuantity cpsapiModel::globalQuantity(const std::string & name)
+{
+  CModelValue * pGlobalQuantity = __globalQuantity(name);
+
+  if (pGlobalQuantity != nullptr)
+    mpDefaultGlobalQuantity = pGlobalQuantity;
+
+  return pGlobalQuantity;
+}
+
+std::vector< cpsapiGlobalQuantity > cpsapiModel::getGlobalQuantities() const
+{
+  if (!mpObject)
+    return std::vector< cpsapiGlobalQuantity >();
+
+  return convertVector< cpsapiGlobalQuantity >(static_cast< CModel * >(*mpObject)->getModelValues());
+}
+
+CModelValue * cpsapiModel::__globalQuantity(const std::string & name) const
+{
+  if (!mpObject)
+    return nullptr;
+
+  if (name.empty())
+    return mpDefaultGlobalQuantity;
+
+  size_t Index = static_cast< CModel * >(*mpObject)->getModelValues().getIndex(name);
+
+  if (Index == C_INVALID_INDEX)
+    return nullptr;
+
+  return &static_cast< CModel * >(*mpObject)->getModelValues()[Index];
 }
 
 void cpsapiModel::deleteAllDependents(CDataContainer * pContainer)
 {
   if (!mpObject)
     return;
-  
+
   static_cast< CModel * >(*mpObject)->compileIfNecessary(nullptr);
 
   CModel::DataObjectSet DependentReactions;
@@ -236,13 +303,13 @@ void cpsapiModel::deleteAllDependents(CDataContainer * pContainer)
   CModel::DataObjectSet DependentEventAssignments;
 
   static_cast< CModel * >(*mpObject)->appendAllDependents(*pContainer,
-                                                         DependentReactions,
-                                                         DependentMetabolites,
-                                                         DependentCompartments,
-                                                         DependentModelValues,
-                                                         DependentEvents,
-                                                         DependentEventAssignments,
-                                                         true);
+                                                          DependentReactions,
+                                                          DependentMetabolites,
+                                                          DependentCompartments,
+                                                          DependentModelValues,
+                                                          DependentEvents,
+                                                          DependentEventAssignments,
+                                                          true);
 
   CDataObject * pObject = nullptr;
 
@@ -256,21 +323,21 @@ void cpsapiModel::deleteAllDependents(CDataContainer * pContainer)
 
 bool cpsapiModel::set(const cpsapiModel::Property & property, const CDataValue & value, const CCore::Framework & framework)
 {
-  return set(static_cast<const CData::Property >(property), value, framework);
+  return set(static_cast< const CData::Property >(property), value, framework);
 }
 
 CDataValue cpsapiModel::get(const cpsapiModel::Property & property, const CCore::Framework & framework) const
 {
-  return get(static_cast<const CData::Property >(property), framework);
+  return get(static_cast< const CData::Property >(property), framework);
 }
 
-// virtual 
+// virtual
 bool cpsapiModel::set(const CData::Property & property, const CDataValue & value, const CCore::Framework & framework)
 {
   if (!mpObject)
     return false;
 
-  if (!isValidProperty<cpsapiModel>(property))
+  if (!isValidProperty< cpsapiModel >(property))
     return base::set(property, value, CCore::Framework::__SIZE);
 
   CCore::Framework Framework(framework);
@@ -292,9 +359,9 @@ bool cpsapiModel::set(const CData::Property & property, const CDataValue & value
           if (success)
             success &= pModel->setVolumeUnit(value.toString());
         }
-      else 
+      else
         success = false;
-        
+
       break;
 
     case CData::Property::AREA_UNIT:
@@ -307,9 +374,9 @@ bool cpsapiModel::set(const CData::Property & property, const CDataValue & value
           if (success)
             success &= pModel->setAreaUnit(value.toString());
         }
-      else 
+      else
         success = false;
-        
+
       break;
 
     case CData::Property::LENGTH_UNIT:
@@ -322,9 +389,9 @@ bool cpsapiModel::set(const CData::Property & property, const CDataValue & value
           if (success)
             success &= pModel->setLengthUnit(value.toString());
         }
-      else 
+      else
         success = false;
-        
+
       break;
 
     case CData::Property::UNIT:
@@ -338,9 +405,9 @@ bool cpsapiModel::set(const CData::Property & property, const CDataValue & value
           if (success)
             success &= pModel->setTimeUnit(value.toString());
         }
-      else 
+      else
         success = false;
-        
+
       break;
 
     case CData::Property::QUANTITY_UNIT:
@@ -358,16 +425,15 @@ bool cpsapiModel::set(const CData::Property & property, const CDataValue & value
           if (success)
             success &= pModel->setQuantityUnit(value.toString(), Framework);
         }
-      else 
+      else
         success = false;
-        
+
       break;
 
     case CData::Property::MODEL_TYPE:
-      if (value.getType() == CDataValue::STRING &&
-          CModel::ModelTypeNames.toEnum(value.toString()) != CModel::ModelType::__SIZE)
+      if (value.getType() == CDataValue::STRING && CModel::ModelTypeNames.toEnum(value.toString()) != CModel::ModelType::__SIZE)
         pModel->setModelType(CModel::ModelTypeNames.toEnum(value.toString()));
-      else 
+      else
         success = false;
 
       break;
@@ -393,13 +459,13 @@ bool cpsapiModel::set(const CData::Property & property, const CDataValue & value
   return success && cpsapiTransaction::synchronize(pChangedObject, Framework);
 }
 
-// virtual 
+// virtual
 CDataValue cpsapiModel::get(const CData::Property & property, const CCore::Framework & framework) const
 {
   if (!mpObject)
     return CDataValue();
 
-  if (!isValidProperty<cpsapiModel>(property))
+  if (!isValidProperty< cpsapiModel >(property))
     return base::get(property, CCore::Framework::__SIZE);
 
   CCore::Framework Framework(framework);

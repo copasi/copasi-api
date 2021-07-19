@@ -32,6 +32,7 @@ CPSAPI_NAMESPACE_BEGIN
 
 class cpsapiModel;
 class cpsapiCompartment;
+class cpsapiGlobalQuantity;
 
 class cpsapiDataModel : public cpsapiContainer
 {
@@ -63,6 +64,22 @@ public:
   cpsapiCompartment compartment(const std::string & name = "");
 
   std::vector< cpsapiCompartment > getCompartments();
+
+  bool addSpecies(const std::string & name, const std::string & compartmentName = "");
+
+  bool deleteSpecies(const std::string & name, const std::string & compartmentName = "");
+
+  cpsapiSpecies species(const std::string & name = "", const std::string & compartmentName = "");
+
+  std::vector< cpsapiSpecies > getSpecies();
+
+  bool addGlobalQuantity(const std::string & name);
+
+  bool deleteGlobalQuantity(const std::string & name);
+
+  cpsapiGlobalQuantity globalQuantity(const std::string & name = "");
+
+  std::vector< cpsapiGlobalQuantity > getGlobalQuantities();
 
 private:
   cpsapiModel mDefaultModel;

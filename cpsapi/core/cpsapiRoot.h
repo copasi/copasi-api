@@ -20,6 +20,7 @@
 #include "cpsapi/model/cpsapiModel.h"
 #include "cpsapi/model/cpsapiCompartment.h"
 #include "cpsapi/model/cpsapiSpecies.h"
+#include "cpsapi/model/cpsapiGlobalQuantity.h"
 
 class CRootContainer;
 class CDataModel;
@@ -82,6 +83,22 @@ public:
   static cpsapiCompartment compartment(const std::string & name = "", const std::string & modelName = "");
 
   static std::vector< cpsapiCompartment > getCompartments(const std::string & modelName = "");
+  
+  static bool addSpecies(const std::string & name, const std::string & compartmentName = "", const std::string & modelName = "");
+
+  static bool deleteSpecies(const std::string & name, const std::string & compartmentName = "", const std::string & modelName = "");
+
+  static cpsapiSpecies species(const std::string & name, const std::string & compartmentName = "", const std::string & modelName = "");
+
+  static std::vector< cpsapiSpecies > getSpecies(const std::string & modelName = "");
+
+  static bool addGlobalQuantity(const std::string & name, const std::string & modelName = "");
+
+  static bool deleteGlobalQuantity(const std::string & name, const std::string & modelName = "");
+
+  static cpsapiGlobalQuantity globalQuantity(const std::string & name = "", const std::string & modelName = "");
+
+  static std::vector< cpsapiGlobalQuantity > getGlobalQuantities(const std::string & modelName = "");
   
 private:
   static std::map< std::string, CDataModel * > DataModels;

@@ -35,6 +35,7 @@ friend class cpsapiObject;
 friend class cpsapiModelEntity;
 friend class cpsapiCompartment;
 friend class cpsapiSpecies;
+friend class cpsapiGlobalQuantity;
 friend class cpsapiModel;
 
 private:
