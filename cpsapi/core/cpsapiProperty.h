@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <copasi/core/CEnumAnnotation.h>
 
 #include "cpsapi/cpsapiConfig.h"
