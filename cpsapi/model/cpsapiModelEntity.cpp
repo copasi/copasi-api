@@ -22,12 +22,12 @@ CPSAPI_NAMESPACE_USE
 // static
 const cpsapiModelEntity::Properties cpsapiModelEntity::SupportedProperties =
   {
-    CData::Property::EXPRESSION,
-    CData::Property::INITIAL_EXPRESSION,
-    CData::Property::INITIAL_VALUE,
-    CData::Property::SIMULATION_TYPE,
-    CData::Property::ADD_NOISE,
-    CData::Property::NOISE_EXPRESSION
+    cpsapiProperty::Type::EXPRESSION,
+    cpsapiProperty::Type::INITIAL_EXPRESSION,
+    cpsapiProperty::Type::INITIAL_VALUE,
+    cpsapiProperty::Type::SIMULATION_TYPE,
+    cpsapiProperty::Type::ADD_NOISE,
+    cpsapiProperty::Type::NOISE_EXPRESSION
   };
 
 cpsapiModelEntity::cpsapiModelEntity(CModelEntity * pObject)
@@ -45,7 +45,7 @@ cpsapiModelEntity::~cpsapiModelEntity()
 // virtual 
 void cpsapiModelEntity::accept(cpsapiVisitor & visitor)
 {
-  if (!mpObject)
+  if (!operator bool())
     return;
 
   visitor.visit(this, cpsapiVisitor::TypeId::cpsapiModelEntity);
@@ -54,42 +54,42 @@ void cpsapiModelEntity::accept(cpsapiVisitor & visitor)
 
 bool cpsapiModelEntity::set(const cpsapiModelEntity::Property & property, const CDataValue & value, const CCore::Framework & framework)
 {
-  return set(static_cast<const CData::Property >(property), value, framework);
+  return set(static_cast<const cpsapiProperty::Type >(property), value, framework);
 }
 
 CDataValue cpsapiModelEntity::get(const Property & property, const CCore::Framework & framework) const
 {
-  return get(static_cast<const CData::Property >(property), framework);
+  return get(static_cast<const cpsapiProperty::Type >(property), framework);
 }
 
 // virtual
-bool cpsapiModelEntity::set(const CData::Property & property, const CDataValue & value, const CCore::Framework & framework)
+bool cpsapiModelEntity::set(const cpsapiProperty::Type & property, const CDataValue & value, const CCore::Framework & framework)
 {
-  if (*mpObject == nullptr)
+  if (!operator bool())
     return false;
 
   if (!isValidProperty<cpsapiModelEntity>(property))
     return base::set(property, value, framework);
 
-  CModelEntity * pEntity = static_cast< CModelEntity * >(*mpObject);
+  CModelEntity * pEntity = static_cast< CModelEntity * >(getObject());
   CDataObject * pChangedObject = pEntity;
   bool success = cpsapiTransaction::endStructureChange(pEntity->getModel());
 
   switch (property)
     {
-    case CData::Property::EXPRESSION:
+    case cpsapiProperty::Type::EXPRESSION:
       if (value.getType() == CDataValue::Type::STRING)
         success = pEntity->setExpression(value.toString());
 
       break;
 
-    case CData::Property::INITIAL_EXPRESSION:
+    case cpsapiProperty::Type::INITIAL_EXPRESSION:
       if (value.getType() == CDataValue::Type::STRING)
         success = pEntity->setInitialExpression(value.toString());
 
       break;
 
-    case CData::Property::INITIAL_VALUE:
+    case cpsapiProperty::Type::INITIAL_VALUE:
       if (value.getType() == CDataValue::Type::DOUBLE)
         {
           pChangedObject = pEntity->getInitialValueReference();
@@ -99,13 +99,13 @@ bool cpsapiModelEntity::set(const CData::Property & property, const CDataValue &
 
       break;
 
-    case CData::Property::SIMULATION_TYPE:
+    case cpsapiProperty::Type::SIMULATION_TYPE:
       if (value.getType() == CDataValue::Type::STRING)
         success = pEntity->setStatus(CModelEntity::StatusName.toEnum(value.toString()));
 
       break;
 
-    case CData::Property::ADD_NOISE:
+    case cpsapiProperty::Type::ADD_NOISE:
       if (value.getType() == CDataValue::Type::BOOL)
         {
           pEntity->setHasNoise(value.toBool());
@@ -114,7 +114,7 @@ bool cpsapiModelEntity::set(const CData::Property & property, const CDataValue &
 
       break;
 
-    case CData::Property::NOISE_EXPRESSION:
+    case cpsapiProperty::Type::NOISE_EXPRESSION:
       if (value.getType() == CDataValue::Type::STRING)
         success = pEntity->setNoiseExpression(value.toString());
 
@@ -128,43 +128,43 @@ bool cpsapiModelEntity::set(const CData::Property & property, const CDataValue &
 }
 
 // virtual 
-CDataValue cpsapiModelEntity::get(const CData::Property & property, const CCore::Framework & framework) const
+CDataValue cpsapiModelEntity::get(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
 {
-  if (*mpObject == nullptr)
+  if (!operator bool())
     return CDataValue();
 
   if (!isValidProperty<cpsapiModelEntity>(property))
     return base::get(property, framework);
 
-  CModelEntity * pEntity = static_cast< CModelEntity * >(*mpObject);
+  CModelEntity * pEntity = static_cast< CModelEntity * >(getObject());
   bool success = false;
 
   CDataObject * pChangedObject = pEntity;
 
   switch (property)
     {
-    case CData::Property::EXPRESSION:
+    case cpsapiProperty::Type::EXPRESSION:
       return pEntity->getExpression();
       break;
 
-    case CData::Property::INITIAL_EXPRESSION:
+    case cpsapiProperty::Type::INITIAL_EXPRESSION:
       return pEntity->getInitialExpression();
       break;
 
-    case CData::Property::INITIAL_VALUE:
+    case cpsapiProperty::Type::INITIAL_VALUE:
       return  pEntity->getInitialValue();
       break;
 
-    case CData::Property::SIMULATION_TYPE:
+    case cpsapiProperty::Type::SIMULATION_TYPE:
       return CModelEntity::StatusName[pEntity->getStatus()];
 
       break;
 
-    case CData::Property::ADD_NOISE:
+    case cpsapiProperty::Type::ADD_NOISE:
       return pEntity->hasNoise();
       break;
 
-    case CData::Property::NOISE_EXPRESSION:
+    case cpsapiProperty::Type::NOISE_EXPRESSION:
       return pEntity->getNoiseExpression();
 
       break;

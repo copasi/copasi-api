@@ -45,10 +45,11 @@ void cpsapiPointer::deleted(const CDataObject * pObject)
   
   Map::iterator foundNull = findOrInsert(pObject);
 
-  std::for_each(found->second->begin(), found->second->end(), [foundNull](cpsapiPointer * pPointer) {
-    pPointer->mpObject = nullptr;
-    pPointer->mpReferences = foundNull->second;
-  });
+  for (cpsapiPointer * pPointer : *found->second)
+    {
+      pPointer->mpObject = nullptr;
+      pPointer->mpReferences = foundNull->second;
+    }
 
   foundNull->second->insert(found->second->begin(), found->second->end());
 
@@ -109,6 +110,18 @@ CDataObject * cpsapiPointer::operator->() const
 CDataObject * cpsapiPointer::operator*() const
 {
   return mpObject;
+}
+
+cpsapiPointer::References & cpsapiPointer::references()
+{
+  static References Empty;
+
+  if (mpReferences == nullptr)
+    {
+      return Empty;
+    }
+
+  return *mpReferences;
 }
 
 cpsapiPointer::operator bool() const

@@ -82,7 +82,7 @@ public:
   std::vector< cpsapiGlobalQuantity > getGlobalQuantities();
 
 private:
-  cpsapiModel mDefaultModel;
+  cpsapiModel mModel;
   CCopasiTask * mpDefaultTask;
   CReportDefinition * mpDefaultReportDefinition;
   CPlotSpecification * mpDefaultPlotSpecification;

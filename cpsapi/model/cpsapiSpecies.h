@@ -27,14 +27,14 @@ public:
 
   enum class Property
   {
-    EXPRESSION = CData::Property::EXPRESSION,
-    INITIAL_EXPRESSION = CData::Property::INITIAL_EXPRESSION,
-    INITIAL_VALUE = CData::Property::INITIAL_VALUE,
-    SIMULATION_TYPE = CData::Property::SIMULATION_TYPE,
-    ADD_NOISE = CData::Property::ADD_NOISE,
-    NOISE_EXPRESSION = CData::Property::NOISE_EXPRESSION,
-    OBJECT_NAME = CData::Property::OBJECT_NAME,
-    UNIT = CData::Property::UNIT
+    EXPRESSION = cpsapiProperty::Type::EXPRESSION,
+    INITIAL_EXPRESSION = cpsapiProperty::Type::INITIAL_EXPRESSION,
+    INITIAL_VALUE = cpsapiProperty::Type::INITIAL_VALUE,
+    SIMULATION_TYPE = cpsapiProperty::Type::SIMULATION_TYPE,
+    ADD_NOISE = cpsapiProperty::Type::ADD_NOISE,
+    NOISE_EXPRESSION = cpsapiProperty::Type::NOISE_EXPRESSION,
+    OBJECT_NAME = cpsapiProperty::Type::OBJECT_NAME,
+    UNIT = cpsapiProperty::Type::UNIT
   };
 
   static const Properties SupportedProperties;
@@ -52,9 +52,9 @@ public:
   CDataValue get(const Property & property, const CCore::Framework & framework = CCore::Framework::__SIZE) const;
 
 protected:
-  virtual bool set(const CData::Property & property, const CDataValue & value, const CCore::Framework & framework) override;
+  virtual bool set(const cpsapiProperty::Type & property, const CDataValue & value, const CCore::Framework & framework) override;
 
-  virtual CDataValue get(const CData::Property & property, const CCore::Framework & framework) const override;
+  virtual CDataValue get(const cpsapiProperty::Type & property, const CCore::Framework & framework) const override;
 };
 
 CPSAPI_NAMESPACE_END

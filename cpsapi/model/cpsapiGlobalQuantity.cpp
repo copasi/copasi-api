@@ -24,7 +24,7 @@ CPSAPI_NAMESPACE_USE
 // static
 const cpsapiGlobalQuantity::Properties cpsapiGlobalQuantity::SupportedProperties =
   {
-    CData::Property::UNIT
+    cpsapiProperty::Type::UNIT
   };
 
 cpsapiGlobalQuantity::cpsapiGlobalQuantity(CModelValue * pGlobalQuantity)
@@ -42,7 +42,7 @@ cpsapiGlobalQuantity::~cpsapiGlobalQuantity()
 // virtual 
 void cpsapiGlobalQuantity::accept(cpsapiVisitor & visitor)
 {
-  if (!mpObject)
+  if (!operator bool())
     return;
 
   visitor.visit(this, cpsapiVisitor::TypeId::cpsapiGlobalQuantity);
@@ -51,18 +51,18 @@ void cpsapiGlobalQuantity::accept(cpsapiVisitor & visitor)
 
 bool cpsapiGlobalQuantity::set(const cpsapiGlobalQuantity::Property & property, const CDataValue & value, const CCore::Framework & framework)
 {
-  return set(static_cast< const CData::Property >(property), value, framework);
+  return set(static_cast< const cpsapiProperty::Type >(property), value, framework);
 }
 
 CDataValue cpsapiGlobalQuantity::get(const cpsapiGlobalQuantity::Property & property, const CCore::Framework & framework) const
 {
-  return get(static_cast< const CData::Property >(property), framework);
+  return get(static_cast< const cpsapiProperty::Type >(property), framework);
 }
 
 // virtual
-bool cpsapiGlobalQuantity::set(const CData::Property & property, const CDataValue & value, const CCore::Framework & framework)
+bool cpsapiGlobalQuantity::set(const cpsapiProperty::Type & property, const CDataValue & value, const CCore::Framework & framework)
 {
-  if (!mpObject)
+  if (!operator bool())
     return false;
 
   if (!isValidProperty<cpsapiGlobalQuantity>(property))
@@ -70,17 +70,19 @@ bool cpsapiGlobalQuantity::set(const CData::Property & property, const CDataValu
 
   CCore::Framework Framework(framework);
 
-  CModelValue * pGlobalQuantity = static_cast< CModelValue * >(*mpObject);
+  CModelValue * pGlobalQuantity = static_cast< CModelValue * >(getObject());
   CDataObject * pChangedObject = pGlobalQuantity;
   bool success = cpsapiTransaction::endStructureChange(pGlobalQuantity->getModel());
 
   switch (property)
     {
-    case CData::Property::UNIT:
-      return pGlobalQuantity->setUnitExpression(value.toString());
+    case cpsapiProperty::Type::UNIT:
+      if (value.getType() == CDataValue::Type::STRING)
+        success &= pGlobalQuantity->setUnitExpression(value.toString());
       break;
 
     default:
+      success = false;
       break;
     }
 
@@ -88,20 +90,20 @@ bool cpsapiGlobalQuantity::set(const CData::Property & property, const CDataValu
 }
 
 // virtual
-CDataValue cpsapiGlobalQuantity::get(const CData::Property & property, const CCore::Framework & framework) const
+CDataValue cpsapiGlobalQuantity::get(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
 {
-  if (!mpObject)
+  if (!operator bool())
     return CDataValue();
 
   if (!isValidProperty<cpsapiGlobalQuantity>(property))
     return base::get(property, CCore::Framework::__SIZE);
 
-  CModelValue * pGlobalQuantity = static_cast< CModelValue * >(*mpObject);
+  CModelValue * pGlobalQuantity = static_cast< CModelValue * >(getObject());
 
   switch (property)
     {
-    case CData::Property::UNIT:
-      return pGlobalQuantity->getUnits();
+    case cpsapiProperty::Type::UNIT:
+      return pGlobalQuantity->getUnitExpression();
       break;
       
     default:

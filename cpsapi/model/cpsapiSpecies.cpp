@@ -22,8 +22,8 @@ CPSAPI_NAMESPACE_USE
 // static
 const cpsapiSpecies::Properties cpsapiSpecies::SupportedProperties =
   {
-    CData::Property::INITIAL_VALUE,
-    CData::Property::UNIT // READ ONLY
+    cpsapiProperty::Type::INITIAL_VALUE,
+    cpsapiProperty::Type::UNIT // READ ONLY
   };
 
 cpsapiSpecies::cpsapiSpecies(CMetab * pSpecies)
@@ -41,7 +41,7 @@ cpsapiSpecies::~cpsapiSpecies()
 // virtual 
 void cpsapiSpecies::accept(cpsapiVisitor & visitor)
 {
-  if (!mpObject)
+  if (!operator bool())
     return;
 
   visitor.visit(this, cpsapiVisitor::TypeId::cpsapiSpecies);
@@ -50,18 +50,18 @@ void cpsapiSpecies::accept(cpsapiVisitor & visitor)
 
 bool cpsapiSpecies::set(const cpsapiSpecies::Property & property, const CDataValue & value, const CCore::Framework & framework)
 {
-  return set(static_cast< const CData::Property >(property), value, framework);
+  return set(static_cast< const cpsapiProperty::Type >(property), value, framework);
 }
 
 CDataValue cpsapiSpecies::get(const Property & property, const CCore::Framework & framework) const
 {
-  return get(static_cast< const CData::Property >(property), framework);
+  return get(static_cast< const cpsapiProperty::Type >(property), framework);
 }
 
 // virtual
-bool cpsapiSpecies::set(const CData::Property & property, const CDataValue & value, const CCore::Framework & framework)
+bool cpsapiSpecies::set(const cpsapiProperty::Type & property, const CDataValue & value, const CCore::Framework & framework)
 {
-  if (*mpObject == nullptr)
+  if (cpsapiPointer::operator=(nullptr))
     return false;
 
   if (!isValidProperty<cpsapiSpecies>(property))
@@ -69,13 +69,13 @@ bool cpsapiSpecies::set(const CData::Property & property, const CDataValue & val
 
   CCore::Framework Framework(framework);
 
-  CMetab * pSpecies = static_cast< CMetab * >(*mpObject);
+  CMetab * pSpecies = static_cast< CMetab * >(getObject());
   CDataObject * pChangedObject = pSpecies;
   bool success = cpsapiTransaction::endStructureChange(pSpecies->getModel());
 
   switch (property)
     {
-    case CData::Property::INITIAL_VALUE:
+    case cpsapiProperty::Type::INITIAL_VALUE:
       if (Framework == CCore::Framework::__SIZE)
         Framework = CCore::Framework::Concentration;
 
@@ -101,7 +101,7 @@ bool cpsapiSpecies::set(const CData::Property & property, const CDataValue & val
 
       break;
 
-    case CData::Property::UNIT:
+    case cpsapiProperty::Type::UNIT:
       success = false;
       break;
 
@@ -113,26 +113,26 @@ bool cpsapiSpecies::set(const CData::Property & property, const CDataValue & val
 }
 
 // virtual 
-CDataValue cpsapiSpecies::get(const CData::Property & property, const CCore::Framework & framework) const
+CDataValue cpsapiSpecies::get(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
 {
-  if (*mpObject == nullptr)
+  if (!operator bool())
     return CDataValue();
 
   if (!isValidProperty<cpsapiSpecies>(property))
     return base::get(property, CCore::Framework::__SIZE);
 
-  CMetab * pSpecies = static_cast< CMetab * >(*mpObject);
+  CMetab * pSpecies = static_cast< CMetab * >(getObject());
 
   switch (property)
     {
-    case CData::Property::INITIAL_VALUE:
+    case cpsapiProperty::Type::INITIAL_VALUE:
       if (framework == CCore::Framework::ParticleNumbers)
         return pSpecies->getInitialValue();
       
       return pSpecies->getInitialConcentration();
       break;
 
-    case CData::Property::UNIT:
+    case cpsapiProperty::Type::UNIT:
       return pSpecies->getUnits();
       break;
       

@@ -17,11 +17,11 @@
 #include <set>
 #include <algorithm>
 
-#include <copasi/undo/CData.h>
 #include <copasi/core/CDataVector.h>
 
 #include "cpsapi/core/cpsapiVisitor.h"
 #include "cpsapi/core/cpsapiPointer.h"
+#include "cpsapi/core/cpsapiProperty.h"
 
 class CDataObject;
 
@@ -30,17 +30,17 @@ CPSAPI_NAMESPACE_BEGIN
 /**
  * The cpsapiObject class is the base class for all COPASI CDataObjects exposed in the cpsapi.
  */
-class cpsapiObject
+class cpsapiObject : protected cpsapiPointer
 {
 public:
-  typedef std::set< CData::Property  > Properties;
+  typedef std::set< cpsapiProperty::Type  > Properties;
 
   /**
    * Enumeration of the exposed properties
    */
   enum class Property
   {
-    OBJECT_NAME = CData::Property::OBJECT_NAME
+    OBJECT_NAME = cpsapiProperty::Type::OBJECT_NAME
   };
 
   static const Properties SupportedProperties;
@@ -89,9 +89,9 @@ public:
 
   /**
    * Retrieve the pointer to the underlying COPASI CDataObject.
-   * @return const CDataObject * pObject
+   * @return CDataObject * pObject
    */
-  const CDataObject * getObject() const;
+  CDataObject * getObject() const;
 
   /**
    * Set a property of the object to the provided value under the given framework.
@@ -106,7 +106,7 @@ public:
 
   /**
    * Set a property of the object to the provided value under the given framework.
-   * The property must be the string in CData::PropertyNames
+   * The property must be the string in cpsapiProperty::Names
    * The value must match the underlying value of the property.
    * The framework must be string in CCore::FrameworkNames
    * @param const std::string & property
@@ -127,7 +127,7 @@ public:
 
   /**
    * Retrieve a property of the object to the provided value under the given framework.
-   * The property must be the string in CData::PropertyNames
+   * The property must be the string in cpsapiProperty::Names
    * The framework must be string in CCore::FrameworkNames
    * @param const std::string & property
    * @param const std::string & framework (default: "")
@@ -135,6 +135,8 @@ public:
    */
   CDataValue get(const std::string & property, const std::string & framework = "") const;
 
+  std::string displayName() const;
+  
   template < class CType >
   static Properties AllSupportedProperties();
 
@@ -143,13 +145,11 @@ public:
 
 protected:
   template < class CType >
-  static bool isValidProperty(const CData::Property & property);
+  static bool isValidProperty(const cpsapiProperty::Type & property);
 
-  virtual bool set(const CData::Property & property, const CDataValue & value, const CCore::Framework & framework);
+  virtual bool set(const cpsapiProperty::Type & property, const CDataValue & value, const CCore::Framework & framework);
 
-  virtual CDataValue get(const CData::Property & property, const CCore::Framework & framework) const;
-
-  cpsapiPointer mpObject;
+  virtual CDataValue get(const cpsapiProperty::Type & property, const CCore::Framework & framework) const;
 };
 
 template < typename Target, class SourceVector >
@@ -158,10 +158,11 @@ std::vector< Target > cpsapiObject::convertVector(SourceVector  &src)
   std::vector< Target > Result(src.size());
   typename SourceVector::iterator itSrc = src.begin();
 
-  std::for_each(Result.begin(), Result.end(), [&itSrc](Target & target) {
-    target = &*itSrc;
-    ++itSrc;
-  });
+  for (Target target : Result)
+    {
+      target = &*itSrc;
+      ++itSrc;
+    }
 
   return Result;
 }
@@ -177,9 +178,10 @@ cpsapiObject::Properties cpsapiObject::AllSupportedProperties()
 {
   Properties All = AllSupportedProperties< typename CType::base >();
 
-  std::for_each(CType::HiddenProperties.begin(), CType::HiddenProperties.end(), [&All](const CData::Property & property){
-    All.erase(property);
-  });
+  for (cpsapiProperty::Type property : CType::HiddenProperties)
+    {
+      All.erase(property);
+    }
 
   All.insert(CType::SupportedProperties.begin(), CType::SupportedProperties.end());
 
@@ -187,7 +189,7 @@ cpsapiObject::Properties cpsapiObject::AllSupportedProperties()
 }
 
 template < class CType >
-bool cpsapiObject::isValidProperty(const CData::Property & property)
+bool cpsapiObject::isValidProperty(const cpsapiProperty::Type & property)
 {
   return CType::SupportedProperties.find(property) != CType::SupportedProperties.end();
 }

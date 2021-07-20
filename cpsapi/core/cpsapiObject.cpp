@@ -21,7 +21,7 @@ CPSAPI_NAMESPACE_USE
 // static
 const cpsapiObject::Properties cpsapiObject::SupportedProperties = 
 {
-  CData::Property::OBJECT_NAME
+  cpsapiProperty::Type::OBJECT_NAME
 };
 
 // static
@@ -29,11 +29,11 @@ const cpsapiObject::Properties cpsapiObject::HiddenProperties =
 {};
 
 cpsapiObject::cpsapiObject(CDataObject * pObject)
-  : mpObject(pObject)
+  : cpsapiPointer(pObject)
 {}
 
 cpsapiObject::cpsapiObject(const cpsapiObject & src)
-  : mpObject(src.mpObject)
+  : cpsapiPointer(src)
 {}
 
 // virtual
@@ -42,36 +42,44 @@ cpsapiObject::~cpsapiObject()
 
 CDataObject * cpsapiObject::getObject()
 {
-  return *mpObject;
+  return cpsapiPointer::operator*();
 }
 
-const CDataObject * cpsapiObject::getObject() const
+CDataObject * cpsapiObject::getObject() const
 {
-  return *mpObject;
+  return cpsapiPointer::operator*();
 }
 
 bool cpsapiObject::set(const cpsapiObject::Property & property, const CDataValue & value, const CCore::Framework & framework)
 {
-  return set(static_cast< CData::Property >(property), value, framework);
+  return set(static_cast< cpsapiProperty::Type >(property), value, framework);
 }
 
 bool cpsapiObject::set(const std::string & property, const CDataValue & value, const std::string & framework)
 {
-  return set(CData::PropertyName.toEnum(property), value, CCore::FrameworkNames.toEnum(framework));
+  return set(cpsapiProperty::Name.toEnum(property), value, CCore::FrameworkNames.toEnum(framework));
 }
 
 CDataValue cpsapiObject::get(const Property & property, const CCore::Framework & framework ) const
 {
-  return get(static_cast< CData::Property >(property), framework);
+  return get(static_cast< cpsapiProperty::Type >(property), framework);
 }
 
 CDataValue cpsapiObject::get(const std::string & property, const std::string & framework) const
 {
-  return get(CData::PropertyName.toEnum(property), CCore::FrameworkNames.toEnum(framework));
+  return get(cpsapiProperty::Name.toEnum(property), CCore::FrameworkNames.toEnum(framework));
+}
+
+std::string cpsapiObject::displayName() const
+{
+  if (operator bool())
+    return getObject()->getObjectDisplayName();
+
+  return "@@@";
 }
 
 // virtual
-bool cpsapiObject::set(const CData::Property & property, const CDataValue & value, const CCore::Framework & framework)
+bool cpsapiObject::set(const cpsapiProperty::Type & property, const CDataValue & value, const CCore::Framework & framework)
 {
   if (!isValidProperty<cpsapiObject>(property))
     return false;
@@ -80,9 +88,9 @@ bool cpsapiObject::set(const CData::Property & property, const CDataValue & valu
 
   switch (property)
     {
-    case CData::Property::OBJECT_NAME:
+    case cpsapiProperty::Type::OBJECT_NAME:
       if (value.getType() == CDataValue::Type::STRING)
-        success = mpObject->setObjectName(value.toString());
+        success = getObject()->setObjectName(value.toString());
 
       break;
 
@@ -94,15 +102,15 @@ bool cpsapiObject::set(const CData::Property & property, const CDataValue & valu
 }
 
 // virtual 
-CDataValue cpsapiObject::get(const CData::Property & property, const CCore::Framework & framework) const
+CDataValue cpsapiObject::get(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
 {
   if (!isValidProperty<cpsapiObject>(property))
     return CDataValue();
 
   switch (property)
     {
-    case CData::Property::OBJECT_NAME:
-      return CDataValue(mpObject->getObjectName());
+    case cpsapiProperty::Type::OBJECT_NAME:
+      return CDataValue(getObject()->getObjectName());
       break;
 
     default:
@@ -114,5 +122,5 @@ CDataValue cpsapiObject::get(const CData::Property & property, const CCore::Fram
 
 cpsapiObject::operator bool() const
 {
-  return mpObject;
+  return cpsapiPointer::operator bool();
 }

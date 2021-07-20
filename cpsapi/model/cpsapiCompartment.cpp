@@ -24,19 +24,26 @@ CPSAPI_NAMESPACE_USE
 // static
 const cpsapiCompartment::Properties cpsapiCompartment::SupportedProperties =
   {
-    CData::Property::DIMENSIONALITY,
-    CData::Property::INITIAL_VALUE,
-    CData::Property::UNIT // READ ONLY
+    cpsapiProperty::Type::DIMENSIONALITY,
+    cpsapiProperty::Type::INITIAL_VALUE,
+    cpsapiProperty::Type::UNIT // READ ONLY
   };
 
 cpsapiCompartment::cpsapiCompartment(CCompartment * pCompartment)
   : base(pCompartment)
-  , mpDefaultSpecies(nullptr)
-{}
+  , mDefaultSpecies(nullptr)
+{
+  for (cpsapiPointer * reference : references())
+    if (this != reference)
+      {
+        mDefaultSpecies = static_cast< cpsapiCompartment * >(reference)->mDefaultSpecies;
+        break;
+      }
+}
 
 cpsapiCompartment::cpsapiCompartment(const cpsapiCompartment & src)
   : base(src)
-  , mpDefaultSpecies(src.mpDefaultSpecies)
+  , mDefaultSpecies(src.mDefaultSpecies)
 {}
 
 // virtual
@@ -46,7 +53,7 @@ cpsapiCompartment::~cpsapiCompartment()
 // virtual 
 void cpsapiCompartment::accept(cpsapiVisitor & visitor)
 {
-  if (!mpObject)
+  if (!operator bool())
     return;
 
   visitor.visit(this, cpsapiVisitor::TypeId::cpsapiCompartment);
@@ -55,30 +62,33 @@ void cpsapiCompartment::accept(cpsapiVisitor & visitor)
 
 cpsapiSpecies cpsapiCompartment::addSpecies(const std::string & name)
 {
-  if (!mpObject)
+  if (!operator bool())
     return nullptr;
   
-  cpsapiSpecies Species = cpsapiModel(static_cast< CCompartment * >(*mpObject)->getModel()).addSpecies(name, mpObject->getObjectName());
+  cpsapiSpecies Species = cpsapiModel(static_cast< CCompartment * >(getObject())->getModel()).addSpecies(name, getObject()->getObjectName());
 
-  if (Species)
-    mpDefaultSpecies = static_cast< CMetab * >(Species.getObject());
+  if (!Species)
+    return nullptr;
 
-  return Species;
+  if (mDefaultSpecies.getObject() != Species.getObject())
+    updateDefaultSpecies(Species);
+
+  return mDefaultSpecies;
 }
 
 bool cpsapiCompartment::deleteSpecies(const std::string & name)
 {
-  CMetab * pSpecies = __species(name);
+  CMetab * pSpecies = static_cast< CMetab * >(__species(name).getObject());
 
   if (pSpecies == nullptr)
     return false;
   
-  if (mpDefaultSpecies == pSpecies)
-    mpDefaultSpecies = nullptr;
+  if (mDefaultSpecies.getObject() == pSpecies)
+    updateDefaultSpecies(nullptr);
   
-  cpsapiTransaction::beginStructureChange(static_cast< CCompartment * >(*mpObject)->getModel());
+  cpsapiTransaction::beginStructureChange(static_cast< CCompartment * >(getObject())->getModel());
 
-  cpsapiModel(static_cast< CCompartment * >(*mpObject)->getModel()).deleteAllDependents(pSpecies);
+  cpsapiModel(static_cast< CCompartment * >(getObject())->getModel()).deleteAllDependents(pSpecies);
   cpsapiPointer::deleted(pSpecies);
   pdelete(pSpecies);
 
@@ -87,52 +97,63 @@ bool cpsapiCompartment::deleteSpecies(const std::string & name)
 
 cpsapiSpecies cpsapiCompartment::species(const std::string & name)
 {
-  CMetab * pSpecies = __species(name);
+  cpsapiSpecies Species(__species(name));
 
-  if (pSpecies != nullptr)
-    mpDefaultSpecies = pSpecies;
+  if (!Species)
+    return nullptr;
 
-  return pSpecies;
+  if (mDefaultSpecies.getObject() != Species.getObject())
+    updateDefaultSpecies(Species);
+
+  return mDefaultSpecies;
 }
 
 std::vector< cpsapiSpecies > cpsapiCompartment::getSpecies() const
 {
-  if (!mpObject)
+  if (!operator bool())
     return std::vector< cpsapiSpecies >();
 
-  return convertVector< cpsapiSpecies >(static_cast< CCompartment * >(*mpObject)->getMetabolites());
+  return convertVector< cpsapiSpecies >(static_cast< CCompartment * >(getObject())->getMetabolites());
 }
 
-CMetab * cpsapiCompartment::__species(const std::string & name) const
+cpsapiSpecies cpsapiCompartment::__species(const std::string & name) const
 { 
-  if (!mpObject)
+  if (!operator bool())
     return nullptr;
     
   if (name.empty())
-    return mpDefaultSpecies;
+    return mDefaultSpecies;
 
-  size_t Index = static_cast< CCompartment * >(*mpObject)->getMetabolites().getIndex(name);
+  size_t Index = static_cast< CCompartment * >(getObject())->getMetabolites().getIndex(name);
 
   if (Index == C_INVALID_INDEX)
     return nullptr;
 
-  return  &static_cast< CCompartment * >(*mpObject)->getMetabolites()[Index];
+  return  &static_cast< CCompartment * >(getObject())->getMetabolites()[Index];
+}
+
+void cpsapiCompartment::updateDefaultSpecies(const cpsapiSpecies & species)
+{
+  for (cpsapiPointer * reference : references())
+    {
+      static_cast< cpsapiCompartment * >(reference)->mDefaultSpecies = species;
+    }
 }
 
 bool cpsapiCompartment::set(const cpsapiCompartment::Property & property, const CDataValue & value, const CCore::Framework & framework)
 {
-  return set(static_cast< const CData::Property >(property), value, framework);
+  return set(static_cast< const cpsapiProperty::Type >(property), value, framework);
 }
 
 CDataValue cpsapiCompartment::get(const cpsapiCompartment::Property & property, const CCore::Framework & framework) const
 {
-  return get(static_cast< const CData::Property >(property), framework);
+  return get(static_cast< const cpsapiProperty::Type >(property), framework);
 }
 
 // virtual
-bool cpsapiCompartment::set(const CData::Property & property, const CDataValue & value, const CCore::Framework & framework)
+bool cpsapiCompartment::set(const cpsapiProperty::Type & property, const CDataValue & value, const CCore::Framework & framework)
 {
-  if (!mpObject)
+  if (!operator bool())
     return false;
 
   if (!isValidProperty<cpsapiCompartment>(property))
@@ -140,13 +161,13 @@ bool cpsapiCompartment::set(const CData::Property & property, const CDataValue &
 
   CCore::Framework Framework(framework);
 
-  CCompartment * pCompartment = static_cast< CCompartment * >(*mpObject);
+  CCompartment * pCompartment = static_cast< CCompartment * >(getObject());
   CDataObject * pChangedObject = pCompartment;
   bool success = cpsapiTransaction::endStructureChange(pCompartment->getModel());
 
   switch (property)
     {
-    case CData::Property::DIMENSIONALITY:
+    case cpsapiProperty::Type::DIMENSIONALITY:
       Framework = CCore::Framework::__SIZE;
       
       if (value.getType() == CDataValue::Type::UINT)
@@ -156,7 +177,7 @@ bool cpsapiCompartment::set(const CData::Property & property, const CDataValue &
 
       break;
 
-    case CData::Property::INITIAL_VALUE:
+    case cpsapiProperty::Type::INITIAL_VALUE:
       if (Framework == CCore::Framework::__SIZE)
         Framework = CCore::Framework::Concentration;
 
@@ -171,7 +192,7 @@ bool cpsapiCompartment::set(const CData::Property & property, const CDataValue &
         
       break;
 
-    case CData::Property::UNIT:
+    case cpsapiProperty::Type::UNIT:
       success = false;
       break;
 
@@ -183,27 +204,27 @@ bool cpsapiCompartment::set(const CData::Property & property, const CDataValue &
 }
 
 // virtual
-CDataValue cpsapiCompartment::get(const CData::Property & property, const CCore::Framework & framework) const
+CDataValue cpsapiCompartment::get(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
 {
-  if (!mpObject)
+  if (!operator bool())
     return CDataValue();
 
   if (!isValidProperty<cpsapiCompartment>(property))
     return base::get(property, CCore::Framework::__SIZE);
 
-  CCompartment * pCompartment = static_cast< CCompartment * >(*mpObject);
+  CCompartment * pCompartment = static_cast< CCompartment * >(getObject());
 
   switch (property)
     {
-    case CData::Property::DIMENSIONALITY:
+    case cpsapiProperty::Type::DIMENSIONALITY:
       return pCompartment->getDimensionality();
       break;
 
-    case CData::Property::INITIAL_VALUE:
+    case cpsapiProperty::Type::INITIAL_VALUE:
       return pCompartment->getInitialValue();
       break;
 
-    case CData::Property::UNIT:
+    case cpsapiProperty::Type::UNIT:
       return pCompartment->getUnits();
       break;
       

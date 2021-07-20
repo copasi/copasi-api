@@ -24,7 +24,7 @@ CPSAPI_NAMESPACE_USE
 
 cpsapiDataModel::cpsapiDataModel(CDataModel * pDataModel)
   : base(pDataModel)
-  , mDefaultModel(nullptr)
+  , mModel(nullptr)
   , mpDefaultTask(nullptr)
   , mpDefaultReportDefinition(nullptr)
   , mpDefaultPlotSpecification(nullptr)
@@ -32,7 +32,7 @@ cpsapiDataModel::cpsapiDataModel(CDataModel * pDataModel)
 
 cpsapiDataModel::cpsapiDataModel(const cpsapiDataModel & src)
   : base(src)
-  , mDefaultModel(src.mDefaultModel)
+  , mModel(src.mModel)
   , mpDefaultTask(src.mpDefaultTask)
   , mpDefaultReportDefinition(src.mpDefaultReportDefinition)
   , mpDefaultPlotSpecification(src.mpDefaultPlotSpecification)
@@ -45,7 +45,7 @@ cpsapiDataModel::~cpsapiDataModel()
 // virtual 
 void cpsapiDataModel::accept(cpsapiVisitor & visitor)
 {
-  if (!mpObject)
+  if (!operator bool())
     return;
 
   visitor.visit(this, cpsapiVisitor::TypeId::cpsapiDataModel);
@@ -56,10 +56,10 @@ bool cpsapiDataModel::loadFromFile(const std::string & fileName)
 {
   bool success = false;
 
-  if (mpObject)
+  if (operator bool())
     {
-      success = static_cast< CDataModel * >(*mpObject)->loadFromFile(fileName);
-      mDefaultModel = cpsapiModel(static_cast< CDataModel * >(*mpObject)->getModel());
+      success = static_cast< CDataModel * >(getObject())->loadFromFile(fileName);
+      mModel = cpsapiModel(static_cast< CDataModel * >(getObject())->getModel());
     }
 
   return success;
@@ -69,10 +69,10 @@ bool cpsapiDataModel::loadFromString(const std::string & content, const std::str
 {
   bool success = false;
 
-  if (mpObject)
+  if (operator bool())
     {
-      success = static_cast< CDataModel * >(*mpObject)->loadFromString(content, referenceDir);
-      mDefaultModel = cpsapiModel(static_cast< CDataModel * >(*mpObject)->getModel());
+      success = static_cast< CDataModel * >(getObject())->loadFromString(content, referenceDir);
+      mModel = cpsapiModel(static_cast< CDataModel * >(getObject())->getModel());
     }
 
   return success;
@@ -80,10 +80,10 @@ bool cpsapiDataModel::loadFromString(const std::string & content, const std::str
 
 cpsapiModel & cpsapiDataModel::model()
 {
-  if (!mDefaultModel && mpObject)
-    mDefaultModel = static_cast< CDataModel * >(*mpObject)->getModel();
+  if (!mModel && operator bool())
+    mModel = static_cast< CDataModel * >(getObject())->getModel();
 
-  return mDefaultModel;
+  return mModel;
 }
 
 void cpsapiDataModel::beginTransaction()

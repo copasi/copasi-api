@@ -80,6 +80,10 @@ TEST_CASE("Edit model", "[cpsapi]")
   REQUIRE_FALSE(Copy.addSpecies("test_species"));
   REQUIRE(Copy.getSpecies().size() == 1);
 
+  std::ostringstream Equation;
+  Equation << 3 << "*" << Model.species().displayName() << "->";
+  REQUIRE("3*test_species->" == Equation.str());
+
   REQUIRE_FALSE(Model.globalQuantity());
   REQUIRE(Model.addGlobalQuantity("test_global_quantity"));
   REQUIRE_FALSE(Model.addGlobalQuantity("test_global_quantity"));

@@ -112,9 +112,10 @@ const std::set< std::string > cpsapi::listModelNames()
 {
   std::set< std::string > Set;
 
-  std::for_each(DataModels.begin(), DataModels.end(), [&Set](const std::pair< std::string, CDataModel * > & mapIterator) {
-    Set.insert(mapIterator.first);
-  });
+  for (const std::pair< std::string, CDataModel * > & mapIterator : DataModels)
+    {
+      Set.insert(mapIterator.first);
+    }
 
   return Set;
 }

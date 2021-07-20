@@ -19,9 +19,9 @@ CPSAPI_NAMESPACE_USE
 cpsapiValue::cpsapiValue(CDataObject * pValue)
   : base(pValue)
 {
-  if (!mpObject->hasFlag(CDataObject::Reference)
+  if (!getObject()->hasFlag(CDataObject::Reference)
       || getType() == CDataValue::Type::INVALID)
-    mpObject = nullptr;
+    cpsapiPointer::operator=(nullptr);
 }
 
 
@@ -35,7 +35,7 @@ cpsapiValue::~cpsapiValue()
 // virtual 
 void cpsapiValue::accept(cpsapiVisitor & visitor)
 {
-  if (!mpObject)
+  if (!operator bool())
     return;
 
   visitor.visit(this, cpsapiVisitor::TypeId::cpsapiValue);
@@ -48,7 +48,7 @@ bool cpsapiValue::setValue(const CDataValue & value)
     case CDataValue::Type::DOUBLE:
       if (value.getType() == CDataValue::Type::DOUBLE)
         {
-          *(double *) mpObject->getValuePointer() = value.toDouble();
+          *(double *) getObject()->getValuePointer() = value.toDouble();
           return true;
         }
       break;
@@ -56,7 +56,7 @@ bool cpsapiValue::setValue(const CDataValue & value)
     case CDataValue::Type::INT:
       if (value.getType() == CDataValue::Type::INT)
         {
-          *(int *) mpObject->getValuePointer() = value.toInt();
+          *(int *) getObject()->getValuePointer() = value.toInt();
           return true;
         }
       break;
@@ -64,7 +64,7 @@ bool cpsapiValue::setValue(const CDataValue & value)
     case CDataValue::Type::BOOL:
       if (value.getType() == CDataValue::Type::BOOL)
         {
-          *(bool *) mpObject->getValuePointer() = value.toBool();
+          *(bool *) getObject()->getValuePointer() = value.toBool();
           return true;
         }
       break;
@@ -78,21 +78,21 @@ bool cpsapiValue::setValue(const CDataValue & value)
 
 CDataValue cpsapiValue::getValue() const
 {
-  if (!mpObject)
+  if (!operator bool())
     return CDataValue();
 
   switch (getType())
   {
     case CDataValue::Type::DOUBLE:
-      return *(double *) mpObject->getValuePointer();
+      return *(double *) getObject()->getValuePointer();
       break;
 
     case CDataValue::Type::INT:
-      return *(int *) mpObject->getValuePointer();
+      return *(int *) getObject()->getValuePointer();
       break;
       
     case CDataValue::Type::BOOL:
-      return *(bool *) mpObject->getValuePointer();
+      return *(bool *) getObject()->getValuePointer();
       break;
       
     default:
@@ -114,16 +114,16 @@ bool cpsapiValue::valid() const
 
 CDataValue::Type cpsapiValue::getType() const
 {
-  if (!mpObject)
+  if (!operator bool())
     return CDataValue::Type::INVALID;
 
-  if (mpObject->hasFlag(CDataObject::ValueDbl))
+  if (getObject()->hasFlag(CDataObject::ValueDbl))
     return CDataValue::Type::DOUBLE;
 
-  if (mpObject->hasFlag(CDataObject::ValueInt))
+  if (getObject()->hasFlag(CDataObject::ValueInt))
     return CDataValue::Type::INT;
 
-  if (mpObject->hasFlag(CDataObject::ValueBool))
+  if (getObject()->hasFlag(CDataObject::ValueBool))
     return CDataValue::Type::BOOL;
 
   return CDataValue::Type::INVALID;

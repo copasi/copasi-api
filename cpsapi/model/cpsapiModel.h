@@ -15,6 +15,9 @@
 #pragma once
 
 #include "cpsapi/model/cpsapiModelEntity.h"
+#include "cpsapi/model/cpsapiCompartment.h"
+#include "cpsapi/model/cpsapiSpecies.h"
+#include "cpsapi/model/cpsapiGlobalQuantity.h"
 
 #include <copasi/model/CModel.h> 
 
@@ -27,9 +30,6 @@ class CEvent;
 
 CPSAPI_NAMESPACE_BEGIN
 
-class cpsapiCompartment;
-class cpsapiSpecies;
-class cpsapiGlobalQuantity;
 
 class cpsapiModel: public cpsapiModelEntity
 {
@@ -38,16 +38,16 @@ public:
 
   enum class Property
   {
-    INITIAL_VALUE = CData::Property::INITIAL_VALUE,
-    OBJECT_NAME = CData::Property::OBJECT_NAME,
-    UNIT = CData::Property::UNIT,
-    VOLUME_UNIT = CData::Property::VOLUME_UNIT,
-    AREA_UNIT = CData::Property::AREA_UNIT,
-    LENGTH_UNIT = CData::Property::LENGTH_UNIT,
-    TIME_UNIT = CData::Property::TIME_UNIT,
-    QUANTITY_UNIT = CData::Property::QUANTITY_UNIT,
-    MODEL_TYPE = CData::Property::MODEL_TYPE,
-    AVOGADRO_NUMBER = CData::Property::AVOGADRO_NUMBER
+    INITIAL_VALUE = cpsapiProperty::Type::INITIAL_VALUE,
+    OBJECT_NAME = cpsapiProperty::Type::OBJECT_NAME,
+    UNIT = cpsapiProperty::Type::UNIT,
+    VOLUME_UNIT = cpsapiProperty::Type::VOLUME_UNIT,
+    AREA_UNIT = cpsapiProperty::Type::AREA_UNIT,
+    LENGTH_UNIT = cpsapiProperty::Type::LENGTH_UNIT,
+    TIME_UNIT = cpsapiProperty::Type::TIME_UNIT,
+    QUANTITY_UNIT = cpsapiProperty::Type::QUANTITY_UNIT,
+    MODEL_TYPE = cpsapiProperty::Type::MODEL_TYPE,
+    AVOGADRO_NUMBER = cpsapiProperty::Type::AVOGADRO_NUMBER
   };
 
   static const Properties SupportedProperties;
@@ -101,36 +101,27 @@ public:
   CDataValue get(const Property & property, const CCore::Framework & framework = CCore::Framework::__SIZE) const;
 
 protected:
-  virtual bool set(const CData::Property & property, const CDataValue & value, const CCore::Framework & framework) override;
+  virtual bool set(const cpsapiProperty::Type & property, const CDataValue & value, const CCore::Framework & framework) override;
 
-  virtual CDataValue get(const CData::Property & property, const CCore::Framework & framework) const override;
+  virtual CDataValue get(const cpsapiProperty::Type & property, const CCore::Framework & framework) const override;
 
 private:
-  CCompartment * __compartment(const std::string & name) const;
+  cpsapiCompartment __compartment(const std::string & name) const;
 
-  CMetab * __species(const std::string & name, const std::string & compartment) const;
+  void updateDefaultCompartment(const cpsapiCompartment & compartment);
 
-  CModelValue * __globalQuantity(const std::string & name) const;
+  cpsapiSpecies __species(const std::string & name, const std::string & compartment) const;
 
-  template < class CType > void deleteDependents(CType *& pDefault, const CDataObject::DataObjectSet & set);
+  cpsapiGlobalQuantity __globalQuantity(const std::string & name) const;
 
-  CCompartment * mpDefaultCompartment;
+  void updateDefaultGlobalQuantity(const cpsapiGlobalQuantity & globalQuantity);
+  
+  void deleteDependents(const CDataObject::DataObjectSet & set);
+
+  cpsapiCompartment mDefaultCompartment;
   CReaction * mpDefaultReaction;
-  CModelValue * mpDefaultGlobalQuantity;
+  cpsapiGlobalQuantity mDefaultGlobalQuantity;
   CEvent * mpDefaultEvent;
 };
-
-template < class CType >
-void cpsapiModel::deleteDependents(CType *& pDefault, const CDataObject::DataObjectSet & set)
-{
-  std::for_each(set.begin(), set.end(), [&pDefault](const CDataObject * pObject) {
-    if (pDefault != nullptr
-        && dynamic_cast< const CType * >(pObject) != pDefault)
-      pDefault = nullptr;
-
-    cpsapiPointer::deleted(pObject);
-    delete pObject;
-  });
-}
 
 CPSAPI_NAMESPACE_END

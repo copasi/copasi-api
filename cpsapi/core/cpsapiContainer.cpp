@@ -45,38 +45,43 @@ cpsapiContainer::~cpsapiContainer()
 // virtual 
 void cpsapiContainer::accept(cpsapiVisitor & visitor)
 {
-  if (!mpObject)
+  if (!operator bool())
     return;
 
   visitor.visit(this, cpsapiVisitor::TypeId::cpsapiContainer);
 
-  CDataContainer::objectMap & Objects = static_cast< CDataContainer * >(*mpObject)->getObjects();
+  CDataContainer::objectMap & Objects = static_cast< CDataContainer * >(getObject())->getObjects();
 
   // TODO CRITICAL We need to call the most specific cpsapiObject derived class instead of just
   // cpsapiContainer and cpsapiValue
-  std::for_each(Objects.begin(), Objects.end(), [&visitor](CDataObject * pObject) {
-    std::type_index ObjectIndex = std::type_index(typeid(*pObject));
 
-    if (ObjectIndex == std::type_index(typeid(CModel)))
-      return cpsapiModel(static_cast< CModel * >(pObject)).accept(visitor);
+  for (CDataObject * pObject : Objects)
+    {
+      std::type_index ObjectIndex = std::type_index(typeid(*pObject));
 
-    if (ObjectIndex == std::type_index(typeid(CMetab)))
-      return cpsapiSpecies(static_cast< CMetab * >(pObject)).accept(visitor);
+      if (ObjectIndex == std::type_index(typeid(CModel)))
+        return cpsapiModel(static_cast< CModel * >(pObject)).accept(visitor);
 
-    if (ObjectIndex == std::type_index(typeid(CCompartment)))
-      return cpsapiCompartment(static_cast< CCompartment * >(pObject)).accept(visitor);
+      if (ObjectIndex == std::type_index(typeid(CMetab)))
+        return cpsapiSpecies(static_cast< CMetab * >(pObject)).accept(visitor);
 
-    if (ObjectIndex == std::type_index(typeid(CDataObjectReference< double >)))
-      return cpsapiValue(static_cast< CDataObjectReference< double > * >(pObject)).accept(visitor);
+      if (ObjectIndex == std::type_index(typeid(CCompartment)))
+        return cpsapiCompartment(static_cast< CCompartment * >(pObject)).accept(visitor);
 
-    if (ObjectIndex == std::type_index(typeid(CDataObjectReference< int >)))
-      return cpsapiValue(static_cast< CDataObjectReference< int > * >(pObject)).accept(visitor);
+      if (ObjectIndex == std::type_index(typeid(CModelValue)))
+        return cpsapiGlobalQuantity(static_cast< CModelValue * >(pObject)).accept(visitor);
 
-    if (ObjectIndex == std::type_index(typeid(CDataObjectReference< bool >)))
-      return cpsapiValue(static_cast< CDataObjectReference< bool > * >(pObject)).accept(visitor);
+      if (ObjectIndex == std::type_index(typeid(CDataObjectReference< double >)))
+        return cpsapiValue(static_cast< CDataObjectReference< double > * >(pObject)).accept(visitor);
 
-    // Catch all for all container
-    if (dynamic_cast< CDataContainer * >(pObject) != nullptr)
-      return cpsapiContainer(static_cast< CDataContainer * >(pObject)).accept(visitor);
-  });
+      if (ObjectIndex == std::type_index(typeid(CDataObjectReference< int >)))
+        return cpsapiValue(static_cast< CDataObjectReference< int > * >(pObject)).accept(visitor);
+
+      if (ObjectIndex == std::type_index(typeid(CDataObjectReference< bool >)))
+        return cpsapiValue(static_cast< CDataObjectReference< bool > * >(pObject)).accept(visitor);
+
+      // Catch all for all container
+      if (dynamic_cast< CDataContainer * >(pObject) != nullptr)
+        return cpsapiContainer(static_cast< CDataContainer * >(pObject)).accept(visitor);
+    }
 }

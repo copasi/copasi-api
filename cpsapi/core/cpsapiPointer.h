@@ -40,7 +40,7 @@ public:
 
   cpsapiPointer(const cpsapiPointer & src);
 
-  ~cpsapiPointer();
+  virtual ~cpsapiPointer();
 
   cpsapiPointer & operator= (const cpsapiPointer & rhs);
 
@@ -49,6 +49,8 @@ public:
   CDataObject * operator-> () const;
 
   CDataObject * operator* () const;
+
+  References & references();
 
   operator bool () const;
 
