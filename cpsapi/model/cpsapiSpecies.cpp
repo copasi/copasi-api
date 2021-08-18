@@ -27,7 +27,7 @@ const cpsapiSpecies::Properties cpsapiSpecies::SupportedProperties =
   };
 
 cpsapiSpecies::cpsapiSpecies(CMetab * pSpecies)
-  : base(pSpecies)
+  : base(pSpecies, Type::cpsapiSpecies)
 {}
 
 cpsapiSpecies::cpsapiSpecies(const cpsapiSpecies & src)
@@ -44,28 +44,28 @@ void cpsapiSpecies::accept(cpsapiVisitor & visitor)
   if (!operator bool())
     return;
 
-  visitor.visit(this, cpsapiVisitor::TypeId::cpsapiSpecies);
+  visitor.visit(this, Type::cpsapiSpecies);
   base::accept(visitor);
 }
 
-bool cpsapiSpecies::set(const cpsapiSpecies::Property & property, const CDataValue & value, const CCore::Framework & framework)
+bool cpsapiSpecies::setProperty(const cpsapiSpecies::Property & property, const CDataValue & value, const CCore::Framework & framework)
 {
-  return set(static_cast< const cpsapiProperty::Type >(property), value, framework);
+  return setProperty(static_cast< const cpsapiProperty::Type >(property), value, framework);
 }
 
-CDataValue cpsapiSpecies::get(const Property & property, const CCore::Framework & framework) const
+CDataValue cpsapiSpecies::getProperty(const Property & property, const CCore::Framework & framework) const
 {
-  return get(static_cast< const cpsapiProperty::Type >(property), framework);
+  return getProperty(static_cast< const cpsapiProperty::Type >(property), framework);
 }
 
 // virtual
-bool cpsapiSpecies::set(const cpsapiProperty::Type & property, const CDataValue & value, const CCore::Framework & framework)
+bool cpsapiSpecies::setProperty(const cpsapiProperty::Type & property, const CDataValue & value, const CCore::Framework & framework)
 {
-  if (cpsapiPointer::operator=(nullptr))
+  if (operator=(nullptr))
     return false;
 
   if (!isValidProperty<cpsapiSpecies>(property))
-    return base::set(property, value, CCore::Framework::__SIZE);
+    return base::setProperty(property, value, CCore::Framework::__SIZE);
 
   CCore::Framework Framework(framework);
 
@@ -113,13 +113,13 @@ bool cpsapiSpecies::set(const cpsapiProperty::Type & property, const CDataValue 
 }
 
 // virtual 
-CDataValue cpsapiSpecies::get(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
+CDataValue cpsapiSpecies::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
 {
   if (!operator bool())
     return CDataValue();
 
   if (!isValidProperty<cpsapiSpecies>(property))
-    return base::get(property, CCore::Framework::__SIZE);
+    return base::getProperty(property, CCore::Framework::__SIZE);
 
   CMetab * pSpecies = static_cast< CMetab * >(getObject());
 

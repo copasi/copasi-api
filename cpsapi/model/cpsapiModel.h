@@ -19,6 +19,8 @@
 #include "cpsapi/model/cpsapiSpecies.h"
 #include "cpsapi/model/cpsapiGlobalQuantity.h"
 
+#include <memory>
+
 #include <copasi/model/CModel.h> 
 
 class CModel;
@@ -40,6 +42,8 @@ public:
   {
     INITIAL_VALUE = cpsapiProperty::Type::INITIAL_VALUE,
     OBJECT_NAME = cpsapiProperty::Type::OBJECT_NAME,
+    DISPLAY_NAME = cpsapiProperty::Type::DISPLAY_NAME,
+    CN = cpsapiProperty::Type::CN,
     UNIT = cpsapiProperty::Type::UNIT,
     VOLUME_UNIT = cpsapiProperty::Type::VOLUME_UNIT,
     AREA_UNIT = cpsapiProperty::Type::AREA_UNIT,
@@ -96,14 +100,14 @@ public:
   
   void deleteAllDependents(CDataContainer * pContainer);
 
-  bool set(const Property & property, const CDataValue & value, const CCore::Framework & framework = CCore::Framework::__SIZE);
+  bool setProperty(const Property & property, const CDataValue & value, const CCore::Framework & framework = CCore::Framework::__SIZE);
 
-  CDataValue get(const Property & property, const CCore::Framework & framework = CCore::Framework::__SIZE) const;
+  CDataValue getProperty(const Property & property, const CCore::Framework & framework = CCore::Framework::__SIZE) const;
 
 protected:
-  virtual bool set(const cpsapiProperty::Type & property, const CDataValue & value, const CCore::Framework & framework) override;
+  virtual bool setProperty(const cpsapiProperty::Type & property, const CDataValue & value, const CCore::Framework & framework) override;
 
-  virtual CDataValue get(const cpsapiProperty::Type & property, const CCore::Framework & framework) const override;
+  virtual CDataValue getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const override;
 
 private:
   cpsapiCompartment __compartment(const std::string & name) const;
@@ -118,9 +122,9 @@ private:
   
   void deleteDependents(const CDataObject::DataObjectSet & set);
 
-  cpsapiCompartment mDefaultCompartment;
+  std::shared_ptr< cpsapiCompartment > mpDefaultCompartment;
   CReaction * mpDefaultReaction;
-  cpsapiGlobalQuantity mDefaultGlobalQuantity;
+  std::shared_ptr< cpsapiGlobalQuantity > mpDefaultGlobalQuantity;
   CEvent * mpDefaultEvent;
 };
 

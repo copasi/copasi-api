@@ -41,6 +41,8 @@ const CEnumAnnotation< std::string, cpsapiProperty::Type > cpsapiProperty::Name(
   "Object Reference CN", // OBJECT_REFERENCE_CN
   "Object Reference Index", // OBJECT_REFERENCE_INDEX
   "Object Pointer", // OBJECT_POINTER
+  "Display Name", // DISPLAY_NAME
+  "CN", // CN
   "Evaluation Tree Type", // EVALUATION_TREE_TYPE
   "Task Type", // TASK_TYPE
   "Task Scheduled", // TASK_SCHEDULED
@@ -54,6 +56,7 @@ const CEnumAnnotation< std::string, cpsapiProperty::Type > cpsapiProperty::Name(
   "Method Type", // METHOD_TYPE
   "Plot Type", // PLOT_TYPE
   "Plot Item Type", // PLOT_ITEM_TYPE
+  "Parameter", // PARAMETER
   "Parameter Type", // PARAMETER_TYPE
   "Parameter Role", // PARAMETER_ROLE
   "Parameter Used", //  PARAMETER_USED

@@ -24,10 +24,19 @@ CPSAPI_NAMESPACE_BEGIN
 
 class cpsapiValue : public cpsapiObject
 {
-private:
+public:
   typedef cpsapiObject base;
 
-public:
+  enum class Property
+  {
+    VALUE = cpsapiProperty::Type::VALUE,
+    OBJECT_NAME = cpsapiProperty::Type::OBJECT_NAME,
+    DISPLAY_NAME = cpsapiProperty::Type::DISPLAY_NAME,
+    CN = cpsapiProperty::Type::CN
+  };
+
+  static const Properties SupportedProperties;
+
   cpsapiValue() = delete;
 
   cpsapiValue(CDataObject * pValue);
@@ -38,15 +47,20 @@ public:
 
   virtual void accept(cpsapiVisitor & visitor) override;
 
-  bool setValue(const CDataValue & value);
+  bool setProperty(const Property & property, const CDataValue & value, const CCore::Framework & framework = CCore::Framework::__SIZE);
 
-  CDataValue getValue() const;
+  CDataValue getProperty(const Property & property, const CCore::Framework & framework = CCore::Framework::__SIZE) const;
 
   operator CDataValue() const;
 
   bool valid() const;
   
   CDataValue::Type getType() const;
+
+protected:
+  virtual bool setProperty(const cpsapiProperty::Type & property, const CDataValue & value, const CCore::Framework & framework) override;
+
+  virtual CDataValue getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const override;
 };
 
 CPSAPI_NAMESPACE_END

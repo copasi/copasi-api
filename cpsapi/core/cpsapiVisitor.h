@@ -15,29 +15,16 @@
 #pragma once
 
 #include "cpsapi/cpsapiConfig.h"
+#include "cpsapi/core/cpsapiObject.h"
 
 #include <cstddef>
 
 CPSAPI_NAMESPACE_BEGIN
 
-class cpsapiObject;
-
 class cpsapiVisitor
 {
 public:
-  enum struct TypeId {
-    cpsapiObject,
-    cpsapiValue,
-    cpsapiContainer,
-    cpsapiModelEntity,
-    cpsapiModel,
-    cpsapiCompartment,
-    cpsapiSpecies,
-    cpsapiGlobalQuantity,
-    cpsapiDataModel
-  };
-
-  virtual void visit(cpsapiObject * pObject, const TypeId & typeId) = 0;
+  virtual void visit(cpsapiObject * pObject, const cpsapiObject::Type & type) = 0;
 
 protected:
   virtual ~cpsapiVisitor() {}

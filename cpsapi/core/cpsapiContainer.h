@@ -16,12 +16,14 @@
 
 #include "cpsapi/core/cpsapiObject.h"
 
-class CDataContainer;
+#include <copasi/core/CDataContainer.h>
 
 CPSAPI_NAMESPACE_BEGIN
 
 class cpsapiContainer : public cpsapiObject
 {
+  friend cpsapiContainer cpsapiObject::final< cpsapiContainer >();
+
 public:
   typedef cpsapiObject base;
 
@@ -32,7 +34,7 @@ public:
 
   static const Properties SupportedProperties;
 
-  cpsapiContainer(CDataContainer * pContainer = nullptr);
+  cpsapiContainer(CDataContainer * pContainer, const Type & typeId);
 
   cpsapiContainer(const cpsapiContainer & src);
 
@@ -40,5 +42,11 @@ public:
 
   virtual void accept(cpsapiVisitor & visitor) override;
 };
+
+template <> inline
+cpsapiContainer cpsapiObject::final()
+{
+  return cpsapiContainer(static_cast< CDataContainer * >(getObject()), Type::cpsapiContainer);
+} 
 
 CPSAPI_NAMESPACE_END

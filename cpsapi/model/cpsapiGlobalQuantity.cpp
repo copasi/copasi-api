@@ -28,7 +28,7 @@ const cpsapiGlobalQuantity::Properties cpsapiGlobalQuantity::SupportedProperties
   };
 
 cpsapiGlobalQuantity::cpsapiGlobalQuantity(CModelValue * pGlobalQuantity)
-  : base(pGlobalQuantity)
+  : base(pGlobalQuantity, Type::cpsapiGlobalQuantity)
 {}
 
 cpsapiGlobalQuantity::cpsapiGlobalQuantity(const cpsapiGlobalQuantity & src)
@@ -45,28 +45,28 @@ void cpsapiGlobalQuantity::accept(cpsapiVisitor & visitor)
   if (!operator bool())
     return;
 
-  visitor.visit(this, cpsapiVisitor::TypeId::cpsapiGlobalQuantity);
+  visitor.visit(this, Type::cpsapiGlobalQuantity);
   base::accept(visitor);
 }
 
-bool cpsapiGlobalQuantity::set(const cpsapiGlobalQuantity::Property & property, const CDataValue & value, const CCore::Framework & framework)
+bool cpsapiGlobalQuantity::setProperty(const cpsapiGlobalQuantity::Property & property, const CDataValue & value, const CCore::Framework & framework)
 {
-  return set(static_cast< const cpsapiProperty::Type >(property), value, framework);
+  return setProperty(static_cast< const cpsapiProperty::Type >(property), value, framework);
 }
 
-CDataValue cpsapiGlobalQuantity::get(const cpsapiGlobalQuantity::Property & property, const CCore::Framework & framework) const
+CDataValue cpsapiGlobalQuantity::getProperty(const cpsapiGlobalQuantity::Property & property, const CCore::Framework & framework) const
 {
-  return get(static_cast< const cpsapiProperty::Type >(property), framework);
+  return getProperty(static_cast< const cpsapiProperty::Type >(property), framework);
 }
 
 // virtual
-bool cpsapiGlobalQuantity::set(const cpsapiProperty::Type & property, const CDataValue & value, const CCore::Framework & framework)
+bool cpsapiGlobalQuantity::setProperty(const cpsapiProperty::Type & property, const CDataValue & value, const CCore::Framework & framework)
 {
   if (!operator bool())
     return false;
 
   if (!isValidProperty<cpsapiGlobalQuantity>(property))
-    return base::set(property, value, CCore::Framework::__SIZE);
+    return base::setProperty(property, value, CCore::Framework::__SIZE);
 
   CCore::Framework Framework(framework);
 
@@ -90,13 +90,13 @@ bool cpsapiGlobalQuantity::set(const cpsapiProperty::Type & property, const CDat
 }
 
 // virtual
-CDataValue cpsapiGlobalQuantity::get(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
+CDataValue cpsapiGlobalQuantity::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
 {
   if (!operator bool())
     return CDataValue();
 
   if (!isValidProperty<cpsapiGlobalQuantity>(property))
-    return base::get(property, CCore::Framework::__SIZE);
+    return base::getProperty(property, CCore::Framework::__SIZE);
 
   CModelValue * pGlobalQuantity = static_cast< CModelValue * >(getObject());
 

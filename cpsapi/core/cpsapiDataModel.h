@@ -17,6 +17,8 @@
 #include "cpsapi/core/cpsapiContainer.h"
 #include "cpsapi/model/cpsapiModel.h"
 
+#include <memory>
+
 class CDataModel;
 class CModel;
 class CCompartment;
@@ -82,7 +84,7 @@ public:
   std::vector< cpsapiGlobalQuantity > getGlobalQuantities();
 
 private:
-  cpsapiModel mModel;
+  std::shared_ptr< cpsapiModel > mpModel;
   CCopasiTask * mpDefaultTask;
   CReportDefinition * mpDefaultReportDefinition;
   CPlotSpecification * mpDefaultPlotSpecification;

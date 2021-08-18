@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 
   cpsapi::addDataModel();
 
-  cpsapi::model().set(cpsapiModel::Property::OBJECT_NAME, "model");
+  cpsapi::model().setProperty(cpsapiModel::Property::OBJECT_NAME, "model");
   cpsapi::addCompartment("compartment");
   cpsapi::model().addSpecies("species");
   Visitor V;
@@ -40,36 +40,36 @@ int main(int argc, char *argv[])
 }
 
 // virtual
-void Visitor::visit(cpsapiObject * pObject, const cpsapiVisitor::TypeId & typeId)
+void Visitor::visit(cpsapiObject * pObject, const cpsapiObject::Type & type)
 {
   // Sanity check
   if (pObject == nullptr || !*pObject)
     return;
 
-  switch (typeId)
+  switch (type)
     {
-    case TypeId::cpsapiModel:
+    case cpsapiObject::Type::cpsapiModel:
       std::cout << "visit cpsapiModel: " << static_cast< cpsapiModel * >(pObject)->getObject()->getCN() << std::endl;
       break;
 
-    case TypeId::cpsapiCompartment:
+    case cpsapiObject::Type::cpsapiCompartment:
       std::cout << "visit cpsapiCompartment: " << static_cast< cpsapiCompartment * >(pObject)->getObject()->getCN() << std::endl;
       break;
 
-    case TypeId::cpsapiSpecies:
+    case cpsapiObject::Type::cpsapiSpecies:
       std::cout << "visit cpsapiSpecies: " << static_cast< cpsapiSpecies * >(pObject)->getObject()->getCN() << std::endl;
       break;
 
-    case TypeId::cpsapiContainer:
+    case cpsapiObject::Type::cpsapiContainer:
       std::cout << "visit cpsapiContainer: " << static_cast< cpsapiContainer * >(pObject)->getObject()->getCN() << std::endl;
       break;
 
-    case TypeId::cpsapiValue:
+    case cpsapiObject::Type::cpsapiValue:
       std::cout << "visit cpsapiValue: " << static_cast< cpsapiValue * >(pObject)->getObject()->getCN() << std::endl;
       break;
 
     default:
-      std::cout << "visit unhandled (" << (std::underlying_type< cpsapiVisitor::TypeId >::type) typeId << "): " << static_cast< cpsapiValue * >(pObject)->getObject()->getCN() << std::endl;
+      std::cout << "visit unhandled (" << (std::underlying_type< cpsapiObject::Type >::type) type << "): " << static_cast< cpsapiObject * >(pObject)->getObject()->getCN() << std::endl;
       break;
     }
 }

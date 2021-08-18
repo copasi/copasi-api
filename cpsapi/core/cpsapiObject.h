@@ -19,20 +19,45 @@
 
 #include <copasi/core/CDataVector.h>
 
-#include "cpsapi/core/cpsapiVisitor.h"
-#include "cpsapi/core/cpsapiPointer.h"
 #include "cpsapi/core/cpsapiProperty.h"
 
 class CDataObject;
 
 CPSAPI_NAMESPACE_BEGIN
 
+class cpsapiVisitor;
+
 /**
  * The cpsapiObject class is the base class for all COPASI CDataObjects exposed in the cpsapi.
  */
-class cpsapiObject : protected cpsapiPointer
+class cpsapiObject
 {
+private:
+  typedef std::set< cpsapiObject * > References;
+  typedef std::map< const CDataObject *, References * > Map; 
+
+  static Map Manager;
+
+  static Map::iterator findOrInsert(const CDataObject * pObject);
+  
 public:
+  static void deleted(const CDataObject * pObject);
+  
+  enum struct Type {
+    cpsapiObject,
+    cpsapiValue,
+    cpsapiContainer,
+    cpsapiModelEntity,
+    cpsapiModel,
+    cpsapiCompartment,
+    cpsapiSpecies,
+    cpsapiGlobalQuantity,
+    cpsapiDataModel,
+    cpsapiParameter,
+    cpsapiGroup,
+    __SIZE
+  };
+
   typedef std::set< cpsapiProperty::Type  > Properties;
 
   /**
@@ -40,19 +65,27 @@ public:
    */
   enum class Property
   {
-    OBJECT_NAME = cpsapiProperty::Type::OBJECT_NAME
+    OBJECT_NAME = cpsapiProperty::Type::OBJECT_NAME,
+    DISPLAY_NAME = cpsapiProperty::Type::DISPLAY_NAME,
+    CN = cpsapiProperty::Type::CN
   };
 
   static const Properties SupportedProperties;
 
   static const Properties HiddenProperties;
 
+  /**
+   * Deleted default constructor
+   */
+  cpsapiObject() = delete;
+
 protected:
   /**
-   * Default constructor
+   * Specific  constructor
    * @param CDataObject * pObject (default: nullptr)
+   * @param const Type & typeId
    */
-  cpsapiObject(CDataObject * pObject = nullptr);
+  cpsapiObject(CDataObject * pObject, const Type & typeId);
 
   /**
    * Copy constructor
@@ -65,6 +98,18 @@ public:
    * Destructor
    */
   virtual ~cpsapiObject();
+
+  cpsapiObject & operator= (const cpsapiObject & rhs);
+
+  cpsapiObject & operator= (CDataObject * pObject);
+
+  CDataObject * operator-> () const;
+
+  CDataObject * operator* () const;
+
+  References & references();
+
+  Type getType() const;
 
   /**
    * Conversion to bool indicating whether the underlying COPASI CDataObject is accessible.
@@ -79,7 +124,7 @@ public:
    * Visitors have read and write access to the object.
    * @param accept(cpsapiVisitor& visitor)
    */
-  virtual void accept(cpsapiVisitor& visitor) = 0;
+  virtual void accept(cpsapiVisitor& visitor);
 
   /**
    * Retrieve the pointer to the underlying COPASI CDataObject.
@@ -102,7 +147,7 @@ public:
    * @param const CCore::Framework & framework (default: CCore::Framework::__SIZE)
    * @return bool success
    */
-  bool set(const Property & property, const CDataValue & value, const CCore::Framework & framework = CCore::Framework::__SIZE);
+  bool setProperty(const Property & property, const CDataValue & value, const CCore::Framework & framework = CCore::Framework::__SIZE);
 
   /**
    * Set a property of the object to the provided value under the given framework.
@@ -114,7 +159,7 @@ public:
    * @param const std::string & framework (default: "")
    * @return bool success
    */
-  bool set(const std::string & property, const CDataValue & value, const std::string & framework = "");
+  bool setProperty(const std::string & property, const CDataValue & value, const std::string & framework = "");
 
   /**
    * Retrieve a property of the object to the provided value under the given framework.
@@ -123,7 +168,7 @@ public:
    * @param const CCore::Framework & framework (default: CCore::Framework::__SIZE)
    * @return CDataValue value
    */
-  CDataValue get(const Property & property, const CCore::Framework & framework = CCore::Framework::__SIZE) const;
+  CDataValue getProperty(const Property & property, const CCore::Framework & framework = CCore::Framework::__SIZE) const;
 
   /**
    * Retrieve a property of the object to the provided value under the given framework.
@@ -133,10 +178,11 @@ public:
    * @param const std::string & framework (default: "")
    * @return CDataValue value
    */
-  CDataValue get(const std::string & property, const std::string & framework = "") const;
+  CDataValue getProperty(const std::string & property, const std::string & framework = "") const;
 
-  std::string displayName() const;
-  
+  template < class CType >
+  CType final();
+
   template < class CType >
   static Properties AllSupportedProperties();
 
@@ -147,9 +193,18 @@ protected:
   template < class CType >
   static bool isValidProperty(const cpsapiProperty::Type & property);
 
-  virtual bool set(const cpsapiProperty::Type & property, const CDataValue & value, const CCore::Framework & framework);
+  virtual bool setProperty(const cpsapiProperty::Type & property, const CDataValue & value, const CCore::Framework & framework);
 
-  virtual CDataValue get(const cpsapiProperty::Type & property, const CCore::Framework & framework) const;
+  virtual CDataValue getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const;
+
+private:
+  void addToReferences();
+
+  void removeFromReferences();
+
+  CDataObject * mpObject;
+  References * mpReferences;
+  const Type mType;
 };
 
 template < typename Target, class SourceVector >
@@ -194,4 +249,12 @@ bool cpsapiObject::isValidProperty(const cpsapiProperty::Type & property)
   return CType::SupportedProperties.find(property) != CType::SupportedProperties.end();
 }
 
+template <> inline
+cpsapiObject cpsapiObject::final()
+{
+  return cpsapiObject(mpObject, Type::cpsapiObject);
+} 
+
 CPSAPI_NAMESPACE_END
+
+#include "cpsapi/core/cpsapiVisitor.h"

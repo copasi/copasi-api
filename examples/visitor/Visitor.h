@@ -29,7 +29,7 @@ class Visitor : public cpsapiVisitor
 public:
   virtual ~Visitor() {}
 
-  virtual void visit(cpsapiObject * pObject, const cpsapiVisitor::TypeId & typeId);
+  virtual void visit(cpsapiObject * pObject, const cpsapiObject::Type & type) override;
 };
 
 CPSAPI_NAMESPACE_END

@@ -16,12 +16,14 @@
 
 #include "cpsapi/core/cpsapiContainer.h"
 
-class CModelEntity;
+#include <copasi/model/CModelValue.h>
 
 CPSAPI_NAMESPACE_BEGIN
 
 class cpsapiModelEntity: public cpsapiContainer
 {
+  friend cpsapiModelEntity cpsapiObject::final< cpsapiModelEntity >();
+
 public:
   typedef cpsapiContainer base;
 
@@ -33,35 +35,39 @@ public:
     SIMULATION_TYPE = cpsapiProperty::Type::SIMULATION_TYPE,
     ADD_NOISE = cpsapiProperty::Type::ADD_NOISE,
     NOISE_EXPRESSION = cpsapiProperty::Type::NOISE_EXPRESSION,
-    OBJECT_NAME = cpsapiProperty::Type::OBJECT_NAME
+    OBJECT_NAME = cpsapiProperty::Type::OBJECT_NAME,
+    DISPLAY_NAME = cpsapiProperty::Type::DISPLAY_NAME,
+    CN = cpsapiProperty::Type::CN
   };
 
   static const Properties SupportedProperties;
 
   cpsapiModelEntity() = delete;
 
-  cpsapiModelEntity(CModelEntity * pModelEntity);
+protected:
+  cpsapiModelEntity(CModelEntity * pModelEntity, const Type & typeId);
 
   cpsapiModelEntity(const cpsapiModelEntity & src);
 
+public:
   virtual ~cpsapiModelEntity();
 
   virtual void accept(cpsapiVisitor & visitor) override;
 
-  bool set(const Property & property, const CDataValue & value, const CCore::Framework & framework = CCore::Framework::__SIZE);
+  bool setProperty(const Property & property, const CDataValue & value, const CCore::Framework & framework = CCore::Framework::__SIZE);
 
-  CDataValue get(const Property & property, const CCore::Framework & framework = CCore::Framework::__SIZE) const;
-
-  /**
-   * Return the properties supported 
-   * @return const Properties & supportedProperties
-   */ 
-  static const Properties & supportedProperties();
+  CDataValue getProperty(const Property & property, const CCore::Framework & framework = CCore::Framework::__SIZE) const;
 
 protected:
-  virtual bool set(const cpsapiProperty::Type & property, const CDataValue & value, const CCore::Framework & framework) override;
+  virtual bool setProperty(const cpsapiProperty::Type & property, const CDataValue & value, const CCore::Framework & framework) override;
 
-  virtual CDataValue get(const cpsapiProperty::Type & property, const CCore::Framework & framework) const override;
+  virtual CDataValue getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const override;
 };
+
+template <> inline
+cpsapiModelEntity cpsapiObject::final()
+{
+  return cpsapiModelEntity(static_cast< CModelEntity * >(getObject()), Type::cpsapiModelEntity);
+} 
 
 CPSAPI_NAMESPACE_END

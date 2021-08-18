@@ -14,54 +14,43 @@
 
 #pragma once
 
-#include "cpsapi/model/cpsapiModelEntity.h"
-#include "cpsapi/model/cpsapiSpecies.h"
+#include "cpsapi/core/cpsapiContainer.h"
 
 #include <memory>
 
-class CCompartment;
-class CMetab;
+class CCopasiParameter;
 
 CPSAPI_NAMESPACE_BEGIN
 
-class cpsapiCompartment: public cpsapiModelEntity
+class cpsapiParameter : public cpsapiContainer
 {
 public:
-  typedef cpsapiModelEntity base;
+  typedef cpsapiContainer base;
 
+  /**
+   * Enumeration of the exposed properties
+   */ 
+  /**
+   * Enumeration of the exposed properties
+   */
   enum class Property
   {
-    DIMENSIONALITY = cpsapiProperty::Type::DIMENSIONALITY,
-    EXPRESSION = cpsapiProperty::Type::EXPRESSION,
-    INITIAL_EXPRESSION = cpsapiProperty::Type::INITIAL_EXPRESSION,
-    INITIAL_VALUE = cpsapiProperty::Type::INITIAL_VALUE,
-    SIMULATION_TYPE = cpsapiProperty::Type::SIMULATION_TYPE,
-    ADD_NOISE = cpsapiProperty::Type::ADD_NOISE,
-    NOISE_EXPRESSION = cpsapiProperty::Type::NOISE_EXPRESSION,
+    PARAMETER_VALUE = cpsapiProperty::Type::PARAMETER_VALUE,
     OBJECT_NAME = cpsapiProperty::Type::OBJECT_NAME,
     DISPLAY_NAME = cpsapiProperty::Type::DISPLAY_NAME,
-    CN = cpsapiProperty::Type::CN,
-    UNIT = cpsapiProperty::Type::UNIT
+    CN = cpsapiProperty::Type::CN
   };
 
   static const Properties SupportedProperties;
 
-  cpsapiCompartment(CCompartment * pCompartment = nullptr);
+  cpsapiParameter(CCopasiParameter * pParameter, const Type & typeId);
 
-  cpsapiCompartment(const cpsapiCompartment & src);
+  cpsapiParameter(const cpsapiParameter & src);
 
-  virtual ~cpsapiCompartment();
+  virtual ~cpsapiParameter();
 
   virtual void accept(cpsapiVisitor & visitor) override;
 
-  cpsapiSpecies addSpecies(const std::string & name);
-
-  bool deleteSpecies(const std::string & name = "");
-
-  cpsapiSpecies species(const std::string & name = "");
-
-  std::vector< cpsapiSpecies > getSpecies() const;
-  
   bool setProperty(const Property & property, const CDataValue & value, const CCore::Framework & framework = CCore::Framework::__SIZE);
 
   CDataValue getProperty(const Property & property, const CCore::Framework & framework = CCore::Framework::__SIZE) const;
@@ -71,12 +60,7 @@ protected:
 
   virtual CDataValue getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const override;
 
-private:
-  cpsapiSpecies __species(const std::string & name) const;
-
-  void updateDefaultSpecies(const cpsapiSpecies & species);
-
-  std::shared_ptr< cpsapiSpecies > mpDefaultSpecies;
+  std::shared_ptr< cpsapiParameter > mpDefaultParameter;
 };
 
 CPSAPI_NAMESPACE_END

@@ -16,14 +16,18 @@
 
 CPSAPI_NAMESPACE_USE
 
-cpsapiValue::cpsapiValue(CDataObject * pValue)
-  : base(pValue)
-{
-  if (!getObject()->hasFlag(CDataObject::Reference)
-      || getType() == CDataValue::Type::INVALID)
-    cpsapiPointer::operator=(nullptr);
-}
+// static
+const cpsapiValue::Properties cpsapiValue::SupportedProperties =
+  {
+    cpsapiProperty::Type::VALUE
+  };
 
+cpsapiValue::cpsapiValue(CDataObject * pValue)
+  : base(pValue, Type::cpsapiValue)
+{
+  if (getType() == CDataValue::Type::INVALID)
+    operator=(nullptr);
+}
 
 cpsapiValue::cpsapiValue(const cpsapiValue & src)
   : base(src)
@@ -38,11 +42,29 @@ void cpsapiValue::accept(cpsapiVisitor & visitor)
   if (!operator bool())
     return;
 
-  visitor.visit(this, cpsapiVisitor::TypeId::cpsapiValue);
+  visitor.visit(this, Type::cpsapiValue);
+  base::accept(visitor);
 }
 
-bool cpsapiValue::setValue(const CDataValue & value)
+bool cpsapiValue::setProperty(const cpsapiValue::Property & property, const CDataValue & value, const CCore::Framework & framework)
 {
+  return setProperty(static_cast< const cpsapiProperty::Type >(property), value, framework);
+}
+
+CDataValue cpsapiValue::getProperty(const cpsapiValue::Property & property, const CCore::Framework & framework) const
+{
+  return getProperty(static_cast< const cpsapiProperty::Type >(property), framework);
+}
+
+// virtual
+bool cpsapiValue::setProperty(const cpsapiProperty::Type & property, const CDataValue & value, const CCore::Framework & framework)
+{
+  if (!operator bool())
+    return false;
+
+  if (!isValidProperty<cpsapiValue>(property))
+    return base::setProperty(property, value, CCore::Framework::__SIZE);
+
   switch (getType())
   {
     case CDataValue::Type::DOUBLE:
@@ -56,7 +78,15 @@ bool cpsapiValue::setValue(const CDataValue & value)
     case CDataValue::Type::INT:
       if (value.getType() == CDataValue::Type::INT)
         {
-          *(int *) getObject()->getValuePointer() = value.toInt();
+          *(C_INT32 *) getObject()->getValuePointer() = value.toInt();
+          return true;
+        }
+      break;
+      
+    case CDataValue::Type::UINT:
+      if (value.getType() == CDataValue::Type::UINT)
+        {
+          *(unsigned C_INT32 *) getObject()->getValuePointer() = value.toInt();
           return true;
         }
       break;
@@ -69,6 +99,14 @@ bool cpsapiValue::setValue(const CDataValue & value)
         }
       break;
       
+    case CDataValue::Type::STRING:
+      if (value.getType() == CDataValue::Type::STRING)
+        {
+          *(std::string *) getObject()->getValuePointer() = value.toString();
+          return true;
+        }
+      break;
+      
     default:
       break;      
   }
@@ -76,10 +114,14 @@ bool cpsapiValue::setValue(const CDataValue & value)
   return false;
 }
 
-CDataValue cpsapiValue::getValue() const
+// virtual
+CDataValue cpsapiValue::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
 {
   if (!operator bool())
     return CDataValue();
+
+  if (!isValidProperty<cpsapiValue>(property))
+    return base::getProperty(property, framework);
 
   switch (getType())
   {
@@ -88,11 +130,19 @@ CDataValue cpsapiValue::getValue() const
       break;
 
     case CDataValue::Type::INT:
-      return *(int *) getObject()->getValuePointer();
+      return *(C_INT32 *) getObject()->getValuePointer();
+      break;
+      
+    case CDataValue::Type::UINT:
+      return *(unsigned C_INT32 *) getObject()->getValuePointer();
       break;
       
     case CDataValue::Type::BOOL:
       return *(bool *) getObject()->getValuePointer();
+      break;
+      
+    case CDataValue::Type::STRING:
+      return *(std::string *) getObject()->getValuePointer();
       break;
       
     default:
@@ -104,7 +154,7 @@ CDataValue cpsapiValue::getValue() const
 
 cpsapiValue::operator CDataValue() const
 {
-  return getValue();
+  return getProperty(cpsapiProperty::VALUE, CCore::Framework::__SIZE);
 }
 
 bool cpsapiValue::valid() const
@@ -114,7 +164,8 @@ bool cpsapiValue::valid() const
 
 CDataValue::Type cpsapiValue::getType() const
 {
-  if (!operator bool())
+  if (!operator bool()
+      || !getObject()->hasFlag(CDataObject::Reference))
     return CDataValue::Type::INVALID;
 
   if (getObject()->hasFlag(CDataObject::ValueDbl))
@@ -125,6 +176,9 @@ CDataValue::Type cpsapiValue::getType() const
 
   if (getObject()->hasFlag(CDataObject::ValueBool))
     return CDataValue::Type::BOOL;
+
+  if (getObject()->hasFlag(CDataObject::ValueString))
+    return CDataValue::Type::STRING;
 
   return CDataValue::Type::INVALID;
 }

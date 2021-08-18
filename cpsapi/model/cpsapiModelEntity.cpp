@@ -30,8 +30,8 @@ const cpsapiModelEntity::Properties cpsapiModelEntity::SupportedProperties =
     cpsapiProperty::Type::NOISE_EXPRESSION
   };
 
-cpsapiModelEntity::cpsapiModelEntity(CModelEntity * pObject)
-  : base(pObject)
+cpsapiModelEntity::cpsapiModelEntity(CModelEntity * pObject, const cpsapiObject::Type & typeId)
+  : base(pObject, typeId)
 {}
 
 cpsapiModelEntity::cpsapiModelEntity(const cpsapiModelEntity & src)
@@ -48,28 +48,28 @@ void cpsapiModelEntity::accept(cpsapiVisitor & visitor)
   if (!operator bool())
     return;
 
-  visitor.visit(this, cpsapiVisitor::TypeId::cpsapiModelEntity);
+  visitor.visit(this, Type::cpsapiModelEntity);
   base::accept(visitor);
 }
 
-bool cpsapiModelEntity::set(const cpsapiModelEntity::Property & property, const CDataValue & value, const CCore::Framework & framework)
+bool cpsapiModelEntity::setProperty(const cpsapiModelEntity::Property & property, const CDataValue & value, const CCore::Framework & framework)
 {
-  return set(static_cast<const cpsapiProperty::Type >(property), value, framework);
+  return setProperty(static_cast<const cpsapiProperty::Type >(property), value, framework);
 }
 
-CDataValue cpsapiModelEntity::get(const Property & property, const CCore::Framework & framework) const
+CDataValue cpsapiModelEntity::getProperty(const Property & property, const CCore::Framework & framework) const
 {
-  return get(static_cast<const cpsapiProperty::Type >(property), framework);
+  return getProperty(static_cast<const cpsapiProperty::Type >(property), framework);
 }
 
 // virtual
-bool cpsapiModelEntity::set(const cpsapiProperty::Type & property, const CDataValue & value, const CCore::Framework & framework)
+bool cpsapiModelEntity::setProperty(const cpsapiProperty::Type & property, const CDataValue & value, const CCore::Framework & framework)
 {
   if (!operator bool())
     return false;
 
   if (!isValidProperty<cpsapiModelEntity>(property))
-    return base::set(property, value, framework);
+    return base::setProperty(property, value, framework);
 
   CModelEntity * pEntity = static_cast< CModelEntity * >(getObject());
   CDataObject * pChangedObject = pEntity;
@@ -128,13 +128,13 @@ bool cpsapiModelEntity::set(const cpsapiProperty::Type & property, const CDataVa
 }
 
 // virtual 
-CDataValue cpsapiModelEntity::get(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
+CDataValue cpsapiModelEntity::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
 {
   if (!operator bool())
     return CDataValue();
 
   if (!isValidProperty<cpsapiModelEntity>(property))
-    return base::get(property, framework);
+    return base::getProperty(property, framework);
 
   CModelEntity * pEntity = static_cast< CModelEntity * >(getObject());
   bool success = false;
