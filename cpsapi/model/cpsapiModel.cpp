@@ -47,7 +47,7 @@ cpsapiModel::cpsapiModel(CModel * pModel)
   , mpDefaultGlobalQuantity()
   , mpDefaultEvent(nullptr)
 {
-  for (cpsapiObject * pReference : references())
+  for (cpsapiObject * pReference : *references())
     if (this != pReference
         && pReference->getType() == Type::cpsapiModel)
       {
@@ -192,7 +192,7 @@ void cpsapiModel::updateDefaultCompartment(const cpsapiCompartment & compartment
 {
   std::shared_ptr< cpsapiCompartment > Default = cpsapiFactory::make_shared< cpsapiCompartment >(compartment);
 
-  for (cpsapiObject * pReference : references())
+  for (cpsapiObject * pReference : *references())
     if (pReference->getType() == Type::cpsapiModel)
       {
         static_cast< cpsapiModel * >(pReference)->mpDefaultCompartment = Default;
@@ -321,7 +321,7 @@ void cpsapiModel::updateDefaultGlobalQuantity(const cpsapiGlobalQuantity & globa
 {
   std::shared_ptr< cpsapiGlobalQuantity > Default = cpsapiFactory::make_shared< cpsapiGlobalQuantity >(globalQuantity);
 
-  for (cpsapiObject * pReference : references())
+  for (cpsapiObject * pReference : *references())
     if (pReference->getType() == Type::cpsapiModel)
       {
         static_cast< cpsapiModel * >(pReference)->mpDefaultGlobalQuantity = Default;

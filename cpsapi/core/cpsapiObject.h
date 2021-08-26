@@ -16,6 +16,7 @@
 
 #include <set>
 #include <algorithm>
+#include <memory>
 
 #include <copasi/core/CDataVector.h>
 
@@ -33,8 +34,8 @@ class cpsapiVisitor;
 class cpsapiObject
 {
 private:
-  typedef std::set< cpsapiObject * > References;
-  typedef std::map< const CDataObject *, References * > Map; 
+  typedef std::shared_ptr< std::set< cpsapiObject * > > References;
+  typedef std::map< const CDataObject *, References > Map; 
   
   static Map Manager;
 
@@ -203,7 +204,7 @@ private:
   void removeFromReferences();
 
   CDataObject * mpObject;
-  References * mpReferences;
+  References mpReferences;
   const Type mType;
 };
 

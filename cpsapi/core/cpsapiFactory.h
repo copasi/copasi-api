@@ -40,13 +40,13 @@ public:
   {
     std::type_index cpsapiClass;
     cpsapiObject::Type cpsapiType;
-    create * cpsapiCreate;
+    std::shared_ptr< create > cpsapiCreate;
     std::type_index copasiClass;
     std::string copasiString;
 
     TypeInfo(const std::type_index & cpsapiClass = std::type_index(typeid(cpsapiObject)),
              cpsapiObject::Type cpsapiType = cpsapiObject::Type::__SIZE,
-             create * cpsapiCreate = nullptr,
+             std::shared_ptr< create > cpsapiCreate = nullptr,
              const std::type_index & copasiClass = std::type_index(typeid(CDataObject)),
              const std::string copasiString = "unknown");
 

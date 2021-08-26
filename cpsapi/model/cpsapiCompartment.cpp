@@ -31,7 +31,7 @@ cpsapiCompartment::cpsapiCompartment(cpsapiCompartment::wrapped * pWrapped)
   : base(pWrapped, Type::cpsapiCompartment)
   , mpDefaultSpecies()
 {
-  for (cpsapiObject * pReference : references())
+  for (cpsapiObject * pReference : *references())
     if (this != pReference
         && pReference->getType() == Type::cpsapiCompartment)
       {
@@ -138,7 +138,7 @@ void cpsapiCompartment::updateDefaultSpecies(const cpsapiSpecies & species)
 {
   std::shared_ptr< cpsapiSpecies > Default = cpsapiFactory::make_shared< cpsapiSpecies >(species);
 
-  for (cpsapiObject * pReference : references())
+  for (cpsapiObject * pReference : *references())
     if (pReference->getType() == Type::cpsapiCompartment)
       {
         static_cast< cpsapiCompartment * >(pReference)->mpDefaultSpecies = Default;

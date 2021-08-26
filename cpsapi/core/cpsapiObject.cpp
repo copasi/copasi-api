@@ -27,7 +27,7 @@ cpsapiObject::Map::iterator cpsapiObject::findOrInsert(const CDataObject * pObje
   Map::iterator found = Manager.insert(std::make_pair(pObject, nullptr)).first;
   
   if (found->second == nullptr)
-    found->second = new References;
+    found->second = std::make_shared< std::set< cpsapiObject * > >();
 
   return found;
 }
@@ -145,14 +145,7 @@ CDataObject * cpsapiObject::operator*() const
 
 cpsapiObject::References & cpsapiObject::references()
 {
-  static References Empty;
-
-  if (mpReferences == nullptr)
-    {
-      return Empty;
-    }
-
-  return *mpReferences;
+  return mpReferences;
 }
 
 cpsapiObject::Type cpsapiObject::getType() const
@@ -167,16 +160,13 @@ cpsapiObject::operator bool() const
 
 void cpsapiObject::addToReferences()
 {
-  if (mpObject != nullptr)
-    {
-      mpReferences = findOrInsert(mpObject)->second;
-      mpReferences->insert(this);
-    }
+  mpReferences = findOrInsert(mpObject)->second;
+  mpReferences->insert(this);
 }
 
 void cpsapiObject::removeFromReferences()
 {
-  if (mpReferences != nullptr)
+  if (mpReferences)
     {
       mpReferences->erase(this);
 

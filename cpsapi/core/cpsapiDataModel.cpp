@@ -29,7 +29,7 @@ cpsapiDataModel::cpsapiDataModel(wrapped * pWrapped)
   , mpDefaultReportDefinition(nullptr)
   , mpDefaultPlotSpecification(nullptr)
 {
-  for (cpsapiObject * pReference : references())
+  for (cpsapiObject * pReference : *references())
     if (this != pReference
         && pReference->getType() == Type::cpsapiDataModel)
       {

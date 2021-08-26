@@ -23,7 +23,7 @@ const cpsapiGroup::Properties cpsapiGroup::SupportedProperties = {};
 cpsapiGroup::cpsapiGroup(CCopasiParameterGroup * pObject)
   : base(pObject, Type::cpsapiGroup)
 {
-  for (cpsapiObject * pReference : references())
+  for (cpsapiObject * pReference : *references())
     if (this != pReference
         && pReference->getType() == Type::cpsapiGroup)
       {
@@ -234,7 +234,7 @@ void cpsapiGroup::updateDefaultParameter(const cpsapiParameter & parameter)
 {
   std::shared_ptr< cpsapiParameter > DefaultParameter = cpsapiFactory::make_shared< cpsapiParameter >(parameter);
 
-  for (cpsapiObject * pReference : references())
+  for (cpsapiObject * pReference : *references())
     if (pReference->getType() == Type::cpsapiGroup)
       {
         static_cast< cpsapiGroup * >(pReference)->mpDefaultParameter = DefaultParameter;
