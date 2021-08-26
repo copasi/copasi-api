@@ -101,7 +101,7 @@ TEST_CASE("Edit model", "[cpsapi]")
     
   std::ostringstream Equation;
   Equation << 3 << "*" << Model.species().getProperty(cpsapiSpecies::Property::DISPLAY_NAME) << "->";
-  REQUIRE("3*test_species->" == Equation.str());
+  REQUIRE("3*test_species_2->" == Equation.str());
 
   REQUIRE_FALSE(Model.globalQuantity());
   REQUIRE(Model.addGlobalQuantity("test_global_quantity"));
