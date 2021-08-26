@@ -22,8 +22,9 @@ CPSAPI_NAMESPACE_BEGIN
 class cpsapiGlobalQuantity : public cpsapiModelEntity
 {
 public:
-  typedef cpsapiModelEntity base;
-
+  /**
+   * Enumeration of the exposed properties
+   */ 
   enum class Property
   {
     EXPRESSION = cpsapiProperty::Type::EXPRESSION,
@@ -38,10 +39,31 @@ public:
     UNIT = cpsapiProperty::Type::UNIT
   };
 
+  /**
+   * Static set of supported properties
+   */
   static const Properties SupportedProperties;
 
-  cpsapiGlobalQuantity(CModelValue * pModelValue = nullptr);
+  /**
+   * The base class
+   */
+  typedef cpsapiModelEntity base;
 
+  /**
+   * The wrapped COPASI class
+   */
+  typedef CModelValue wrapped;
+
+  /**
+   * Specific constructor
+   * @param wrapped * pWrapped
+   */
+  cpsapiGlobalQuantity(wrapped * pWrapped = nullptr);
+
+  /**
+   * Copy constructor
+   * @param const cpsapiGlobalQuantity & src
+   */
   cpsapiGlobalQuantity(const cpsapiGlobalQuantity & src);
 
   virtual ~cpsapiGlobalQuantity();

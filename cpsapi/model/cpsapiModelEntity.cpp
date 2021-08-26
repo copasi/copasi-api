@@ -30,8 +30,8 @@ const cpsapiModelEntity::Properties cpsapiModelEntity::SupportedProperties =
     cpsapiProperty::Type::NOISE_EXPRESSION
   };
 
-cpsapiModelEntity::cpsapiModelEntity(CModelEntity * pObject, const cpsapiObject::Type & typeId)
-  : base(pObject, typeId)
+cpsapiModelEntity::cpsapiModelEntity(CModelEntity * pObject, const cpsapiObject::Type & type)
+  : base(pObject, type)
 {}
 
 cpsapiModelEntity::cpsapiModelEntity(const cpsapiModelEntity & src)

@@ -15,8 +15,7 @@
 #include "Visitor.h"
 
 #include <cpsapi/core/cpsapiRoot.h>
-
-#include <type_traits>
+#include <cpsapi/core/cpsapiFactory.h>
 
 CPSAPI_NAMESPACE_USE
 
@@ -60,6 +59,10 @@ void Visitor::visit(cpsapiObject * pObject, const cpsapiObject::Type & type)
       std::cout << "visit cpsapiSpecies: " << static_cast< cpsapiSpecies * >(pObject)->getObject()->getCN() << std::endl;
       break;
 
+    case cpsapiObject::Type::cpsapiObject:
+      std::cout << "visit cpsapiObject: " << static_cast< cpsapiObject * >(pObject)->getObject()->getCN() << std::endl;
+      break;
+
     case cpsapiObject::Type::cpsapiContainer:
       std::cout << "visit cpsapiContainer: " << static_cast< cpsapiContainer * >(pObject)->getObject()->getCN() << std::endl;
       break;
@@ -69,7 +72,7 @@ void Visitor::visit(cpsapiObject * pObject, const cpsapiObject::Type & type)
       break;
 
     default:
-      std::cout << "visit unhandled (" << (std::underlying_type< cpsapiObject::Type >::type) type << "): " << static_cast< cpsapiObject * >(pObject)->getObject()->getCN() << std::endl;
+      std::cout << "visit unhandled (" << cpsapiObject::TypeName[type] << "): " << static_cast< cpsapiObject * >(pObject)->getObject()->getCN() << std::endl;
       break;
     }
 }

@@ -24,8 +24,8 @@ const cpsapiParameter::Properties cpsapiParameter::SupportedProperties =
     cpsapiProperty::Type::PARAMETER_VALUE
   };
 
-cpsapiParameter::cpsapiParameter(CCopasiParameter * pObject, const cpsapiObject::Type & typeId)
-  : base(pObject, typeId)
+cpsapiParameter::cpsapiParameter(wrapped * pWrapped, const cpsapiObject::Type & type)
+  : base(pWrapped, type)
   , mpDefaultParameter()
 {}
 
@@ -67,7 +67,7 @@ bool cpsapiParameter::setProperty(const cpsapiProperty::Type & property, const C
   if (!isValidProperty<cpsapiParameter>(property))
     return base::setProperty(property, value, framework);
 
-  CCopasiParameter * pParameter = static_cast< CCopasiParameter * >(getObject());
+  wrapped * pParameter = static_cast< wrapped * >(getObject());
   bool success = false;
 
   switch (property)
@@ -75,42 +75,42 @@ bool cpsapiParameter::setProperty(const cpsapiProperty::Type & property, const C
     case cpsapiProperty::Type::PARAMETER_VALUE:
       switch (pParameter->getType())
         {
-        case CCopasiParameter::Type::DOUBLE:
-        case CCopasiParameter::Type::UDOUBLE:
+        case wrapped::Type::DOUBLE:
+        case wrapped::Type::UDOUBLE:
           if (value.getType() == CDataValue::Type::DOUBLE)
             pParameter->setValue(value.toDouble());
           break;
 
-        case CCopasiParameter::Type::INT:
+        case wrapped::Type::INT:
           if (value.getType() == CDataValue::Type::INT)
             success = pParameter->setValue(value.toUint());
           break;
 
-        case CCopasiParameter::Type::UINT:
+        case wrapped::Type::UINT:
           if (value.getType() == CDataValue::Type::UINT)
             success = pParameter->setValue(value.toInt());
           break;
 
-        case CCopasiParameter::Type::BOOL:
+        case wrapped::Type::BOOL:
           if (value.getType() == CDataValue::Type::BOOL)
             success = pParameter->setValue(value.toBool());
           break;
 
-        case CCopasiParameter::Type::STRING:
-        case CCopasiParameter::Type::KEY:
-        case CCopasiParameter::Type::FILE:
-        case CCopasiParameter::Type::EXPRESSION:
+        case wrapped::Type::STRING:
+        case wrapped::Type::KEY:
+        case wrapped::Type::FILE:
+        case wrapped::Type::EXPRESSION:
           if (value.getType() == CDataValue::Type::STRING)
             success = pParameter->setValue(value.toString());
           break;
 
-        case CCopasiParameter::Type::CN:
+        case wrapped::Type::CN:
           if (value.getType() == CDataValue::Type::STRING)
             success = pParameter->setValue(CCommonName(value.toString()));
           break;
 
-        case CCopasiParameter::Type::GROUP:
-        case CCopasiParameter::Type::INVALID:
+        case wrapped::Type::GROUP:
+        case wrapped::Type::INVALID:
           break;
         }
 
@@ -130,7 +130,7 @@ CDataValue cpsapiParameter::getProperty(const cpsapiProperty::Type & property, c
   if (!isValidProperty<cpsapiParameter>(property))
     return base::getProperty(property, framework);
 
-  CCopasiParameter * pParameter = static_cast< CCopasiParameter * >(getObject());
+  wrapped * pParameter = static_cast< wrapped * >(getObject());
   bool success = false;
 
   switch (property)
@@ -138,33 +138,33 @@ CDataValue cpsapiParameter::getProperty(const cpsapiProperty::Type & property, c
     case cpsapiProperty::Type::PARAMETER_VALUE:
       switch (pParameter->getType())
         {
-        case CCopasiParameter::Type::DOUBLE:
-        case CCopasiParameter::Type::UDOUBLE:
+        case wrapped::Type::DOUBLE:
+        case wrapped::Type::UDOUBLE:
           return * (C_FLOAT64 *) pParameter->getValidValuesPointer();
           break;
 
-        case CCopasiParameter::Type::INT:
+        case wrapped::Type::INT:
           return * (C_INT32 *) pParameter->getValidValuesPointer();
           break;
 
-        case CCopasiParameter::Type::UINT:
+        case wrapped::Type::UINT:
           return * (unsigned C_INT32 *) pParameter->getValidValuesPointer();
           break;
 
-        case CCopasiParameter::Type::BOOL:
+        case wrapped::Type::BOOL:
           return * (bool *) pParameter->getValidValuesPointer();
           break;
 
-        case CCopasiParameter::Type::STRING:
-        case CCopasiParameter::Type::KEY:
-        case CCopasiParameter::Type::FILE:
-        case CCopasiParameter::Type::EXPRESSION:
-        case CCopasiParameter::Type::CN:
+        case wrapped::Type::STRING:
+        case wrapped::Type::KEY:
+        case wrapped::Type::FILE:
+        case wrapped::Type::EXPRESSION:
+        case wrapped::Type::CN:
           return * (std::string *) pParameter->getValidValuesPointer();
           break;
 
-        case CCopasiParameter::Type::GROUP:
-        case CCopasiParameter::Type::INVALID:
+        case wrapped::Type::GROUP:
+        case wrapped::Type::INVALID:
           break;
         }
       break;

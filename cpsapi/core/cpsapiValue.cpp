@@ -22,8 +22,8 @@ const cpsapiValue::Properties cpsapiValue::SupportedProperties =
     cpsapiProperty::Type::VALUE
   };
 
-cpsapiValue::cpsapiValue(CDataObject * pValue)
-  : base(pValue, Type::cpsapiValue)
+cpsapiValue::cpsapiValue(wrapped * pWrapped)
+  : base(pWrapped, Type::cpsapiValue)
 {
   if (getType() == CDataValue::Type::INVALID)
     operator=(nullptr);
@@ -165,19 +165,19 @@ bool cpsapiValue::valid() const
 CDataValue::Type cpsapiValue::getType() const
 {
   if (!operator bool()
-      || !getObject()->hasFlag(CDataObject::Reference))
+      || !getObject()->hasFlag(wrapped::Reference))
     return CDataValue::Type::INVALID;
 
-  if (getObject()->hasFlag(CDataObject::ValueDbl))
+  if (getObject()->hasFlag(wrapped::ValueDbl))
     return CDataValue::Type::DOUBLE;
 
-  if (getObject()->hasFlag(CDataObject::ValueInt))
+  if (getObject()->hasFlag(wrapped::ValueInt))
     return CDataValue::Type::INT;
 
-  if (getObject()->hasFlag(CDataObject::ValueBool))
+  if (getObject()->hasFlag(wrapped::ValueBool))
     return CDataValue::Type::BOOL;
 
-  if (getObject()->hasFlag(CDataObject::ValueString))
+  if (getObject()->hasFlag(wrapped::ValueString))
     return CDataValue::Type::STRING;
 
   return CDataValue::Type::INVALID;

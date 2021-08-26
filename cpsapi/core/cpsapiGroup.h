@@ -34,10 +34,16 @@ public:
 
   static const Properties SupportedProperties;
 
-  cpsapiGroup(CCopasiParameterGroup * pGroup = nullptr);
+  /**
+   * Specific constructor
+   * @param CCopasiParameterGroup * pGroup
+   */
+  cpsapiGroup(CCopasiParameterGroup * pGroup);
 
-  cpsapiGroup(const cpsapiParameter & base);
-
+  /**
+   * Copy constructor
+   * @param const cpsapiGroup & src
+   */
   cpsapiGroup(const cpsapiGroup & src);
 
   virtual ~cpsapiGroup();

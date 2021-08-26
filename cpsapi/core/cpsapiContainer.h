@@ -22,31 +22,52 @@ CPSAPI_NAMESPACE_BEGIN
 
 class cpsapiContainer : public cpsapiObject
 {
-  friend cpsapiContainer cpsapiObject::final< cpsapiContainer >();
-
 public:
-  typedef cpsapiObject base;
-
   /**
    * Enumeration of the exposed properties
    */ 
   enum class Property {};
 
+  /**
+   * Static set of supported properties
+   */
   static const Properties SupportedProperties;
 
-  cpsapiContainer(CDataContainer * pContainer, const Type & typeId);
+  /**
+   * The base class
+   */
+  typedef cpsapiObject base;
 
+  /**
+   * The wrapped COPASI class
+   */
+  typedef CDataContainer wrapped;
+
+protected:
+  /**
+   * Specific constructor
+   * @param wrapped * pWrapped (default: nullptr)
+   * @param const Type & type (default: Type::cpsapiContainer)
+  */
+  cpsapiContainer(wrapped * pWrapped = nullptr, const Type & type = Type::cpsapiContainer);
+
+public:
+  /**
+   * Copy constructor
+   * @param const cpsapiContainer & src
+   */
   cpsapiContainer(const cpsapiContainer & src);
 
+  /**
+   * Destructor
+   */
   virtual ~cpsapiContainer();
 
+  /**
+   * Accept a visitor
+   * @param cpsapiVisitor & visitor
+   */
   virtual void accept(cpsapiVisitor & visitor) override;
 };
-
-template <> inline
-cpsapiContainer cpsapiObject::final()
-{
-  return cpsapiContainer(static_cast< CDataContainer * >(getObject()), Type::cpsapiContainer);
-} 
 
 CPSAPI_NAMESPACE_END

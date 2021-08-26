@@ -26,8 +26,8 @@ const cpsapiSpecies::Properties cpsapiSpecies::SupportedProperties =
     cpsapiProperty::Type::UNIT // READ ONLY
   };
 
-cpsapiSpecies::cpsapiSpecies(CMetab * pSpecies)
-  : base(pSpecies, Type::cpsapiSpecies)
+cpsapiSpecies::cpsapiSpecies(wrapped * pWrapped)
+  : base(pWrapped, Type::cpsapiSpecies)
 {}
 
 cpsapiSpecies::cpsapiSpecies(const cpsapiSpecies & src)
@@ -69,9 +69,9 @@ bool cpsapiSpecies::setProperty(const cpsapiProperty::Type & property, const CDa
 
   CCore::Framework Framework(framework);
 
-  CMetab * pSpecies = static_cast< CMetab * >(getObject());
-  CDataObject * pChangedObject = pSpecies;
-  bool success = cpsapiTransaction::endStructureChange(pSpecies->getModel());
+  wrapped * pWrapped = static_cast< wrapped * >(getObject());
+  CDataObject * pChangedObject = pWrapped;
+  bool success = cpsapiTransaction::endStructureChange(pWrapped->getModel());
 
   switch (property)
     {
@@ -83,14 +83,14 @@ bool cpsapiSpecies::setProperty(const cpsapiProperty::Type & property, const CDa
         switch (Framework)
           {
           case CCore::Framework::Concentration:
-            pChangedObject = pSpecies->getInitialConcentrationReference();
-            pSpecies->setInitialConcentration(value.toDouble());
+            pChangedObject = pWrapped->getInitialConcentrationReference();
+            pWrapped->setInitialConcentration(value.toDouble());
             success = true;
             break;
 
           case CCore::Framework::ParticleNumbers:
-            pChangedObject = pSpecies->getInitialValueReference();
-            pSpecies->setInitialValue(value.toDouble());
+            pChangedObject = pWrapped->getInitialValueReference();
+            pWrapped->setInitialValue(value.toDouble());
             success = true;
             break;
 
@@ -121,19 +121,19 @@ CDataValue cpsapiSpecies::getProperty(const cpsapiProperty::Type & property, con
   if (!isValidProperty<cpsapiSpecies>(property))
     return base::getProperty(property, CCore::Framework::__SIZE);
 
-  CMetab * pSpecies = static_cast< CMetab * >(getObject());
+  wrapped * pWrapped = static_cast< wrapped * >(getObject());
 
   switch (property)
     {
     case cpsapiProperty::Type::INITIAL_VALUE:
       if (framework == CCore::Framework::ParticleNumbers)
-        return pSpecies->getInitialValue();
+        return pWrapped->getInitialValue();
       
-      return pSpecies->getInitialConcentration();
+      return pWrapped->getInitialConcentration();
       break;
 
     case cpsapiProperty::Type::UNIT:
-      return pSpecies->getUnits();
+      return pWrapped->getUnits();
       break;
       
     default:

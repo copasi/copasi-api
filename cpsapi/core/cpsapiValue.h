@@ -25,8 +25,9 @@ CPSAPI_NAMESPACE_BEGIN
 class cpsapiValue : public cpsapiObject
 {
 public:
-  typedef cpsapiObject base;
-
+ /**
+   * Enumeration of the exposed properties
+   */ 
   enum class Property
   {
     VALUE = cpsapiProperty::Type::VALUE,
@@ -35,16 +36,42 @@ public:
     CN = cpsapiProperty::Type::CN
   };
 
+  /**
+   * Static set of supported properties
+   */
   static const Properties SupportedProperties;
 
-  cpsapiValue() = delete;
+  /**
+   * The base class
+   */
+  typedef cpsapiObject base;
 
-  cpsapiValue(CDataObject * pValue);
+  /**
+   * The wrapped COPASI class
+   */
+  typedef CDataObject wrapped;
 
+  /**
+   * Specific constructor
+   * @param wrapped * pWrapped (default: nullptr)
+  */
+  cpsapiValue(wrapped * pWrapped = nullptr);
+
+  /**
+   * Copy constructor
+   * @param const cpsapiValue & src
+   */
   cpsapiValue(const cpsapiValue & src);
 
+  /**
+   * Destructor
+   */
   virtual ~cpsapiValue();
 
+  /**
+   * Accept a visitor
+   * @param cpsapiVisitor & visitor
+   */
   virtual void accept(cpsapiVisitor & visitor) override;
 
   bool setProperty(const Property & property, const CDataValue & value, const CCore::Framework & framework = CCore::Framework::__SIZE);

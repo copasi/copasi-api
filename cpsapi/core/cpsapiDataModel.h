@@ -39,18 +39,51 @@ class cpsapiGlobalQuantity;
 class cpsapiDataModel : public cpsapiContainer
 {
 public:
+  /**
+   * The base class
+   */
   typedef cpsapiContainer base;
 
-  cpsapiDataModel(CDataModel * pDataModel = nullptr);
+  /**
+   * The wrapped COPASI class
+   */
+  typedef CDataModel wrapped;
 
+  /**
+   * Specific constructor
+   * @param wrapped * pDataModel (default: nullptr)
+   */
+  cpsapiDataModel(wrapped * pDataModel = nullptr);
+
+  /**
+   * Copy constructor
+   * @param const cpsapiContainer & src
+   */
   cpsapiDataModel(const cpsapiDataModel & src);
 
+  /**
+   * Destructor
+   */
   virtual ~cpsapiDataModel();
 
+  /**
+   * Accept a visitor
+   * @param cpsapiVisitor & visitor
+   */
   virtual void accept(cpsapiVisitor & visitor) override;
 
+  /**
+   * Load a model from a file (any supported format)
+   * @param const std::string & fileName
+   * @return bool success
+   */
   bool loadFromFile(const std::string & fileName);
 
+  /**
+   * Load a model from a file (any supported format)
+   * @param const std::string & fileName
+   * @return bool success
+   */
   bool loadFromString(const std::string & content, const std::string & referenceDir = "");
 
   cpsapiModel & model();

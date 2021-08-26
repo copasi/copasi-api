@@ -13,7 +13,6 @@
 // END: License
 
 #include "cpsapi/core/cpsapiGroup.h"
-
 #include <copasi/utilities/CCopasiParameterGroup.h>
 
 CPSAPI_NAMESPACE_USE
@@ -25,24 +24,15 @@ cpsapiGroup::cpsapiGroup(CCopasiParameterGroup * pObject)
   : base(pObject, Type::cpsapiGroup)
 {
   for (cpsapiObject * pReference : references())
-    if (this != pReference)
+    if (this != pReference
+        && pReference->getType() == Type::cpsapiGroup)
       {
         mpDefaultParameter = static_cast< cpsapiGroup * >(pReference)->mpDefaultParameter;
         break;
       }
 
   if (!mpDefaultParameter)
-    mpDefaultParameter = std::make_shared< cpsapiParameter >(nullptr, Type::cpsapiParameter);
-}
-
-cpsapiGroup::cpsapiGroup(const cpsapiParameter & src)
-  : base(src)
-{
-  if (operator bool()
-      && static_cast< CCopasiParameter * >(getObject())->getType() != CCopasiParameter::Type::GROUP)
-    {
-      operator = (cpsapiGroup(nullptr));
-    }
+    mpDefaultParameter = cpsapiFactory::make_shared< cpsapiParameter >(nullptr);
 }
 
 cpsapiGroup::cpsapiGroup(const cpsapiGroup & src)
@@ -242,16 +232,11 @@ cpsapiParameter cpsapiGroup::__parameter(const std::string & name) const
 
 void cpsapiGroup::updateDefaultParameter(const cpsapiParameter & parameter)
 {
-  std::shared_ptr< cpsapiParameter > DefaultParameter;
-
-  if (!parameter 
-      || static_cast< CCopasiParameter * >(parameter.getObject())->getType() != CCopasiParameter::Type::GROUP)
-    DefaultParameter = std::make_shared< cpsapiParameter >(parameter);
-  else
-    DefaultParameter = std::make_shared< cpsapiGroup >(parameter);
+  std::shared_ptr< cpsapiParameter > DefaultParameter = cpsapiFactory::make_shared< cpsapiParameter >(parameter);
 
   for (cpsapiObject * pReference : references())
-    {
-      static_cast< cpsapiGroup * >(pReference)->mpDefaultParameter = DefaultParameter;
-    }
+    if (pReference->getType() == Type::cpsapiGroup)
+      {
+        static_cast< cpsapiGroup * >(pReference)->mpDefaultParameter = DefaultParameter;
+      }
 }

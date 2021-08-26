@@ -69,8 +69,10 @@ TEST_CASE("Edit model", "[cpsapi]")
   REQUIRE(Model.getCompartments().size() == 1);
 
   cpsapiSpecies Species = Compartment.addSpecies("test_species");
-
   double ParticleNumber = Species.getProperty(cpsapiSpecies::Property::INITIAL_VALUE, CCore::Framework::ParticleNumbers).toDouble();
+
+  cpsapiSpecies Species2 = Compartment.addSpecies("test_species_2");
+  REQUIRE(ParticleNumber == Species2.getProperty(cpsapiSpecies::Property::INITIAL_VALUE, CCore::Framework::ParticleNumbers).toDouble());
 
   cpsapi::beginTransaction();
   
@@ -83,8 +85,20 @@ TEST_CASE("Edit model", "[cpsapi]")
 
   REQUIRE_FALSE(Model.addSpecies("test_species"));
   REQUIRE_FALSE(Copy.addSpecies("test_species"));
-  REQUIRE(Copy.getSpecies().size() == 1);
+  REQUIRE(Copy.getSpecies().size() == 2);
 
+  cpsapiVector< cpsapiSpecies > SpeciesVector = Compartment.getSpecies();
+  REQUIRE(SpeciesVector);
+  REQUIRE(SpeciesVector.size() == 2);
+
+  cpsapiVector< cpsapiSpecies >::iterator it = SpeciesVector.begin();
+  cpsapiVector< cpsapiSpecies >::iterator end = SpeciesVector.end();
+
+  REQUIRE(cpsapiSpecies(*it));
+
+  for (cpsapiSpecies & species : SpeciesVector)
+    REQUIRE_FALSE(ParticleNumber == species.getProperty(cpsapiSpecies::Property::INITIAL_VALUE, CCore::Framework::ParticleNumbers).toDouble());
+    
   std::ostringstream Equation;
   Equation << 3 << "*" << Model.species().getProperty(cpsapiSpecies::Property::DISPLAY_NAME) << "->";
   REQUIRE("3*test_species->" == Equation.str());

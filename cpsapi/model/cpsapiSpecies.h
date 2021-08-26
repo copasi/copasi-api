@@ -23,8 +23,9 @@ CPSAPI_NAMESPACE_BEGIN
 class cpsapiSpecies: public cpsapiModelEntity
 {
 public:
-  typedef cpsapiModelEntity base;
-
+  /**
+   * Enumeration of the exposed properties
+   */ 
   enum class Property
   {
     EXPRESSION = cpsapiProperty::Type::EXPRESSION,
@@ -39,10 +40,36 @@ public:
     UNIT = cpsapiProperty::Type::UNIT
   };
 
+  /**
+   * Static set of supported properties
+   */
   static const Properties SupportedProperties;
 
-  cpsapiSpecies(CMetab * pSpecies = nullptr);
+  /**
+   * The base class
+   */
+  typedef cpsapiModelEntity base;
 
+  /**
+   * The wrapped COPASI class
+   */
+  typedef CMetab wrapped;
+
+  /**
+   * Specific constructor
+   * @param wrapped * pWrapped
+   */
+
+  /**
+   * Specific constructor
+   * @param wrapped * pWrapped
+   */
+  cpsapiSpecies(wrapped * pWrapped = nullptr);
+
+  /**
+   * Copy constructor
+   * @param const cpsapiSpecies & src
+   */
   cpsapiSpecies(const cpsapiSpecies & src);
 
   virtual ~cpsapiSpecies();

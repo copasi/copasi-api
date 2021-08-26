@@ -58,8 +58,16 @@ public:
 
   static const Properties HiddenProperties;
 
+  /**
+   * Specific constructor
+   * @param CModel * pModel
+   */
   cpsapiModel(CModel * pModel = nullptr);
 
+  /**
+   * Copy constructor
+   * @param const cpsapiModel & src
+   */
   cpsapiModel(const cpsapiModel & src);
 
   virtual ~cpsapiModel();

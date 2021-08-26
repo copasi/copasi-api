@@ -35,7 +35,7 @@ class cpsapiObject
 private:
   typedef std::set< cpsapiObject * > References;
   typedef std::map< const CDataObject *, References * > Map; 
-
+  
   static Map Manager;
 
   static Map::iterator findOrInsert(const CDataObject * pObject);
@@ -45,9 +45,10 @@ public:
   
   enum struct Type {
     cpsapiObject,
-    cpsapiValue,
     cpsapiContainer,
+    cpsapiVector,
     cpsapiModelEntity,
+    cpsapiValue,
     cpsapiModel,
     cpsapiCompartment,
     cpsapiSpecies,
@@ -57,6 +58,8 @@ public:
     cpsapiGroup,
     __SIZE
   };
+
+  static const CEnumAnnotation< std::string, Type > TypeName;
 
   typedef std::set< cpsapiProperty::Type  > Properties;
 
@@ -83,9 +86,9 @@ protected:
   /**
    * Specific  constructor
    * @param CDataObject * pObject (default: nullptr)
-   * @param const Type & typeId
+   * @param const Type & type
    */
-  cpsapiObject(CDataObject * pObject, const Type & typeId);
+  cpsapiObject(CDataObject * pObject, const Type & type);
 
   /**
    * Copy constructor
@@ -181,9 +184,6 @@ public:
   CDataValue getProperty(const std::string & property, const std::string & framework = "") const;
 
   template < class CType >
-  CType final();
-
-  template < class CType >
   static Properties AllSupportedProperties();
 
   template < typename Target, class SourceVector >
@@ -208,16 +208,13 @@ private:
 };
 
 template < typename Target, class SourceVector >
-std::vector< Target > cpsapiObject::convertVector(SourceVector  &src)
+std::vector< Target > cpsapiObject::convertVector(SourceVector &sourceVector)
 {
-  std::vector< Target > Result(src.size());
-  typename SourceVector::iterator itSrc = src.begin();
+  std::vector< Target > Result;
+  typename SourceVector::iterator itSrc = sourceVector.begin();
 
-  for (Target target : Result)
-    {
-      target = &*itSrc;
-      ++itSrc;
-    }
+  for (auto & Source : sourceVector)
+    Result.push_back(&Source);
 
   return Result;
 }
@@ -249,12 +246,8 @@ bool cpsapiObject::isValidProperty(const cpsapiProperty::Type & property)
   return CType::SupportedProperties.find(property) != CType::SupportedProperties.end();
 }
 
-template <> inline
-cpsapiObject cpsapiObject::final()
-{
-  return cpsapiObject(mpObject, Type::cpsapiObject);
-} 
-
 CPSAPI_NAMESPACE_END
 
+#include "cpsapi/core/cpsapiFactory.h"
+#include "cpsapi/core/cpsapiVariant.h"
 #include "cpsapi/core/cpsapiVisitor.h"

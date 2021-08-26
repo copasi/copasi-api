@@ -17,8 +17,6 @@
 #include "cpsapi/model/cpsapiModel.h"
 #include "cpsapi/model/cpsapiTransaction.h"
 
-#include "copasi/model/CCompartment.h"
-
 CPSAPI_NAMESPACE_USE
 
 // static
@@ -29,19 +27,20 @@ const cpsapiCompartment::Properties cpsapiCompartment::SupportedProperties =
     cpsapiProperty::Type::UNIT // READ ONLY
   };
 
-cpsapiCompartment::cpsapiCompartment(CCompartment * pCompartment)
-  : base(pCompartment, Type::cpsapiCompartment)
+cpsapiCompartment::cpsapiCompartment(cpsapiCompartment::wrapped * pWrapped)
+  : base(pWrapped, Type::cpsapiCompartment)
   , mpDefaultSpecies()
 {
   for (cpsapiObject * pReference : references())
-    if (this != pReference)
+    if (this != pReference
+        && pReference->getType() == Type::cpsapiCompartment)
       {
         mpDefaultSpecies = static_cast< cpsapiCompartment * >(pReference)->mpDefaultSpecies;
         break;
       }
 
   if (!mpDefaultSpecies)
-    mpDefaultSpecies = std::make_shared< cpsapiSpecies >(nullptr);
+    mpDefaultSpecies = cpsapiFactory::make_shared< cpsapiSpecies >(nullptr);
 }
 
 cpsapiCompartment::cpsapiCompartment(const cpsapiCompartment & src)
@@ -68,7 +67,7 @@ cpsapiSpecies cpsapiCompartment::addSpecies(const std::string & name)
   if (!operator bool())
     return nullptr;
   
-  cpsapiSpecies Species = cpsapiModel(static_cast< CCompartment * >(getObject())->getModel()).addSpecies(name, getObject()->getObjectName());
+  cpsapiSpecies Species = cpsapiModel(static_cast< wrapped * >(getObject())->getModel()).addSpecies(name, getObject()->getObjectName());
 
   if (!Species)
     return nullptr;
@@ -89,9 +88,9 @@ bool cpsapiCompartment::deleteSpecies(const std::string & name)
   if (mpDefaultSpecies->getObject() == pSpecies)
     updateDefaultSpecies(nullptr);
   
-  cpsapiTransaction::beginStructureChange(static_cast< CCompartment * >(getObject())->getModel());
+  cpsapiTransaction::beginStructureChange(static_cast< wrapped * >(getObject())->getModel());
 
-  cpsapiModel(static_cast< CCompartment * >(getObject())->getModel()).deleteAllDependents(pSpecies);
+  cpsapiModel(static_cast< wrapped * >(getObject())->getModel()).deleteAllDependents(pSpecies);
   deleted(pSpecies);
   pdelete(pSpecies);
 
@@ -111,12 +110,12 @@ cpsapiSpecies cpsapiCompartment::species(const std::string & name)
   return *mpDefaultSpecies;
 }
 
-std::vector< cpsapiSpecies > cpsapiCompartment::getSpecies() const
+cpsapiVector< cpsapiSpecies > cpsapiCompartment::getSpecies() const
 {
   if (!operator bool())
-    return std::vector< cpsapiSpecies >();
+    return cpsapiVector< cpsapiSpecies >();
 
-  return convertVector< cpsapiSpecies >(static_cast< CCompartment * >(getObject())->getMetabolites());
+  return cpsapiVector< cpsapiSpecies >(&static_cast< wrapped * >(getObject())->getMetabolites());
 }
 
 cpsapiSpecies cpsapiCompartment::__species(const std::string & name) const
@@ -127,22 +126,23 @@ cpsapiSpecies cpsapiCompartment::__species(const std::string & name) const
   if (name.empty())
     return *mpDefaultSpecies;
 
-  size_t Index = static_cast< CCompartment * >(getObject())->getMetabolites().getIndex(name);
+  size_t Index = static_cast< wrapped * >(getObject())->getMetabolites().getIndex(name);
 
   if (Index == C_INVALID_INDEX)
     return nullptr;
 
-  return  &static_cast< CCompartment * >(getObject())->getMetabolites()[Index];
+  return  &static_cast< wrapped * >(getObject())->getMetabolites()[Index];
 }
 
 void cpsapiCompartment::updateDefaultSpecies(const cpsapiSpecies & species)
 {
-  std::shared_ptr< cpsapiSpecies > Default = std::make_shared< cpsapiSpecies >(species);
+  std::shared_ptr< cpsapiSpecies > Default = cpsapiFactory::make_shared< cpsapiSpecies >(species);
 
   for (cpsapiObject * pReference : references())
-    {
-      static_cast< cpsapiCompartment * >(pReference)->mpDefaultSpecies = Default;
-    }
+    if (pReference->getType() == Type::cpsapiCompartment)
+      {
+        static_cast< cpsapiCompartment * >(pReference)->mpDefaultSpecies = Default;
+      }
 }
 
 bool cpsapiCompartment::setProperty(const cpsapiCompartment::Property & property, const CDataValue & value, const CCore::Framework & framework)
@@ -166,9 +166,9 @@ bool cpsapiCompartment::setProperty(const cpsapiProperty::Type & property, const
 
   CCore::Framework Framework(framework);
 
-  CCompartment * pCompartment = static_cast< CCompartment * >(getObject());
-  CDataObject * pChangedObject = pCompartment;
-  bool success = cpsapiTransaction::endStructureChange(pCompartment->getModel());
+  wrapped * pWrapped = static_cast< wrapped * >(getObject());
+  CDataObject * pChangedObject = pWrapped;
+  bool success = cpsapiTransaction::endStructureChange(pWrapped->getModel());
 
   switch (property)
     {
@@ -176,9 +176,9 @@ bool cpsapiCompartment::setProperty(const cpsapiProperty::Type & property, const
       Framework = CCore::Framework::__SIZE;
       
       if (value.getType() == CDataValue::Type::UINT)
-        success = pCompartment->setDimensionality(value.toUint());
+        success = pWrapped->setDimensionality(value.toUint());
       else if (value.getType() == CDataValue::Type::INT)
-        success = pCompartment->setDimensionality(value.toInt());
+        success = pWrapped->setDimensionality(value.toInt());
 
       break;
 
@@ -188,8 +188,8 @@ bool cpsapiCompartment::setProperty(const cpsapiProperty::Type & property, const
 
       if (value.getType() == CDataValue::Type::DOUBLE)
         {
-          pChangedObject = pCompartment->getInitialValueReference();
-          pCompartment->setInitialValue(value.toDouble());
+          pChangedObject = pWrapped->getInitialValueReference();
+          pWrapped->setInitialValue(value.toDouble());
           success = true;
         }
       else
@@ -217,20 +217,20 @@ CDataValue cpsapiCompartment::getProperty(const cpsapiProperty::Type & property,
   if (!isValidProperty<cpsapiCompartment>(property))
     return base::getProperty(property, CCore::Framework::__SIZE);
 
-  CCompartment * pCompartment = static_cast< CCompartment * >(getObject());
+  wrapped * pWrapped = static_cast< wrapped * >(getObject());
 
   switch (property)
     {
     case cpsapiProperty::Type::DIMENSIONALITY:
-      return pCompartment->getDimensionality();
+      return pWrapped->getDimensionality();
       break;
 
     case cpsapiProperty::Type::INITIAL_VALUE:
-      return pCompartment->getInitialValue();
+      return pWrapped->getInitialValue();
       break;
 
     case cpsapiProperty::Type::UNIT:
-      return pCompartment->getUnits();
+      return pWrapped->getUnits();
       break;
       
     default:

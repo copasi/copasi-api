@@ -14,12 +14,14 @@
 
 #pragma once
 
+#include "cpsapi/core/cpsapiVector.h"
 #include "cpsapi/model/cpsapiModelEntity.h"
 #include "cpsapi/model/cpsapiSpecies.h"
 
 #include <memory>
 
-class CCompartment;
+#include <copasi/model/CCompartment.h>
+
 class CMetab;
 
 CPSAPI_NAMESPACE_BEGIN
@@ -27,8 +29,9 @@ CPSAPI_NAMESPACE_BEGIN
 class cpsapiCompartment: public cpsapiModelEntity
 {
 public:
-  typedef cpsapiModelEntity base;
-
+  /**
+   * Enumeration of the exposed properties
+   */ 
   enum class Property
   {
     DIMENSIONALITY = cpsapiProperty::Type::DIMENSIONALITY,
@@ -44,10 +47,31 @@ public:
     UNIT = cpsapiProperty::Type::UNIT
   };
 
+  /**
+   * Static set of supported properties
+   */
   static const Properties SupportedProperties;
 
-  cpsapiCompartment(CCompartment * pCompartment = nullptr);
+  /**
+   * The base class
+   */
+  typedef cpsapiModelEntity base;
 
+  /**
+   * The wrapped COPASI class
+   */
+  typedef CCompartment wrapped;
+
+  /**
+   * Specific constructor
+   * @param wrapped * pWrapped
+   */
+  cpsapiCompartment(wrapped * pWrapped = nullptr);
+
+  /**
+   * Copy constructor
+   * @param const cpsapiCompartment & src
+   */
   cpsapiCompartment(const cpsapiCompartment & src);
 
   virtual ~cpsapiCompartment();
@@ -60,7 +84,7 @@ public:
 
   cpsapiSpecies species(const std::string & name = "");
 
-  std::vector< cpsapiSpecies > getSpecies() const;
+  cpsapiVector< cpsapiSpecies > getSpecies() const;
   
   bool setProperty(const Property & property, const CDataValue & value, const CCore::Framework & framework = CCore::Framework::__SIZE);
 

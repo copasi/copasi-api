@@ -227,6 +227,7 @@ std::vector< cpsapiGlobalQuantity > cpsapi::getGlobalQuantities(const std::strin
 void cpsapi::init()
 {
   CRootContainer::init(0, nullptr);
+  cpsapiFactory::init();
 }
 
 // static 

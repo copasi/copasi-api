@@ -22,8 +22,6 @@ CPSAPI_NAMESPACE_BEGIN
 
 class cpsapiModelEntity: public cpsapiContainer
 {
-  friend cpsapiModelEntity cpsapiObject::final< cpsapiModelEntity >();
-
 public:
   typedef cpsapiContainer base;
 
@@ -45,8 +43,17 @@ public:
   cpsapiModelEntity() = delete;
 
 protected:
-  cpsapiModelEntity(CModelEntity * pModelEntity, const Type & typeId);
+  /**
+   * Specific constructor
+   * @param CModelEntity * pContainer
+   * @param const Type & type
+   */
+  cpsapiModelEntity(CModelEntity * pModelEntity, const Type & type);
 
+  /**
+   * Copy constructor
+   * @param const cpsapiModelEntity & src
+   */
   cpsapiModelEntity(const cpsapiModelEntity & src);
 
 public:
@@ -63,11 +70,5 @@ protected:
 
   virtual CDataValue getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const override;
 };
-
-template <> inline
-cpsapiModelEntity cpsapiObject::final()
-{
-  return cpsapiModelEntity(static_cast< CModelEntity * >(getObject()), Type::cpsapiModelEntity);
-} 
 
 CPSAPI_NAMESPACE_END

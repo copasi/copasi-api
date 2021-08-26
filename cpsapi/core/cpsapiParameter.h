@@ -25,11 +25,6 @@ CPSAPI_NAMESPACE_BEGIN
 class cpsapiParameter : public cpsapiContainer
 {
 public:
-  typedef cpsapiContainer base;
-
-  /**
-   * Enumeration of the exposed properties
-   */ 
   /**
    * Enumeration of the exposed properties
    */
@@ -41,14 +36,43 @@ public:
     CN = cpsapiProperty::Type::CN
   };
 
+ /**
+   * Static set of supported properties
+   */
   static const Properties SupportedProperties;
 
-  cpsapiParameter(CCopasiParameter * pParameter, const Type & typeId);
+  /**
+   * The base class
+   */
+  typedef cpsapiContainer base;
 
+  /**
+   * The wrapped COPASI class
+   */
+  typedef CCopasiParameter wrapped;
+
+  /**
+   * Specific constructor
+   * @param wrapped * pWrapped (default: nullptr)
+   * @param const Type & type (default: Type::cpsapiParameter)
+   */
+  cpsapiParameter(wrapped * pWrapped = nullptr, const Type & type = Type::cpsapiParameter);
+
+  /**
+   * Copy constructor
+   * @param const cpsapiContainer & src
+   */
   cpsapiParameter(const cpsapiParameter & src);
 
+  /**
+   * Destructor
+   */
   virtual ~cpsapiParameter();
 
+  /**
+   * Accept a visitor
+   * @param cpsapiVisitor & visitor
+   */
   virtual void accept(cpsapiVisitor & visitor) override;
 
   bool setProperty(const Property & property, const CDataValue & value, const CCore::Framework & framework = CCore::Framework::__SIZE);

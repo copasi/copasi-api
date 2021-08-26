@@ -48,7 +48,8 @@ cpsapiModel::cpsapiModel(CModel * pModel)
   , mpDefaultEvent(nullptr)
 {
   for (cpsapiObject * pReference : references())
-    if (this != pReference)
+    if (this != pReference
+        && pReference->getType() == Type::cpsapiModel)
       {
         mpDefaultCompartment = static_cast< cpsapiModel * >(pReference)->mpDefaultCompartment;
         mpDefaultGlobalQuantity = static_cast< cpsapiModel * >(pReference)->mpDefaultGlobalQuantity;
@@ -56,10 +57,10 @@ cpsapiModel::cpsapiModel(CModel * pModel)
       }
 
   if (!mpDefaultCompartment)
-    mpDefaultCompartment = std::make_shared< cpsapiCompartment >();
+    mpDefaultCompartment = cpsapiFactory::make_shared< cpsapiCompartment >(nullptr);
 
   if (!mpDefaultGlobalQuantity)
-    mpDefaultGlobalQuantity = std::make_shared< cpsapiGlobalQuantity >();
+    mpDefaultGlobalQuantity = cpsapiFactory::make_shared< cpsapiGlobalQuantity >(nullptr);
 }
 
 cpsapiModel::cpsapiModel(const cpsapiModel & src)
@@ -189,12 +190,13 @@ cpsapiCompartment cpsapiModel::__compartment(const std::string & name) const
 
 void cpsapiModel::updateDefaultCompartment(const cpsapiCompartment & compartment)
 {
-  std::shared_ptr< cpsapiCompartment > Default = std::make_shared< cpsapiCompartment >(compartment);
+  std::shared_ptr< cpsapiCompartment > Default = cpsapiFactory::make_shared< cpsapiCompartment >(compartment);
 
   for (cpsapiObject * pReference : references())
-    {
-      static_cast< cpsapiModel * >(pReference)->mpDefaultCompartment = Default;
-    }
+    if (pReference->getType() == Type::cpsapiModel)
+      {
+        static_cast< cpsapiModel * >(pReference)->mpDefaultCompartment = Default;
+      }
 }
 
 cpsapiSpecies cpsapiModel::addSpecies(const std::string & name, const std::string & compartment)
@@ -317,12 +319,13 @@ cpsapiGlobalQuantity cpsapiModel::__globalQuantity(const std::string & name) con
 
 void cpsapiModel::updateDefaultGlobalQuantity(const cpsapiGlobalQuantity & globalQuantity)
 {
-  std::shared_ptr< cpsapiGlobalQuantity > Default = std::make_shared< cpsapiGlobalQuantity >(globalQuantity);
+  std::shared_ptr< cpsapiGlobalQuantity > Default = cpsapiFactory::make_shared< cpsapiGlobalQuantity >(globalQuantity);
 
   for (cpsapiObject * pReference : references())
-    {
-      static_cast< cpsapiModel * >(pReference)->mpDefaultGlobalQuantity = Default;
-    }
+    if (pReference->getType() == Type::cpsapiModel)
+      {
+        static_cast< cpsapiModel * >(pReference)->mpDefaultGlobalQuantity = Default;
+      }
 }
 
 void cpsapiModel::deleteDependents(const CDataObject::DataObjectSet & set)

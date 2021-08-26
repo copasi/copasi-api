@@ -57,7 +57,24 @@ void cpsapiObject::deleted(const CDataObject * pObject)
 }
 
 // static
-const cpsapiObject::Properties cpsapiObject::SupportedProperties = 
+const CEnumAnnotation< std::string, cpsapiObject::Type > cpsapiObject::TypeName(
+{
+  "cpsapiObject",
+  "cpsapiContainer",
+  "cpsapiVector",
+  "cpsapiModelEntity",
+  "cpsapiValue",
+  "cpsapiModel",
+  "cpsapiCompartment",
+  "cpsapiSpecies",
+  "cpsapiGlobalQuantity",
+  "cpsapiDataModel",
+  "cpsapiParameter",
+  "cpsapiGroup"
+});
+
+// static
+const cpsapiObject::Properties cpsapiObject::SupportedProperties =
 {
   cpsapiProperty::Type::OBJECT_NAME,
   cpsapiProperty::Type::DISPLAY_NAME,
@@ -65,13 +82,12 @@ const cpsapiObject::Properties cpsapiObject::SupportedProperties =
 };
 
 // static
-const cpsapiObject::Properties cpsapiObject::HiddenProperties = 
-{};
+const cpsapiObject::Properties cpsapiObject::HiddenProperties = {};
 
-cpsapiObject::cpsapiObject(CDataObject * pObject, const cpsapiObject::Type & typeId)
+cpsapiObject::cpsapiObject(CDataObject * pObject, const cpsapiObject::Type & type)
   : mpObject(pObject)
   , mpReferences(nullptr)
-  , mType(typeId)
+  , mType(type)
 {
   addToReferences();
 }
