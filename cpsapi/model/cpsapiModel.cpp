@@ -303,7 +303,7 @@ std::vector< cpsapiGlobalQuantity > cpsapiModel::getGlobalQuantities() const
 
 cpsapiGlobalQuantity cpsapiModel::__globalQuantity(const std::string & name) const
 {
-  if (!operator bool() || mpDefaultGlobalQuantity == nullptr)
+  if (!operator bool())
     return nullptr;
 
   if (name.empty())

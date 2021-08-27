@@ -109,7 +109,7 @@ std::shared_ptr< cpsapiObject > cpsapiFactory::make_shared(const cpsapiObject & 
 template < class CType > inline
 std::shared_ptr< CType > cpsapiFactory::make_shared(CDataObject * pFrom)
 {
-  return std::shared_ptr< CType >(dynamic_cast< CType * >(make(pFrom, pFrom == nullptr ? nullptr : &info(std::type_index(typeid(CType))))));
+  return std::shared_ptr< CType >(dynamic_cast< CType * >(make(pFrom, pFrom != nullptr ? nullptr : &info(std::type_index(typeid(CType))))));
 }
 
 template < class CType > inline
@@ -133,7 +133,7 @@ std::unique_ptr< cpsapiObject, cpsapiFactory::free_unique_t >cpsapiFactory::make
 template < class CType > 
 std::unique_ptr< CType, cpsapiFactory::free_unique_t > cpsapiFactory::make_unique(CDataObject * pFrom)
 {
-  return std::unique_ptr< CType, cpsapiFactory::free_unique_t >(dynamic_cast< CType * >(make(pFrom, pFrom == nullptr ? nullptr : &info(std::type_index(typeid(CType))))), &free_unique< CType >);
+  return std::unique_ptr< CType, cpsapiFactory::free_unique_t >(dynamic_cast< CType * >(make(pFrom, pFrom != nullptr ? nullptr : &info(std::type_index(typeid(CType))))), &free_unique< CType >);
 }
 
 template < class CType > 

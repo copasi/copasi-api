@@ -104,7 +104,7 @@ cpsapiSpecies cpsapiCompartment::species(const std::string & name)
   if (!Species)
     return Species;
 
-  if (mpDefaultSpecies == nullptr || mpDefaultSpecies->getObject() != Species.getObject())
+  if (mpDefaultSpecies->getObject() != Species.getObject())
     updateDefaultSpecies(Species);
 
   return *mpDefaultSpecies;
