@@ -16,29 +16,51 @@
 
 #include "cpsapi/core/cpsapiParameter.h"
 
-#include <copasi/utilities/CCopasiParameter.h>
-
-class CCopasiParameterGroup;
+#include <copasi/utilities/CCopasiParameterGroup.h>
 
 CPSAPI_NAMESPACE_BEGIN
 
 class cpsapiGroup : public cpsapiParameter
 {
 public:
-  typedef cpsapiParameter base;
-
   /**
    * Enumeration of the exposed properties
-   */
+   */ 
   enum class Property {};
 
+  /**
+   * Static set of supported properties
+   */
   static const Properties SupportedProperties;
 
   /**
-   * Specific constructor
-   * @param CCopasiParameterGroup * pGroup
+   * The base class
    */
-  cpsapiGroup(CCopasiParameterGroup * pGroup);
+  typedef cpsapiParameter base;
+
+  /**
+   * The wrapped COPASI class
+   */
+  typedef CCopasiParameterGroup wrapped;
+
+  class Data : public base::Data
+  {
+  public:
+    Data(const base::Data & data)
+      : base::Data(data)
+      , mDefaultParameter()
+    {}
+
+    virtual ~Data() {}
+
+    cpsapiParameter mDefaultParameter;
+  };
+
+  /**
+   * Specific constructor
+   * @param wrapped * pGroup
+   */
+  cpsapiGroup(wrapped * pGroup);
 
   /**
    * Copy constructor

@@ -13,26 +13,16 @@
 // END: License
 
 #include "cpsapi/core/cpsapiGroup.h"
-#include <copasi/utilities/CCopasiParameterGroup.h>
 
 CPSAPI_NAMESPACE_USE
 
 // static
 const cpsapiGroup::Properties cpsapiGroup::SupportedProperties = {};
 
-cpsapiGroup::cpsapiGroup(CCopasiParameterGroup * pObject)
+cpsapiGroup::cpsapiGroup(wrapped * pObject)
   : base(pObject, Type::cpsapiGroup)
 {
-  for (cpsapiObject * pReference : *references())
-    if (this != pReference
-        && pReference->getType() == Type::cpsapiGroup)
-      {
-        mpDefaultParameter = static_cast< cpsapiGroup * >(pReference)->mpDefaultParameter;
-        break;
-      }
-
-  if (!mpDefaultParameter)
-    mpDefaultParameter = cpsapiFactory::make_shared< cpsapiParameter >(nullptr);
+  assertData(Data(*std::static_pointer_cast< base::Data >(mpData)));
 }
 
 cpsapiGroup::cpsapiGroup(const cpsapiGroup & src)
@@ -131,7 +121,7 @@ cpsapiParameter cpsapiGroup::addParameter(const std::string & name, const CDataV
 
   if (pParameter != nullptr)
     {
-      static_cast< CCopasiParameterGroup * >(getObject())->addParameter(pParameter);
+      static_cast< wrapped * >(getObject())->addParameter(pParameter);
       Parameter = cpsapiParameter(pParameter, Type::cpsapiParameter);
 
       updateDefaultParameter(Parameter);
@@ -147,12 +137,12 @@ cpsapiGroup cpsapiGroup::addGroup(const std::string & name)
   if (!operator bool())
     return Group;
 
-  CCopasiParameterGroup * pGroup = new CCopasiParameterGroup(name);
+  wrapped * pWrapped = new wrapped(name);
 
-  if (pGroup != nullptr)
+  if (pWrapped != nullptr)
     {
-      static_cast< CCopasiParameterGroup * >(getObject())->addParameter(pGroup);
-      Group = cpsapiGroup(pGroup);
+      static_cast< wrapped * >(getObject())->addParameter(pWrapped);
+      Group = cpsapiGroup(pWrapped);
 
       updateDefaultParameter(Group);
     }
@@ -167,7 +157,7 @@ bool cpsapiGroup::deleteParameter(const std::string & name)
   if (pParameter == nullptr)
     return false;
 
-  if (mpDefaultParameter->getObject() == pParameter)
+  if (DATA(mpData)->mDefaultParameter.getObject() == pParameter)
     updateDefaultParameter(cpsapiParameter(nullptr, Type::cpsapiParameter));
 
   deleted(pParameter);
@@ -183,10 +173,10 @@ cpsapiParameter cpsapiGroup::parameter(const std::string & name)
   if (!Parameter)
     return Parameter;
 
-  if (mpDefaultParameter->getObject() != Parameter.getObject())
+  if (DATA(mpData)->mDefaultParameter.getObject() != Parameter.getObject())
     updateDefaultParameter(Parameter);
 
-  return *static_cast< cpsapiParameter * >(mpDefaultParameter.get());
+  return DATA(mpData)->mDefaultParameter;
 }
 
 std::vector< cpsapiParameter > cpsapiGroup::getParameters() const
@@ -195,10 +185,10 @@ std::vector< cpsapiParameter > cpsapiGroup::getParameters() const
 
   if (operator bool())
     {
-      CCopasiParameterGroup::elements::iterator it = static_cast< CCopasiParameterGroup::elements * >(static_cast< CCopasiParameterGroup * >(getObject())->getValuePointer())->begin();
-      CCopasiParameterGroup::elements::iterator end = static_cast< CCopasiParameterGroup::elements * >(static_cast< CCopasiParameterGroup * >(getObject())->getValuePointer())->end();
+      wrapped::elements::iterator it = static_cast< wrapped::elements * >(static_cast< wrapped * >(getObject())->getValuePointer())->begin();
+      wrapped::elements::iterator end = static_cast< wrapped::elements * >(static_cast< wrapped * >(getObject())->getValuePointer())->end();
 
-      for (CCopasiParameter * pParameter : *static_cast< CCopasiParameterGroup::elements * >(static_cast< CCopasiParameterGroup * >(getObject())->getValuePointer()))
+      for (CCopasiParameter * pParameter : *static_cast< wrapped::elements * >(static_cast< wrapped * >(getObject())->getValuePointer()))
         {
           if (pParameter == nullptr)
             continue;
@@ -206,7 +196,7 @@ std::vector< cpsapiParameter > cpsapiGroup::getParameters() const
           if (pParameter->getType() != CCopasiParameter::Type::GROUP)
             Parameters.push_back(cpsapiParameter(pParameter, Type::cpsapiParameter));
           else
-            Parameters.push_back(cpsapiGroup(static_cast< CCopasiParameterGroup * >(pParameter)));
+            Parameters.push_back(cpsapiGroup(static_cast< wrapped * >(pParameter)));
         }
     }
 
@@ -219,24 +209,18 @@ cpsapiParameter cpsapiGroup::__parameter(const std::string & name) const
     return cpsapiParameter(nullptr, Type::cpsapiParameter);
 
   if (name.empty())
-    return *mpDefaultParameter;
+    return DATA(mpData)->mDefaultParameter;
 
-  CCopasiParameter * pParameter = static_cast< CCopasiParameterGroup * >(getObject())->getParameter(name);
+  CCopasiParameter * pParameter = static_cast< wrapped * >(getObject())->getParameter(name);
 
   if (pParameter == nullptr
       || pParameter->getType() != CCopasiParameter::Type::GROUP)
     return cpsapiParameter(pParameter, Type::cpsapiParameter);
   
-  return cpsapiGroup(static_cast< CCopasiParameterGroup * >(pParameter));
+  return cpsapiGroup(static_cast< wrapped * >(pParameter));
 }
 
 void cpsapiGroup::updateDefaultParameter(const cpsapiParameter & parameter)
 {
-  std::shared_ptr< cpsapiParameter > DefaultParameter = cpsapiFactory::make_shared< cpsapiParameter >(parameter);
-
-  for (cpsapiObject * pReference : *references())
-    if (pReference->getType() == Type::cpsapiGroup)
-      {
-        static_cast< cpsapiGroup * >(pReference)->mpDefaultParameter = DefaultParameter;
-      }
+  DATA(mpData)->mDefaultParameter = parameter;
 }

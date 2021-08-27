@@ -26,12 +26,10 @@ const cpsapiParameter::Properties cpsapiParameter::SupportedProperties =
 
 cpsapiParameter::cpsapiParameter(wrapped * pWrapped, const cpsapiObject::Type & type)
   : base(pWrapped, type)
-  , mpDefaultParameter()
 {}
 
 cpsapiParameter::cpsapiParameter(const cpsapiParameter & src)
   : base(src)
-  , mpDefaultParameter(src.mpDefaultParameter)
 {}
 
 // virtual

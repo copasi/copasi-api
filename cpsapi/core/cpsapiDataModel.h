@@ -40,6 +40,16 @@ class cpsapiDataModel : public cpsapiContainer
 {
 public:
   /**
+   * Enumeration of the exposed properties
+   */ 
+  enum class Property {};
+
+  /**
+   * Static set of supported properties
+   */
+  // static const Properties SupportedProperties;
+
+  /**
    * The base class
    */
   typedef cpsapiContainer base;
@@ -48,6 +58,25 @@ public:
    * The wrapped COPASI class
    */
   typedef CDataModel wrapped;
+
+  class Data : public base::Data
+  {
+  public:
+    Data(const base::Data & data)
+      : base::Data(data)
+      , mModel()
+      , mpDefaultTask(nullptr)
+      , mpDefaultReportDefinition(nullptr)
+      , mpDefaultPlotSpecification(nullptr)
+    {}
+
+    virtual ~Data() {}
+
+    cpsapiModel mModel;
+    CCopasiTask * mpDefaultTask;
+    CReportDefinition * mpDefaultReportDefinition;
+    CPlotSpecification * mpDefaultPlotSpecification;
+  };
 
   /**
    * Specific constructor
@@ -115,13 +144,6 @@ public:
   cpsapiGlobalQuantity globalQuantity(const std::string & name = "");
 
   std::vector< cpsapiGlobalQuantity > getGlobalQuantities();
-
-private:
-  std::shared_ptr< cpsapiModel > mpModel;
-  CCopasiTask * mpDefaultTask;
-  CReportDefinition * mpDefaultReportDefinition;
-  CPlotSpecification * mpDefaultPlotSpecification;
-
 };
 
 CPSAPI_NAMESPACE_END

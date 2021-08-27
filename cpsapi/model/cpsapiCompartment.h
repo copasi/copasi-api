@@ -62,6 +62,20 @@ public:
    */
   typedef CCompartment wrapped;
 
+  class Data : public base::Data
+  {
+  public:
+    Data(const base::Data & data)
+      : base::Data(data)
+      , mDefaultSpecies()
+    {}
+
+    virtual ~Data() {}
+
+
+    cpsapiSpecies mDefaultSpecies;
+  };
+
   /**
    * Specific constructor
    * @param wrapped * pWrapped
@@ -99,8 +113,6 @@ private:
   cpsapiSpecies __species(const std::string & name) const;
 
   void updateDefaultSpecies(const cpsapiSpecies & species);
-
-  std::shared_ptr< cpsapiSpecies > mpDefaultSpecies;
 };
 
 CPSAPI_NAMESPACE_END

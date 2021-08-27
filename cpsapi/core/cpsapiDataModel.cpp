@@ -24,34 +24,12 @@ CPSAPI_NAMESPACE_USE
 
 cpsapiDataModel::cpsapiDataModel(wrapped * pWrapped)
   : base(pWrapped, Type::cpsapiDataModel)
-  , mpModel()
-  , mpDefaultTask(nullptr)
-  , mpDefaultReportDefinition(nullptr)
-  , mpDefaultPlotSpecification(nullptr)
 {
-  for (cpsapiObject * pReference : *references())
-    if (this != pReference
-        && pReference->getType() == Type::cpsapiDataModel)
-      {
-        mpModel = static_cast< cpsapiDataModel * >(pReference)->mpModel;
-        break;
-      }
-
-  if (!mpModel)
-    {
-      if (operator bool())
-        mpModel = cpsapiFactory::make_shared< cpsapiModel >(static_cast< wrapped * >(getObject())->getModel());
-      else
-        mpModel = cpsapiFactory::make_shared< cpsapiModel >(nullptr);
-    }
+  assertData(Data(*std::static_pointer_cast< base::Data >(mpData)));
 }
 
 cpsapiDataModel::cpsapiDataModel(const cpsapiDataModel & src)
   : base(src)
-  , mpModel(src.mpModel)
-  , mpDefaultTask(src.mpDefaultTask)
-  , mpDefaultReportDefinition(src.mpDefaultReportDefinition)
-  , mpDefaultPlotSpecification(src.mpDefaultPlotSpecification)
 {}
 
 // virtual 
@@ -75,7 +53,7 @@ bool cpsapiDataModel::loadFromFile(const std::string & fileName)
   if (operator bool())
     {
       success = static_cast< wrapped * >(getObject())->loadFromFile(fileName);
-      *mpModel = cpsapiModel(static_cast< wrapped * >(getObject())->getModel());
+      DATA(mpData)->mModel = cpsapiModel(static_cast< wrapped * >(getObject())->getModel());
     }
 
   return success;
@@ -88,7 +66,7 @@ bool cpsapiDataModel::loadFromString(const std::string & content, const std::str
   if (operator bool())
     {
       success = static_cast< wrapped * >(getObject())->loadFromString(content, referenceDir);
-      *mpModel = cpsapiModel(static_cast< wrapped * >(getObject())->getModel());
+      DATA(mpData)->mModel = cpsapiModel(static_cast< wrapped * >(getObject())->getModel());
     }
 
   return success;
@@ -97,10 +75,10 @@ bool cpsapiDataModel::loadFromString(const std::string & content, const std::str
 cpsapiModel & cpsapiDataModel::model()
 {
   if (operator bool()
-      && !*mpModel)
-    *mpModel = static_cast< wrapped * >(getObject())->getModel();
+      && !DATA(mpData)->mModel)
+    DATA(mpData)->mModel = static_cast< wrapped * >(getObject())->getModel();
 
-  return *mpModel;
+  return DATA(mpData)->mModel;
 }
 
 void cpsapiDataModel::beginTransaction()

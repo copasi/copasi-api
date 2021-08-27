@@ -40,35 +40,14 @@ const cpsapiModel::Properties cpsapiModel::HiddenProperties =
     cpsapiProperty::Type::ADD_NOISE,
     cpsapiProperty::Type::NOISE_EXPRESSION};
 
-cpsapiModel::cpsapiModel(CModel * pModel)
-  : base(pModel, Type::cpsapiModel)
-  , mpDefaultCompartment()
-  , mpDefaultReaction(nullptr)
-  , mpDefaultGlobalQuantity()
-  , mpDefaultEvent(nullptr)
+cpsapiModel::cpsapiModel(wrapped * pWrapped)
+  : base(pWrapped, Type::cpsapiModel)
 {
-  for (cpsapiObject * pReference : *references())
-    if (this != pReference
-        && pReference->getType() == Type::cpsapiModel)
-      {
-        mpDefaultCompartment = static_cast< cpsapiModel * >(pReference)->mpDefaultCompartment;
-        mpDefaultGlobalQuantity = static_cast< cpsapiModel * >(pReference)->mpDefaultGlobalQuantity;
-        break;
-      }
-
-  if (!mpDefaultCompartment)
-    mpDefaultCompartment = cpsapiFactory::make_shared< cpsapiCompartment >(nullptr);
-
-  if (!mpDefaultGlobalQuantity)
-    mpDefaultGlobalQuantity = cpsapiFactory::make_shared< cpsapiGlobalQuantity >(nullptr);
+  assertData(Data(*std::static_pointer_cast< base::Data >(mpData)));
 }
 
 cpsapiModel::cpsapiModel(const cpsapiModel & src)
   : base(src)
-  , mpDefaultCompartment(src.mpDefaultCompartment)
-  , mpDefaultReaction(src.mpDefaultReaction)
-  , mpDefaultGlobalQuantity(src.mpDefaultGlobalQuantity)
-  , mpDefaultEvent(src.mpDefaultEvent)
 {}
 
 // virtual
@@ -88,13 +67,13 @@ void cpsapiModel::accept(cpsapiVisitor & visitor)
 void cpsapiModel::beginTransaction() const
 {
   if (operator bool())
-    cpsapiTransaction::beginTransaction(static_cast< CModel * >(getObject()));
+    cpsapiTransaction::beginTransaction(static_cast< wrapped * >(getObject()));
 }
 
 void cpsapiModel::endTransaction() const
 {
   if (operator bool())
-    cpsapiTransaction::endTransaction(static_cast< CModel * >(getObject()));
+    cpsapiTransaction::endTransaction(static_cast< wrapped * >(getObject()));
 }
 
 bool cpsapiModel::synchronize(std::set< const CDataObject * > & /* changedObjects */, const CCore::Framework & framework)
@@ -102,7 +81,7 @@ bool cpsapiModel::synchronize(std::set< const CDataObject * > & /* changedObject
   if (!operator bool())
     return false;
 
-  static_cast< CModel * >(getObject())->updateInitialValues(framework != CCore::Framework::__SIZE ? framework : CCore::Framework::Concentration);
+  static_cast< wrapped * >(getObject())->updateInitialValues(framework != CCore::Framework::__SIZE ? framework : CCore::Framework::Concentration);
 
   return true;
 }
@@ -112,7 +91,7 @@ bool cpsapiModel::compile()
   if (!operator bool())
     return false;
 
-  return static_cast< CModel * >(getObject())->compileIfNecessary(nullptr);
+  return static_cast< wrapped * >(getObject())->compileIfNecessary(nullptr);
 }
 
 cpsapiCompartment cpsapiModel::addCompartment(const std::string & name)
@@ -120,16 +99,16 @@ cpsapiCompartment cpsapiModel::addCompartment(const std::string & name)
   if (!operator bool())
     return nullptr;
 
-  cpsapiTransaction::beginStructureChange(static_cast< CModel * >(getObject()));
+  cpsapiTransaction::beginStructureChange(static_cast< wrapped * >(getObject()));
 
-  CCompartment * pCompartment = static_cast< CModel * >(getObject())->createCompartment(name);
+  CCompartment * pCompartment = static_cast< wrapped * >(getObject())->createCompartment(name);
 
   if (pCompartment == nullptr)
     return nullptr;
 
   updateDefaultCompartment(pCompartment);
 
-  return *mpDefaultCompartment;
+  return DATA(mpData)->mDefaultCompartment;
 }
 
 bool cpsapiModel::deleteCompartment(const std::string & name)
@@ -139,10 +118,10 @@ bool cpsapiModel::deleteCompartment(const std::string & name)
   if (pCompartment == nullptr)
     return false;
 
-  if (mpDefaultCompartment->getObject() == pCompartment)
+  if (DATA(mpData)->mDefaultCompartment.getObject() == pCompartment)
     updateDefaultCompartment(nullptr);
 
-  cpsapiTransaction::beginStructureChange(static_cast< CModel * >(getObject()));
+  cpsapiTransaction::beginStructureChange(static_cast< wrapped * >(getObject()));
 
   deleteAllDependents(pCompartment);
   deleted(pCompartment);
@@ -158,10 +137,10 @@ cpsapiCompartment cpsapiModel::compartment(const std::string & name)
   if (!Compartment)
     return nullptr;
 
-  if (mpDefaultCompartment->getObject() != Compartment.getObject())
+  if (DATA(mpData)->mDefaultCompartment.getObject() != Compartment.getObject())
     updateDefaultCompartment(Compartment);
 
-  return *mpDefaultCompartment;
+  return DATA(mpData)->mDefaultCompartment;
 }
 
 std::vector< cpsapiCompartment > cpsapiModel::getCompartments() const
@@ -169,7 +148,7 @@ std::vector< cpsapiCompartment > cpsapiModel::getCompartments() const
   if (!operator bool())
     return std::vector< cpsapiCompartment >();
 
-  return convertVector< cpsapiCompartment >(static_cast< CModel * >(getObject())->getCompartments());
+  return convertVector< cpsapiCompartment >(static_cast< wrapped * >(getObject())->getCompartments());
 }
 
 cpsapiCompartment cpsapiModel::__compartment(const std::string & name) const
@@ -178,25 +157,19 @@ cpsapiCompartment cpsapiModel::__compartment(const std::string & name) const
     return nullptr;
 
   if (name.empty())
-    return *mpDefaultCompartment;
+    return DATA(mpData)->mDefaultCompartment;
 
-  size_t Index = static_cast< CModel * >(getObject())->getCompartments().getIndex(name);
+  size_t Index = static_cast< wrapped * >(getObject())->getCompartments().getIndex(name);
 
   if (Index == C_INVALID_INDEX)
     return nullptr;
 
-  return &static_cast< CModel * >(getObject())->getCompartments()[Index];
+  return &static_cast< wrapped * >(getObject())->getCompartments()[Index];
 }
 
 void cpsapiModel::updateDefaultCompartment(const cpsapiCompartment & compartment)
 {
-  std::shared_ptr< cpsapiCompartment > Default = cpsapiFactory::make_shared< cpsapiCompartment >(compartment);
-
-  for (cpsapiObject * pReference : *references())
-    if (pReference->getType() == Type::cpsapiModel)
-      {
-        static_cast< cpsapiModel * >(pReference)->mpDefaultCompartment = Default;
-      }
+  DATA(mpData)->mDefaultCompartment = compartment;
 }
 
 cpsapiSpecies cpsapiModel::addSpecies(const std::string & name, const std::string & compartment)
@@ -209,16 +182,14 @@ cpsapiSpecies cpsapiModel::addSpecies(const std::string & name, const std::strin
   if (!Compartment)
     return nullptr;
 
-  if (mpDefaultCompartment->getObject() != Compartment.getObject())
+  if (DATA(mpData)->mDefaultCompartment.getObject() != Compartment.getObject())
     updateDefaultCompartment(Compartment);
 
-  cpsapiTransaction::beginStructureChange(static_cast< CModel * >(getObject()));
-  CMetab * pMetab = static_cast< CModel * >(getObject())->createMetabolite(name, compartment);
+  cpsapiTransaction::beginStructureChange(static_cast< wrapped * >(getObject()));
+  CMetab * pMetab = static_cast< wrapped * >(getObject())->createMetabolite(name, compartment);
 
   if (pMetab != nullptr)
-    {
-      mpDefaultCompartment->species(name);
-    }
+    DATA(mpData)->mDefaultCompartment.species(name);
 
   return pMetab;
 }
@@ -238,7 +209,7 @@ std::vector< cpsapiSpecies > cpsapiModel::getSpecies() const
   if (!operator bool())
     return std::vector< cpsapiSpecies >();
 
-  return convertVector< cpsapiSpecies >(static_cast< CModel * >(getObject())->getMetabolites());
+  return convertVector< cpsapiSpecies >(static_cast< wrapped * >(getObject())->getMetabolites());
 }
 
 cpsapiSpecies cpsapiModel::__species(const std::string & name, const std::string & compartment) const
@@ -251,9 +222,9 @@ cpsapiGlobalQuantity cpsapiModel::addGlobalQuantity(const std::string & name)
   if (!operator bool())
     return nullptr;
 
-  cpsapiTransaction::beginStructureChange(static_cast< CModel * >(getObject()));
+  cpsapiTransaction::beginStructureChange(static_cast< wrapped * >(getObject()));
 
-  CModelValue * pGlobalQuantity = static_cast< CModel * >(getObject())->createModelValue(name);
+  CModelValue * pGlobalQuantity = static_cast< wrapped * >(getObject())->createModelValue(name);
 
   if (pGlobalQuantity != nullptr)
     updateDefaultGlobalQuantity(pGlobalQuantity);
@@ -268,10 +239,10 @@ bool cpsapiModel::deleteGlobalQuantity(const std::string & name)
   if (pGlobalQuantity == nullptr)
     return false;
 
-  if (mpDefaultGlobalQuantity->getObject() == pGlobalQuantity)
+  if (DATA(mpData)->mDefaultGlobalQuantity.getObject() == pGlobalQuantity)
     updateDefaultGlobalQuantity(nullptr);
 
-  cpsapiTransaction::beginStructureChange(static_cast< CModel * >(getObject()));
+  cpsapiTransaction::beginStructureChange(static_cast< wrapped * >(getObject()));
 
   deleteAllDependents(pGlobalQuantity);
   deleted(pGlobalQuantity);
@@ -287,7 +258,7 @@ cpsapiGlobalQuantity cpsapiModel::globalQuantity(const std::string & name)
   if (!GlobalQuantity)
     return nullptr;
 
-  if (mpDefaultGlobalQuantity->getObject() != GlobalQuantity.getObject())
+  if (DATA(mpData)->mDefaultGlobalQuantity.getObject() != GlobalQuantity.getObject())
     updateDefaultGlobalQuantity(GlobalQuantity);
 
   return GlobalQuantity;
@@ -298,7 +269,7 @@ std::vector< cpsapiGlobalQuantity > cpsapiModel::getGlobalQuantities() const
   if (!operator bool())
     return std::vector< cpsapiGlobalQuantity >();
 
-  return convertVector< cpsapiGlobalQuantity >(static_cast< CModel * >(getObject())->getModelValues());
+  return convertVector< cpsapiGlobalQuantity >(static_cast< wrapped * >(getObject())->getModelValues());
 }
 
 cpsapiGlobalQuantity cpsapiModel::__globalQuantity(const std::string & name) const
@@ -307,25 +278,19 @@ cpsapiGlobalQuantity cpsapiModel::__globalQuantity(const std::string & name) con
     return nullptr;
 
   if (name.empty())
-    return *mpDefaultGlobalQuantity;
+    return DATA(mpData)->mDefaultGlobalQuantity;
 
-  size_t Index = static_cast< CModel * >(getObject())->getModelValues().getIndex(name);
+  size_t Index = static_cast< wrapped * >(getObject())->getModelValues().getIndex(name);
 
   if (Index == C_INVALID_INDEX)
     return nullptr;
 
-  return &static_cast< CModel * >(getObject())->getModelValues()[Index];
+  return &static_cast< wrapped * >(getObject())->getModelValues()[Index];
 }
 
 void cpsapiModel::updateDefaultGlobalQuantity(const cpsapiGlobalQuantity & globalQuantity)
 {
-  std::shared_ptr< cpsapiGlobalQuantity > Default = cpsapiFactory::make_shared< cpsapiGlobalQuantity >(globalQuantity);
-
-  for (cpsapiObject * pReference : *references())
-    if (pReference->getType() == Type::cpsapiModel)
-      {
-        static_cast< cpsapiModel * >(pReference)->mpDefaultGlobalQuantity = Default;
-      }
+  DATA(mpData)->mDefaultGlobalQuantity = globalQuantity;
 }
 
 void cpsapiModel::deleteDependents(const CDataObject::DataObjectSet & set)
@@ -342,16 +307,16 @@ void cpsapiModel::deleteAllDependents(CDataContainer * pContainer)
   if (!operator bool())
     return;
 
-  static_cast< CModel * >(getObject())->compileIfNecessary(nullptr);
+  static_cast< wrapped * >(getObject())->compileIfNecessary(nullptr);
 
-  CModel::DataObjectSet DependentReactions;
-  CModel::DataObjectSet DependentMetabolites;
-  CModel::DataObjectSet DependentCompartments;
-  CModel::DataObjectSet DependentModelValues;
-  CModel::DataObjectSet DependentEvents;
-  CModel::DataObjectSet DependentEventAssignments;
+  wrapped::DataObjectSet DependentReactions;
+  wrapped::DataObjectSet DependentMetabolites;
+  wrapped::DataObjectSet DependentCompartments;
+  wrapped::DataObjectSet DependentModelValues;
+  wrapped::DataObjectSet DependentEvents;
+  wrapped::DataObjectSet DependentEventAssignments;
 
-  static_cast< CModel * >(getObject())->appendAllDependents(*pContainer,
+  static_cast< wrapped * >(getObject())->appendAllDependents(*pContainer,
                                                           DependentReactions,
                                                           DependentMetabolites,
                                                           DependentCompartments,
@@ -389,10 +354,10 @@ bool cpsapiModel::setProperty(const cpsapiProperty::Type & property, const CData
 
   CCore::Framework Framework(framework);
 
-  CModel * pModel = static_cast< CModel * >(getObject());
-  const CDataObject * pChangedObject = pModel;
+  wrapped * pWrapped = static_cast< wrapped * >(getObject());
+  const CDataObject * pChangedObject = pWrapped;
 
-  bool success = cpsapiTransaction::endStructureChange(pModel);
+  bool success = cpsapiTransaction::endStructureChange(pWrapped);
 
   switch (property)
     {
@@ -404,7 +369,7 @@ bool cpsapiModel::setProperty(const cpsapiProperty::Type & property, const CData
           success &= Unit.isEquivalent(CUnit("m^3")) || Unit.isDimensionless();
 
           if (success)
-            success &= pModel->setVolumeUnit(value.toString());
+            success &= pWrapped->setVolumeUnit(value.toString());
         }
       else
         success = false;
@@ -419,7 +384,7 @@ bool cpsapiModel::setProperty(const cpsapiProperty::Type & property, const CData
           success &= Unit.isEquivalent(CUnit("m^2")) || Unit.isDimensionless();
 
           if (success)
-            success &= pModel->setAreaUnit(value.toString());
+            success &= pWrapped->setAreaUnit(value.toString());
         }
       else
         success = false;
@@ -434,7 +399,7 @@ bool cpsapiModel::setProperty(const cpsapiProperty::Type & property, const CData
           success &= Unit.isEquivalent(CUnit("m")) || Unit.isDimensionless();
 
           if (success)
-            success &= pModel->setLengthUnit(value.toString());
+            success &= pWrapped->setLengthUnit(value.toString());
         }
       else
         success = false;
@@ -450,7 +415,7 @@ bool cpsapiModel::setProperty(const cpsapiProperty::Type & property, const CData
           success &= Unit.isEquivalent(CUnit("s")) || Unit.isDimensionless();
 
           if (success)
-            success &= pModel->setTimeUnit(value.toString());
+            success &= pWrapped->setTimeUnit(value.toString());
         }
       else
         success = false;
@@ -463,14 +428,14 @@ bool cpsapiModel::setProperty(const cpsapiProperty::Type & property, const CData
           if (Framework == CCore::Framework::__SIZE)
             Framework = CCore::Framework::Concentration;
 
-          pChangedObject = CObjectInterface::DataObject(pModel->getObject(CCommonName("Reference=Quantity Conversion Factor")));
+          pChangedObject = CObjectInterface::DataObject(pWrapped->getObject(CCommonName("Reference=Quantity Conversion Factor")));
 
           CUnit Unit;
           success &= !Unit.setExpression(value.toString());
           success &= Unit.isEquivalent(CUnit("#")) || Unit.isDimensionless();
 
           if (success)
-            success &= pModel->setQuantityUnit(value.toString(), Framework);
+            success &= pWrapped->setQuantityUnit(value.toString(), Framework);
         }
       else
         success = false;
@@ -478,8 +443,8 @@ bool cpsapiModel::setProperty(const cpsapiProperty::Type & property, const CData
       break;
 
     case cpsapiProperty::Type::MODEL_TYPE:
-      if (value.getType() == CDataValue::STRING && CModel::ModelTypeNames.toEnum(value.toString()) != CModel::ModelType::__SIZE)
-        pModel->setModelType(CModel::ModelTypeNames.toEnum(value.toString()));
+      if (value.getType() == CDataValue::STRING && wrapped::ModelTypeNames.toEnum(value.toString()) != wrapped::ModelType::__SIZE)
+        pWrapped->setModelType(wrapped::ModelTypeNames.toEnum(value.toString()));
       else
         success = false;
 
@@ -491,8 +456,8 @@ bool cpsapiModel::setProperty(const cpsapiProperty::Type & property, const CData
           if (Framework == CCore::Framework::__SIZE)
             Framework = CCore::Framework::Concentration;
 
-          pChangedObject = CObjectInterface::DataObject(pModel->getObject(CCommonName("Reference=Avogadro Constant")));
-          pModel->setAvogadro(value.toDouble(), Framework);
+          pChangedObject = CObjectInterface::DataObject(pWrapped->getObject(CCommonName("Reference=Avogadro Constant")));
+          pWrapped->setAvogadro(value.toDouble(), Framework);
         }
       else
         success = false;
@@ -518,41 +483,41 @@ CDataValue cpsapiModel::getProperty(const cpsapiProperty::Type & property, const
   CCore::Framework Framework(framework);
   bool success = false;
 
-  CModel * pModel = static_cast< CModel * >(getObject());
-  CDataObject * pChangedObject = pModel;
+  wrapped * pWrapped = static_cast< wrapped * >(getObject());
+  CDataObject * pChangedObject = pWrapped;
 
   switch (property)
     {
     case cpsapiProperty::Type::UNIT:
-      return pModel->getUnits();
+      return pWrapped->getUnits();
       break;
 
     case cpsapiProperty::Type::VOLUME_UNIT:
-      return pModel->getVolumeUnit();
+      return pWrapped->getVolumeUnit();
       break;
 
     case cpsapiProperty::Type::AREA_UNIT:
-      return pModel->getAreaUnit();
+      return pWrapped->getAreaUnit();
       break;
 
     case cpsapiProperty::Type::LENGTH_UNIT:
-      return pModel->getLengthUnit();
+      return pWrapped->getLengthUnit();
       break;
 
     case cpsapiProperty::Type::TIME_UNIT:
-      return pModel->getTimeUnit();
+      return pWrapped->getTimeUnit();
       break;
 
     case cpsapiProperty::Type::QUANTITY_UNIT:
-      return pModel->getQuantityUnit();
+      return pWrapped->getQuantityUnit();
       break;
 
     case cpsapiProperty::Type::MODEL_TYPE:
-      return pModel->CModel::ModelTypeNames[pModel->getModelType()];
+      return pWrapped->wrapped::ModelTypeNames[pWrapped->getModelType()];
       break;
 
     case cpsapiProperty::Type::AVOGADRO_NUMBER:
-      return pModel->getAvogadro();
+      return pWrapped->getAvogadro();
       break;
 
     default:

@@ -83,8 +83,6 @@ protected:
   virtual bool setProperty(const cpsapiProperty::Type & property, const CDataValue & value, const CCore::Framework & framework) override;
 
   virtual CDataValue getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const override;
-
-  std::shared_ptr< cpsapiParameter > mpDefaultParameter;
 };
 
 CPSAPI_NAMESPACE_END

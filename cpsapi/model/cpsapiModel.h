@@ -23,7 +23,6 @@
 
 #include <copasi/model/CModel.h> 
 
-class CModel;
 class CCompartment;
 class CMetab;
 class CReaction;
@@ -36,8 +35,9 @@ CPSAPI_NAMESPACE_BEGIN
 class cpsapiModel: public cpsapiModelEntity
 {
 public:
-  typedef cpsapiModelEntity base;
-
+  /**
+   * Enumeration of the exposed properties
+   */ 
   enum class Property
   {
     INITIAL_VALUE = cpsapiProperty::Type::INITIAL_VALUE,
@@ -54,15 +54,50 @@ public:
     AVOGADRO_NUMBER = cpsapiProperty::Type::AVOGADRO_NUMBER
   };
 
+  /**
+   * Static set of supported properties
+   */
   static const Properties SupportedProperties;
 
+  /**
+   * Static set of hidden properties
+   */
   static const Properties HiddenProperties;
 
   /**
-   * Specific constructor
-   * @param CModel * pModel
+   * The base class
    */
-  cpsapiModel(CModel * pModel = nullptr);
+  typedef cpsapiModelEntity base;
+
+  /**
+   * The wrapped COPASI class
+   */
+  typedef CModel wrapped;
+
+  class Data : public base::Data
+  {
+  public:
+    Data(const base::Data & data)
+      : base::Data(data)
+      , mDefaultCompartment()
+      , mpDefaultReaction(nullptr)
+      , mDefaultGlobalQuantity()
+      , mpDefaultEvent(nullptr)
+    {}
+
+    virtual ~Data() {}
+
+    cpsapiCompartment mDefaultCompartment;
+    CReaction * mpDefaultReaction;
+    cpsapiGlobalQuantity mDefaultGlobalQuantity;
+    CEvent * mpDefaultEvent;
+  };
+
+  /**
+   * Specific constructor
+   * @param wrapped * pWrapped
+   */
+  cpsapiModel(wrapped * pWrapped = nullptr);
 
   /**
    * Copy constructor
@@ -129,11 +164,6 @@ private:
   void updateDefaultGlobalQuantity(const cpsapiGlobalQuantity & globalQuantity);
   
   void deleteDependents(const CDataObject::DataObjectSet & set);
-
-  std::shared_ptr< cpsapiCompartment > mpDefaultCompartment;
-  CReaction * mpDefaultReaction;
-  std::shared_ptr< cpsapiGlobalQuantity > mpDefaultGlobalQuantity;
-  CEvent * mpDefaultEvent;
 };
 
 CPSAPI_NAMESPACE_END

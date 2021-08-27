@@ -24,23 +24,28 @@
 
 class CDataObject;
 
+#define DATA(share) std::static_pointer_cast< Data >(share)
+
 CPSAPI_NAMESPACE_BEGIN
 
 class cpsapiVisitor;
+class cpsapiData {
+public:
+  virtual ~cpsapiData() {}
+};
 
 /**
  * The cpsapiObject class is the base class for all COPASI CDataObjects exposed in the cpsapi.
  */
 class cpsapiObject
 {
-private:
-  typedef std::shared_ptr< std::set< cpsapiObject * > > References;
-  typedef std::map< const CDataObject *, References > Map; 
+protected:
+  typedef std::shared_ptr< cpsapiData > DataPointer;
+
+  typedef std::map< const CDataObject *, DataPointer > Map; 
   
   static Map Manager;
 
-  static Map::iterator findOrInsert(const CDataObject * pObject);
-  
 public:
   static void deleted(const CDataObject * pObject);
   
@@ -78,6 +83,18 @@ public:
 
   static const Properties HiddenProperties;
 
+protected:
+  class Data : public cpsapiData
+  {
+  public:
+    virtual ~Data() {}
+
+    CDataObject * mpObject;
+    Type mType;
+  };
+
+  DataPointer mpData;
+
   /**
    * Deleted default constructor
    */
@@ -110,8 +127,6 @@ public:
   CDataObject * operator-> () const;
 
   CDataObject * operator* () const;
-
-  References & references();
 
   Type getType() const;
 
@@ -198,14 +213,8 @@ protected:
 
   virtual CDataValue getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const;
 
-private:
-  void addToReferences();
-
-  void removeFromReferences();
-
-  CDataObject * mpObject;
-  References mpReferences;
-  const Type mType;
+template < class CData >
+  void assertData(const CData & data);
 };
 
 template < typename Target, class SourceVector >
@@ -245,6 +254,23 @@ template < class CType >
 bool cpsapiObject::isValidProperty(const cpsapiProperty::Type & property)
 {
   return CType::SupportedProperties.find(property) != CType::SupportedProperties.end();
+}
+
+template < class CData >
+void cpsapiObject::assertData(const CData & data)
+{
+  if (data.mpObject == nullptr)
+    {
+      mpData = std::make_shared< CData >(data);
+      return;
+    }
+  
+  Map::iterator found = Manager.insert(std::make_pair(data.mpObject, nullptr)).first;
+
+  if (!std::dynamic_pointer_cast< CData >(found->second))
+    found->second = std::make_shared< CData >(data);
+
+  mpData = found->second;
 }
 
 CPSAPI_NAMESPACE_END

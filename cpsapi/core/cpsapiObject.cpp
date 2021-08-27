@@ -22,17 +22,6 @@ CPSAPI_NAMESPACE_USE
 cpsapiObject::Map cpsapiObject::Manager;
 
 // static 
-cpsapiObject::Map::iterator cpsapiObject::findOrInsert(const CDataObject * pObject)
-{
-  Map::iterator found = Manager.insert(std::make_pair(pObject, nullptr)).first;
-  
-  if (found->second == nullptr)
-    found->second = std::make_shared< std::set< cpsapiObject * > >();
-
-  return found;
-}
-
-// static 
 void cpsapiObject::deleted(const CDataObject * pObject)
 {
   if (pObject == nullptr)
@@ -43,17 +32,9 @@ void cpsapiObject::deleted(const CDataObject * pObject)
   if (found == Manager.end())
     return;
   
-  Map::iterator foundNull = findOrInsert(pObject);
+  std::static_pointer_cast< Data >(found->second)->mpObject = nullptr;
 
-  for (cpsapiObject * pPointer : *found->second)
-    {
-      pPointer->mpObject = nullptr;
-      pPointer->mpReferences = foundNull->second;
-    }
-
-  foundNull->second->insert(found->second->begin(), found->second->end());
-
-  Manager.erase(found);
+  Manager.erase(pObject);
 }
 
 // static
@@ -85,98 +66,51 @@ const cpsapiObject::Properties cpsapiObject::SupportedProperties =
 const cpsapiObject::Properties cpsapiObject::HiddenProperties = {};
 
 cpsapiObject::cpsapiObject(CDataObject * pObject, const cpsapiObject::Type & type)
-  : mpObject(pObject)
-  , mpReferences(nullptr)
-  , mType(type)
+  : mpData()
 {
-  addToReferences();
+  Data data;
+
+  data.mpObject = pObject;
+  data.mType = type;
+  
+  assertData(data);
 }
 
 cpsapiObject::cpsapiObject(const cpsapiObject & src)
-  : mpObject(src.mpObject)
-  , mpReferences(nullptr)
-  , mType(src.mType)
-{
-  addToReferences();
-}
+  : mpData(src.mpData)
+{}
 
 // virtual
 cpsapiObject::~cpsapiObject()
-{
-  removeFromReferences();
-}
+{}
 
 cpsapiObject & cpsapiObject::operator= (const cpsapiObject & rhs)
 {
-  if (this == &rhs) return *this;
-
-  removeFromReferences();
-
-  mpObject = rhs.mpObject;
-
-  addToReferences();
-
-  return *this;
-}
-
-cpsapiObject & cpsapiObject::operator= (CDataObject * pObject)
-{
-  if (mpObject == pObject)
-    return *this;
-
-  removeFromReferences();
-
-  mpObject = pObject;
-
-  addToReferences();
+  if (this != &rhs)
+    mpData = rhs.mpData;
 
   return *this;
 }
 
 CDataObject * cpsapiObject::operator->() const
 {
-  return mpObject;
+  return std::static_pointer_cast< Data >(mpData)->mpObject;
 }
 
 CDataObject * cpsapiObject::operator*() const
 {
-  return mpObject;
-}
-
-cpsapiObject::References & cpsapiObject::references()
-{
-  return mpReferences;
+  return std::static_pointer_cast< Data >(mpData)->mpObject;
 }
 
 cpsapiObject::Type cpsapiObject::getType() const
 {
-  return mType;
+  return std::static_pointer_cast< Data >(mpData)->mType;
 }
 
 cpsapiObject::operator bool() const
 {
-  return mpObject != nullptr;
+  return std::static_pointer_cast< Data >(mpData)->mpObject != nullptr;
 }
-
-void cpsapiObject::addToReferences()
-{
-  mpReferences = findOrInsert(mpObject)->second;
-  mpReferences->insert(this);
-}
-
-void cpsapiObject::removeFromReferences()
-{
-  if (mpReferences)
-    {
-      mpReferences->erase(this);
-
-      if (mpReferences->empty())
-        Manager.erase(mpObject);
-
-      mpReferences = nullptr;
-    }
-}
-
 
 CDataObject * cpsapiObject::getObject()
 {
