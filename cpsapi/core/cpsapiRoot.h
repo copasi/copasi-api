@@ -62,7 +62,7 @@ public:
 
   static cpsapiDataModel & dataModel(const std::string & name = "");
 
-  static std::vector< cpsapiDataModel > getDataModels();
+  static cpsapiVector< cpsapiDataModel > getDataModels();
   
   static const std::set< std::string > listModelNames();
 
@@ -82,7 +82,7 @@ public:
 
   static cpsapiCompartment compartment(const std::string & name = "", const std::string & modelName = "");
 
-  static std::vector< cpsapiCompartment > getCompartments(const std::string & modelName = "");
+  static cpsapiVector< cpsapiCompartment > getCompartments(const std::string & modelName = "");
   
   static bool addSpecies(const std::string & name, const std::string & compartmentName = "", const std::string & modelName = "");
 
@@ -90,7 +90,7 @@ public:
 
   static cpsapiSpecies species(const std::string & name, const std::string & compartmentName = "", const std::string & modelName = "");
 
-  static std::vector< cpsapiSpecies > getSpecies(const std::string & modelName = "");
+  static cpsapiVector< cpsapiSpecies > getSpecies(const std::string & modelName = "");
 
   static bool addGlobalQuantity(const std::string & name, const std::string & modelName = "");
 
@@ -98,7 +98,7 @@ public:
 
   static cpsapiGlobalQuantity globalQuantity(const std::string & name = "", const std::string & modelName = "");
 
-  static std::vector< cpsapiGlobalQuantity > getGlobalQuantities(const std::string & modelName = "");
+  static cpsapiVector< cpsapiGlobalQuantity > getGlobalQuantities(const std::string & modelName = "");
   
 private:
   static std::map< std::string, CDataModel * > DataModels;

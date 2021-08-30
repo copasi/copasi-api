@@ -143,12 +143,12 @@ cpsapiCompartment cpsapiModel::compartment(const std::string & name)
   return DATA(mpData)->mDefaultCompartment;
 }
 
-std::vector< cpsapiCompartment > cpsapiModel::getCompartments() const
+cpsapiVector< cpsapiCompartment > cpsapiModel::getCompartments() const
 {
   if (!operator bool())
-    return std::vector< cpsapiCompartment >();
+    return cpsapiVector< cpsapiCompartment >();
 
-  return convertVector< cpsapiCompartment >(static_cast< wrapped * >(getObject())->getCompartments());
+  return cpsapiVector< cpsapiCompartment >(&static_cast< wrapped * >(getObject())->getCompartments());
 }
 
 cpsapiCompartment cpsapiModel::__compartment(const std::string & name) const
@@ -204,12 +204,12 @@ cpsapiSpecies cpsapiModel::species(const std::string & name, const std::string &
   return __species(name, compartment);
 }
 
-std::vector< cpsapiSpecies > cpsapiModel::getSpecies() const
+cpsapiVector< cpsapiSpecies > cpsapiModel::getSpecies() const
 {
   if (!operator bool())
-    return std::vector< cpsapiSpecies >();
+    return cpsapiVector< cpsapiSpecies >();
 
-  return convertVector< cpsapiSpecies >(static_cast< wrapped * >(getObject())->getMetabolites());
+  return cpsapiVector< cpsapiSpecies >(&static_cast< wrapped * >(getObject())->getMetabolites());
 }
 
 cpsapiSpecies cpsapiModel::__species(const std::string & name, const std::string & compartment) const
@@ -264,12 +264,12 @@ cpsapiGlobalQuantity cpsapiModel::globalQuantity(const std::string & name)
   return GlobalQuantity;
 }
 
-std::vector< cpsapiGlobalQuantity > cpsapiModel::getGlobalQuantities() const
+cpsapiVector< cpsapiGlobalQuantity > cpsapiModel::getGlobalQuantities() const
 {
   if (!operator bool())
-    return std::vector< cpsapiGlobalQuantity >();
+    return cpsapiVector< cpsapiGlobalQuantity >();
 
-  return convertVector< cpsapiGlobalQuantity >(static_cast< wrapped * >(getObject())->getModelValues());
+  return cpsapiVector< cpsapiGlobalQuantity >(&static_cast< wrapped * >(getObject())->getModelValues());
 }
 
 cpsapiGlobalQuantity cpsapiModel::__globalQuantity(const std::string & name) const

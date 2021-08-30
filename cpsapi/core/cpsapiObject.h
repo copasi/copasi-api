@@ -1,16 +1,16 @@
-// BEGIN: Copyright 
-// Copyright (C) 2021 by Pedro Mendes, Rector and Visitors of the 
-// University of Virginia, University of Heidelberg, and University 
-// of Connecticut School of Medicine. 
-// All rights reserved 
-// END: Copyright 
+// BEGIN: Copyright
+// Copyright (C) 2021 by Pedro Mendes, Rector and Visitors of the
+// University of Virginia, University of Heidelberg, and University
+// of Connecticut School of Medicine.
+// All rights reserved
+// END: Copyright
 
-// BEGIN: License 
-// Licensed under the Artistic License 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-//   https://opensource.org/licenses/Artistic-2.0 
-// END: License 
+// BEGIN: License
+// Licensed under the Artistic License 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//   https://opensource.org/licenses/Artistic-2.0
+// END: License
 
 #pragma once
 
@@ -29,7 +29,8 @@ class CDataObject;
 CPSAPI_NAMESPACE_BEGIN
 
 class cpsapiVisitor;
-class cpsapiData {
+class cpsapiData
+{
 public:
   virtual ~cpsapiData() {}
 };
@@ -42,14 +43,15 @@ class cpsapiObject
 protected:
   typedef std::shared_ptr< cpsapiData > DataPointer;
 
-  typedef std::map< const CDataObject *, DataPointer > Map; 
-  
+  typedef std::map< const CDataObject *, DataPointer > Map;
+
   static Map Manager;
 
 public:
   static void deleted(const CDataObject * pObject);
-  
-  enum struct Type {
+
+  enum struct Type
+  {
     cpsapiObject,
     cpsapiContainer,
     cpsapiVector,
@@ -67,7 +69,7 @@ public:
 
   static const CEnumAnnotation< std::string, Type > TypeName;
 
-  typedef std::set< cpsapiProperty::Type  > Properties;
+  typedef std::set< cpsapiProperty::Type > Properties;
 
   /**
    * Enumeration of the exposed properties
@@ -120,13 +122,13 @@ public:
    */
   virtual ~cpsapiObject();
 
-  cpsapiObject & operator= (const cpsapiObject & rhs);
+  cpsapiObject & operator=(const cpsapiObject & rhs);
 
-  cpsapiObject & operator= (CDataObject * pObject);
+  cpsapiObject & operator=(CDataObject * pObject);
 
-  CDataObject * operator-> () const;
+  CDataObject * operator->() const;
 
-  CDataObject * operator* () const;
+  CDataObject * operator*() const;
 
   Type getType() const;
 
@@ -143,7 +145,7 @@ public:
    * Visitors have read and write access to the object.
    * @param accept(cpsapiVisitor& visitor)
    */
-  virtual void accept(cpsapiVisitor& visitor);
+  virtual void accept(cpsapiVisitor & visitor);
 
   /**
    * Retrieve the pointer to the underlying COPASI CDataObject.
@@ -202,9 +204,6 @@ public:
   template < class CType >
   static Properties AllSupportedProperties();
 
-  template < typename Target, class SourceVector >
-  static std::vector< Target > convertVector(SourceVector  &src);
-
 protected:
   template < class CType >
   static bool isValidProperty(const cpsapiProperty::Type & property);
@@ -213,24 +212,12 @@ protected:
 
   virtual CDataValue getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const;
 
-template < class CData >
+  template < class CData >
   void assertData(const CData & data);
 };
 
-template < typename Target, class SourceVector >
-std::vector< Target > cpsapiObject::convertVector(SourceVector &sourceVector)
-{
-  std::vector< Target > Result;
-  typename SourceVector::iterator itSrc = sourceVector.begin();
-
-  for (auto & Source : sourceVector)
-    Result.push_back(&Source);
-
-  return Result;
-}
-
-template <> inline
-cpsapiObject::Properties cpsapiObject::AllSupportedProperties< cpsapiObject >()
+template <>
+inline cpsapiObject::Properties cpsapiObject::AllSupportedProperties< cpsapiObject >()
 {
   return cpsapiObject::SupportedProperties;
 }
@@ -264,7 +251,7 @@ void cpsapiObject::assertData(const CData & data)
       mpData = std::make_shared< CData >(data);
       return;
     }
-  
+
   Map::iterator found = Manager.insert(std::make_pair(data.mpObject, nullptr)).first;
 
   if (!std::dynamic_pointer_cast< CData >(found->second))

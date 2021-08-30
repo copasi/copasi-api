@@ -102,9 +102,9 @@ cpsapiDataModel & cpsapi::dataModel(const std::string & name)
 }
 
 // static 
-std::vector< cpsapiDataModel > cpsapi::getDataModels()
+cpsapiVector< cpsapiDataModel > cpsapi::getDataModels()
 {
-  return convertVector< cpsapiDataModel >(*CRootContainer::getDatamodelList());
+  return cpsapiVector< cpsapiDataModel >(CRootContainer::getDatamodelList());
 }
 
 // static
@@ -170,7 +170,7 @@ cpsapiCompartment cpsapi::compartment(const std::string & name, const std::strin
 }
 
 // static 
-std::vector< cpsapiCompartment > cpsapi::getCompartments(const std::string & modelName)
+cpsapiVector< cpsapiCompartment > cpsapi::getCompartments(const std::string & modelName)
 {
   return dataModel(modelName).getCompartments();
 }
@@ -194,7 +194,7 @@ cpsapiSpecies cpsapi::species(const std::string & name, const std::string & comp
 }
 
 // static 
-std::vector< cpsapiSpecies > cpsapi::getSpecies(const std::string & modelName)
+cpsapiVector< cpsapiSpecies > cpsapi::getSpecies(const std::string & modelName)
 {
   return dataModel(modelName).getSpecies();
 }
@@ -218,7 +218,7 @@ cpsapiGlobalQuantity cpsapi::globalQuantity(const std::string & name, const std:
 }
 
 // static 
-std::vector< cpsapiGlobalQuantity > cpsapi::getGlobalQuantities(const std::string & modelName)
+cpsapiVector< cpsapiGlobalQuantity > cpsapi::getGlobalQuantities(const std::string & modelName)
 {
   return dataModel(modelName).getGlobalQuantities();
 }

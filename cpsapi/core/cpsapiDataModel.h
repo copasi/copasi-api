@@ -127,7 +127,7 @@ public:
 
   cpsapiCompartment compartment(const std::string & name = "");
 
-  std::vector< cpsapiCompartment > getCompartments();
+  cpsapiVector< cpsapiCompartment > getCompartments();
 
   bool addSpecies(const std::string & name, const std::string & compartmentName = "");
 
@@ -135,7 +135,7 @@ public:
 
   cpsapiSpecies species(const std::string & name = "", const std::string & compartmentName = "");
 
-  std::vector< cpsapiSpecies > getSpecies();
+  cpsapiVector< cpsapiSpecies > getSpecies();
 
   bool addGlobalQuantity(const std::string & name);
 
@@ -143,7 +143,7 @@ public:
 
   cpsapiGlobalQuantity globalQuantity(const std::string & name = "");
 
-  std::vector< cpsapiGlobalQuantity > getGlobalQuantities();
+  cpsapiVector< cpsapiGlobalQuantity > getGlobalQuantities();
 };
 
 CPSAPI_NAMESPACE_END

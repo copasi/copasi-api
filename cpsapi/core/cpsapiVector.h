@@ -180,18 +180,27 @@ void cpsapiVector< Object >::accept(cpsapiVisitor & visitor)
 template < class Object > 
 size_t cpsapiVector< Object >::size() const
 {
+  if (!operator bool())
+    return 0;
+
   return static_cast< wrapped * >(getObject())->size();
 }
 
 template < class Object > 
 typename cpsapiVector< Object >::iterator cpsapiVector< Object >::begin()
 {
+  if (!operator bool())
+    return iterator();
+
   return iterator(static_cast< wrapped * >(getObject())->begin());
 }
 
 template < class Object > 
 typename cpsapiVector< Object >::iterator cpsapiVector< Object >::end()
 {
+  if (!operator bool())
+    return iterator();
+
   return iterator(static_cast< wrapped * >(getObject())->end());
 }
 
@@ -209,7 +218,12 @@ Object & cpsapiVector< Object >::operator[](const size_t & index)
 template < class Object > 
 Object & cpsapiVector< Object >::operator[](const std::string & name)
 {
-  return operator[](static_cast< wrapped * >(getObject())->getIndex(name));
+  static Object NotFound(nullptr);
+
+  if (operator bool())
+    return operator[](static_cast< wrapped * >(getObject())->getIndex(name));
+
+  return NotFound;
 };
 
 CPSAPI_NAMESPACE_END

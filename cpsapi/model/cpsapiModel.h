@@ -123,7 +123,7 @@ public:
 
   cpsapiCompartment compartment(const std::string & name = "");
 
-  std::vector< cpsapiCompartment > getCompartments() const;
+  cpsapiVector< cpsapiCompartment > getCompartments() const;
   
   cpsapiSpecies addSpecies(const std::string & name, const std::string & compartment = "");
 
@@ -131,7 +131,7 @@ public:
 
   cpsapiSpecies species(const std::string & name = "", const std::string & compartment = "");
 
-  std::vector< cpsapiSpecies > getSpecies() const;
+  cpsapiVector< cpsapiSpecies > getSpecies() const;
   
   cpsapiGlobalQuantity addGlobalQuantity(const std::string & name);
 
@@ -139,7 +139,7 @@ public:
 
   cpsapiGlobalQuantity globalQuantity(const std::string & name = "");
 
-  std::vector< cpsapiGlobalQuantity > getGlobalQuantities() const;
+  cpsapiVector< cpsapiGlobalQuantity > getGlobalQuantities() const;
   
   void deleteAllDependents(CDataContainer * pContainer);
 

@@ -106,7 +106,7 @@ cpsapiCompartment cpsapiDataModel::compartment(const std::string & name)
   return model().compartment(name);
 }
 
-std::vector< cpsapiCompartment > cpsapiDataModel::getCompartments()
+cpsapiVector< cpsapiCompartment > cpsapiDataModel::getCompartments()
 {
   return model().getCompartments();
 }
@@ -126,7 +126,7 @@ cpsapiSpecies cpsapiDataModel::species(const std::string & name, const std::stri
   return model().species(name, compartmentName);
 }
 
-std::vector< cpsapiSpecies > cpsapiDataModel::getSpecies()
+cpsapiVector< cpsapiSpecies > cpsapiDataModel::getSpecies()
 {
   return model().getSpecies();
 }
@@ -146,7 +146,7 @@ cpsapiGlobalQuantity cpsapiDataModel::globalQuantity(const std::string & name)
   return model().globalQuantity(name);
 }
 
-std::vector< cpsapiGlobalQuantity > cpsapiDataModel::getGlobalQuantities()
+cpsapiVector< cpsapiGlobalQuantity > cpsapiDataModel::getGlobalQuantities()
 {
   return model().getGlobalQuantities();
 }

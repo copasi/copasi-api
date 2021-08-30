@@ -16,14 +16,10 @@ CPSAPI_NAMESPACE_USE
 cpsapiFactory::CopasiMap cpsapiFactory::copasiMap;
 
 // static
-cpsapiFactory::CpsapiMap cpsapiFactory::cpsapiMap;
-
-// static
 void cpsapiFactory::insert(const TypeInfo & typeInfo)
 {
   copasiMap.insert(std::make_pair(typeInfo.copasiClass, typeInfo));
   copasiMap.insert(std::make_pair(typeInfo.cpsapiClass, typeInfo));
-  cpsapiMap.insert(std::make_pair(typeInfo.cpsapiType, typeInfo));
 }
 
 // static
@@ -31,115 +27,37 @@ void cpsapiFactory::init()
 {
   if (copasiMap.empty())
     {
-      insert(TypeInfo(std::type_index(typeid(cpsapiObject)),
-                      cpsapiObject::Type::cpsapiObject,
-                      nullptr,
-                      std::type_index(typeid(CDataObject)),
-                      "CDataObject"));
-      insert(TypeInfo(std::type_index(typeid(cpsapiContainer)),
-                      cpsapiObject::Type::cpsapiContainer,
-                      nullptr,
-                      std::type_index(typeid(CDataContainer)),
-                      "CDataContainer"));
-      insert(TypeInfo(std::type_index(typeid(cpsapiModelEntity)),
-                      cpsapiObject::Type::cpsapiModelEntity,
-                      nullptr,
-                      std::type_index(typeid(CModelEntity)),
-                      "CModelEntity"));
-      insert(TypeInfo(std::type_index(typeid(cpsapiVector< cpsapiCompartment >)),
-                      cpsapiObject::Type::cpsapiVector,
-                      std::make_shared< createTemplate< cpsapiVector< cpsapiCompartment >, CDataVectorNS< CCompartment > > >(),
-                      std::type_index(typeid(CDataVectorNS< CCompartment >)),
-                      "CDataVectorNS < CCompartment >"));
-      insert(TypeInfo(std::type_index(typeid(cpsapiVector< cpsapiSpecies >)),
-                      cpsapiObject::Type::cpsapiVector,
-                      std::make_shared<  createTemplate< cpsapiVector< cpsapiSpecies >, CDataVectorNS< CMetab > > >(),
-                      std::type_index(typeid(CDataVectorNS< CMetab >)),
-                      "CDataVectorNS < CMetab >"));
-      insert(TypeInfo(std::type_index(typeid(cpsapiVector< cpsapiGlobalQuantity >)),
-                      cpsapiObject::Type::cpsapiVector,
-                      std::make_shared<  createTemplate< cpsapiVector< cpsapiGlobalQuantity >, CDataVectorN< CModelValue > > >(),
-                      std::type_index(typeid(CDataVectorN< CModelValue >)),
-                      "CDataVectorNS < CModelValue >"));
-      insert(TypeInfo(std::type_index(typeid(cpsapiValue)),
-                      cpsapiObject::Type::cpsapiValue,
-                      std::make_shared<  createTemplate< cpsapiValue, CDataObject > >(),
-                      std::type_index(typeid(CDataObjectReference< C_FLOAT64 >)),
-                      "CDataObjectReference< C_FLOAT64 >"));
-      insert(TypeInfo(std::type_index(typeid(cpsapiValue)),
-                      cpsapiObject::Type::cpsapiValue,
-                      std::make_shared<  createTemplate< cpsapiValue, CDataObject > >(),
-                      std::type_index(typeid(CDataObjectReference< C_INT32 >)),
-                      "CDataObjectReference< C_INT32 >"));
-      insert(TypeInfo(std::type_index(typeid(cpsapiValue)),
-                      cpsapiObject::Type::cpsapiValue,
-                      std::make_shared<  createTemplate< cpsapiValue, CDataObject > >(),
-                      std::type_index(typeid(CDataObjectReference< unsigned C_INT32 >)),
-                      "CDataObjectReference< unsigned C_INT32 >"));
-      insert(TypeInfo(std::type_index(typeid(cpsapiValue)),
-                      cpsapiObject::Type::cpsapiValue,
-                      std::make_shared<  createTemplate< cpsapiValue, CDataObject > >(),
-                      std::type_index(typeid(CDataObjectReference< size_t >)),
-                      "CDataObjectReference< size_t >"));
-      insert(TypeInfo(std::type_index(typeid(cpsapiValue)),
-                      cpsapiObject::Type::cpsapiValue,
-                      std::make_shared<  createTemplate< cpsapiValue, CDataObject > >(),
-                      std::type_index(typeid(CDataObjectReference< std::string >)),
-                      "CDataObjectReference< std::string >"));
-      insert(TypeInfo(std::type_index(typeid(cpsapiValue)),
-                      cpsapiObject::Type::cpsapiValue,
-                      std::make_shared<  createTemplate< cpsapiValue, CDataObject > >(),
-                      std::type_index(typeid(CDataObjectReference< CRegisteredCommonName >)),
-                      "CDataObjectReference< CRegisteredCommonName >"));
-      insert(TypeInfo(std::type_index(typeid(cpsapiModel)),
-                      cpsapiObject::Type::cpsapiModel,
-                      std::make_shared<  createTemplate< cpsapiModel, CModel > >(),
-                      std::type_index(typeid(CModel)),
-                      "CModel"));
-      insert(TypeInfo(std::type_index(typeid(cpsapiCompartment)),
-                      cpsapiObject::Type::cpsapiCompartment,
-                      std::make_shared<  createTemplate< cpsapiCompartment, CCompartment > >(),
-                      std::type_index(typeid(CCompartment)),
-                      "CCompartment"));
-      insert(TypeInfo(std::type_index(typeid(cpsapiSpecies)),
-                      cpsapiObject::Type::cpsapiSpecies,
-                      std::make_shared<  createTemplate< cpsapiSpecies, CMetab > >(),
-                      std::type_index(typeid(CMetab)),
-                      "CMetab"));
-      insert(TypeInfo(std::type_index(typeid(cpsapiGlobalQuantity)),
-                      cpsapiObject::Type::cpsapiGlobalQuantity,
-                      std::make_shared<  createTemplate< cpsapiGlobalQuantity, CModelValue > >(),
-                      std::type_index(typeid(CModelValue)),
-                      "CModelValue"));
-      insert(TypeInfo(std::type_index(typeid(cpsapiDataModel)),
-                      cpsapiObject::Type::cpsapiDataModel,
-                      std::make_shared<  createTemplate< cpsapiDataModel, CDataModel > >(),
-                      std::type_index(typeid(CDataModel)),
-                      "CDataModel"));
-      insert(TypeInfo(std::type_index(typeid(cpsapiParameter)),
-                      cpsapiObject::Type::cpsapiParameter,
-                      std::make_shared<  createTemplate< cpsapiParameter, CCopasiParameter > >(),
-                      std::type_index(typeid(CCopasiParameter)),
-                      "CCopasiParameter"));
-      insert(TypeInfo(std::type_index(typeid(cpsapiGroup)),
-                      cpsapiObject::Type::cpsapiGroup,
-                      std::make_shared<  createTemplate< cpsapiGroup, CCopasiParameterGroup > >(),
-                      std::type_index(typeid(CCopasiParameterGroup)),
-                      "CCopasiParameterGroup"));
+      TypeInfo::initProtected< cpsapiObject, CDataObject >();
+      TypeInfo::initProtected< cpsapiContainer, CDataContainer >();
+      TypeInfo::initProtected< cpsapiModelEntity, CModelEntity >();
+      TypeInfo::init< cpsapiVector< cpsapiCompartment >, CDataVectorNS< CCompartment > >();
+      TypeInfo::init< cpsapiVector< cpsapiSpecies >, CDataVector< CMetab > >();
+      TypeInfo::init< cpsapiVector< cpsapiSpecies >, CDataVectorNS< CMetab > >();
+      TypeInfo::init< cpsapiVector< cpsapiGlobalQuantity >, CDataVectorN< CModelValue > >();
+      TypeInfo::init< cpsapiVector< cpsapiDataModel >, CDataVector< CDataModel > >();
+      TypeInfo::init< cpsapiValue, CDataObjectReference< C_FLOAT64 > >();
+      TypeInfo::init< cpsapiValue, CDataObjectReference< C_INT32 > >();
+      TypeInfo::init< cpsapiValue, CDataObjectReference< unsigned C_INT32 > >();
+      TypeInfo::init< cpsapiValue, CDataObjectReference< size_t > >();
+      TypeInfo::init< cpsapiValue, CDataObjectReference< std::string > >();
+      TypeInfo::init< cpsapiValue, CDataObjectReference< CRegisteredCommonName > >();
+      TypeInfo::init< cpsapiModel, CModel >();
+      TypeInfo::init< cpsapiCompartment, CCompartment >();
+      TypeInfo::init< cpsapiSpecies, CMetab >();
+      TypeInfo::init< cpsapiGlobalQuantity, CModelValue >();
+      TypeInfo::init< cpsapiDataModel, CDataModel >();
+      TypeInfo::init< cpsapiParameter, CCopasiParameter >();
+      TypeInfo::init< cpsapiGroup, CCopasiParameterGroup >();
     }
 }
 
-cpsapiFactory::TypeInfo::TypeInfo(const std::type_index & cpsapiClass, cpsapiObject::Type cpsapiType, std::shared_ptr< create > cpsapiCreate, const std::type_index & copasiClass, const std::string copasiString)
+cpsapiFactory::TypeInfo::TypeInfo(const std::type_index & cpsapiClass, std::shared_ptr< create > cpsapiCreate, const std::type_index & copasiClass, const std::string copasiString)
   : cpsapiClass(cpsapiClass)
-  , cpsapiType(cpsapiType)
+  , cpsapiCreate()
   , copasiClass(copasiClass)
   , copasiString(copasiString)
 {
-  this->cpsapiClass = cpsapiClass;
-  this->cpsapiType = cpsapiType;
   this->cpsapiCreate = cpsapiCreate;
-  this->copasiClass = copasiClass;
-  this->copasiString = copasiString;
 }
 
 cpsapiFactory::TypeInfo & cpsapiFactory::TypeInfo::operator=(const cpsapiFactory::TypeInfo & rhs)
@@ -147,7 +65,7 @@ cpsapiFactory::TypeInfo & cpsapiFactory::TypeInfo::operator=(const cpsapiFactory
   if (this != &rhs)
     {
       cpsapiClass = rhs.cpsapiClass;
-      cpsapiType = rhs.cpsapiType;
+      cpsapiCreate = rhs.cpsapiCreate;
       copasiClass = rhs.copasiClass;
       copasiString = rhs.copasiString;
     }
@@ -188,12 +106,6 @@ const cpsapiFactory::TypeInfo & cpsapiFactory::info(const cpsapiObject & from)
     return info(std::type_index(typeid(*from.getObject())));
 
   return Unknown;
-}
-
-// static
-cpsapiFactory::Range cpsapiFactory::info(const cpsapiObject::Type & type)
-{
-  return cpsapiMap.equal_range(type);
 }
 
 // static
