@@ -29,6 +29,8 @@ class CDataObject;
 CPSAPI_NAMESPACE_BEGIN
 
 class cpsapiVisitor;
+class cpsapiVariant;
+
 class cpsapiData
 {
 public:
@@ -52,18 +54,18 @@ public:
 
   enum struct Type
   {
-    cpsapiObject,
-    cpsapiContainer,
-    cpsapiVector,
-    cpsapiModelEntity,
-    cpsapiValue,
-    cpsapiModel,
-    cpsapiCompartment,
-    cpsapiSpecies,
-    cpsapiGlobalQuantity,
-    cpsapiDataModel,
-    cpsapiParameter,
-    cpsapiGroup,
+    Object,
+    Container,
+    Vector,
+    ModelEntity,
+    Value,
+    Model,
+    Compartment,
+    Species,
+    GlobalQuantity,
+    DataModel,
+    Parameter,
+    Group,
     __SIZE
   };
 
@@ -164,11 +166,11 @@ public:
    * The value must match the underlying value of the property.
    * The default framework is unspecified
    * @param const Property & property
-   * @param const CDataValue & value
+   * @param const cpsapiVariant & value
    * @param const CCore::Framework & framework (default: CCore::Framework::__SIZE)
    * @return bool success
    */
-  bool setProperty(const Property & property, const CDataValue & value, const CCore::Framework & framework = CCore::Framework::__SIZE);
+  bool setProperty(const Property & property, const cpsapiVariant & value, const CCore::Framework & framework = CCore::Framework::__SIZE);
 
   /**
    * Set a property of the object to the provided value under the given framework.
@@ -176,20 +178,20 @@ public:
    * The value must match the underlying value of the property.
    * The framework must be string in CCore::FrameworkNames
    * @param const std::string & property
-   * @param const CDataValue & value
+   * @param const cpsapiVariant & value
    * @param const std::string & framework (default: "")
    * @return bool success
    */
-  bool setProperty(const std::string & property, const CDataValue & value, const std::string & framework = "");
+  bool setProperty(const std::string & property, const cpsapiVariant & value, const std::string & framework = "");
 
   /**
    * Retrieve a property of the object to the provided value under the given framework.
    * The default framework is unspecified
    * @param const Property & property
    * @param const CCore::Framework & framework (default: CCore::Framework::__SIZE)
-   * @return CDataValue value
+   * @return cpsapiVariant value
    */
-  CDataValue getProperty(const Property & property, const CCore::Framework & framework = CCore::Framework::__SIZE) const;
+  cpsapiVariant getProperty(const Property & property, const CCore::Framework & framework = CCore::Framework::__SIZE) const;
 
   /**
    * Retrieve a property of the object to the provided value under the given framework.
@@ -197,9 +199,9 @@ public:
    * The framework must be string in CCore::FrameworkNames
    * @param const std::string & property
    * @param const std::string & framework (default: "")
-   * @return CDataValue value
+   * @return cpsapiVariant value
    */
-  CDataValue getProperty(const std::string & property, const std::string & framework = "") const;
+  cpsapiVariant getProperty(const std::string & property, const std::string & framework = "") const;
 
   template < class CType >
   static Properties AllSupportedProperties();
@@ -208,9 +210,9 @@ protected:
   template < class CType >
   static bool isValidProperty(const cpsapiProperty::Type & property);
 
-  virtual bool setProperty(const cpsapiProperty::Type & property, const CDataValue & value, const CCore::Framework & framework);
+  virtual bool setProperty(const cpsapiProperty::Type & property, const cpsapiVariant & value, const CCore::Framework & framework);
 
-  virtual CDataValue getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const;
+  virtual cpsapiVariant getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const;
 
   template < class CData >
   void assertData(const CData & data);

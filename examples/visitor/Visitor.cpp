@@ -47,27 +47,27 @@ void Visitor::visit(cpsapiObject * pObject, const cpsapiObject::Type & type)
 
   switch (type)
     {
-    case cpsapiObject::Type::cpsapiModel:
+    case cpsapiObject::Type::Model:
       std::cout << "visit cpsapiModel: " << static_cast< cpsapiModel * >(pObject)->getObject()->getCN() << std::endl;
       break;
 
-    case cpsapiObject::Type::cpsapiCompartment:
+    case cpsapiObject::Type::Compartment:
       std::cout << "visit cpsapiCompartment: " << static_cast< cpsapiCompartment * >(pObject)->getObject()->getCN() << std::endl;
       break;
 
-    case cpsapiObject::Type::cpsapiSpecies:
+    case cpsapiObject::Type::Species:
       std::cout << "visit cpsapiSpecies: " << static_cast< cpsapiSpecies * >(pObject)->getObject()->getCN() << std::endl;
       break;
 
-    case cpsapiObject::Type::cpsapiObject:
+    case cpsapiObject::Type::Object:
       std::cout << "visit cpsapiObject: " << static_cast< cpsapiObject * >(pObject)->getObject()->getCN() << std::endl;
       break;
 
-    case cpsapiObject::Type::cpsapiContainer:
+    case cpsapiObject::Type::Container:
       std::cout << "visit cpsapiContainer: " << static_cast< cpsapiContainer * >(pObject)->getObject()->getCN() << std::endl;
       break;
 
-    case cpsapiObject::Type::cpsapiValue:
+    case cpsapiObject::Type::Value:
       std::cout << "visit cpsapiValue: " << static_cast< cpsapiValue * >(pObject)->getObject()->getCN() << std::endl;
       break;
 

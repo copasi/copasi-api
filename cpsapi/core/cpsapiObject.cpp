@@ -128,31 +128,31 @@ void cpsapiObject::accept(cpsapiVisitor & visitor)
   if (!operator bool())
     return;
 
-  visitor.visit(this, Type::cpsapiObject);
+  visitor.visit(this, Type::Object);
 }
 
-bool cpsapiObject::setProperty(const cpsapiObject::Property & property, const CDataValue & value, const CCore::Framework & framework)
+bool cpsapiObject::setProperty(const cpsapiObject::Property & property, const cpsapiVariant & value, const CCore::Framework & framework)
 {
   return setProperty(static_cast< cpsapiProperty::Type >(property), value, framework);
 }
 
-bool cpsapiObject::setProperty(const std::string & property, const CDataValue & value, const std::string & framework)
+bool cpsapiObject::setProperty(const std::string & property, const cpsapiVariant & value, const std::string & framework)
 {
   return setProperty(cpsapiProperty::Name.toEnum(property), value, CCore::FrameworkNames.toEnum(framework));
 }
 
-CDataValue cpsapiObject::getProperty(const Property & property, const CCore::Framework & framework ) const
+cpsapiVariant cpsapiObject::getProperty(const Property & property, const CCore::Framework & framework ) const
 {
   return getProperty(static_cast< cpsapiProperty::Type >(property), framework);
 }
 
-CDataValue cpsapiObject::getProperty(const std::string & property, const std::string & framework) const
+cpsapiVariant cpsapiObject::getProperty(const std::string & property, const std::string & framework) const
 {
   return getProperty(cpsapiProperty::Name.toEnum(property), CCore::FrameworkNames.toEnum(framework));
 }
 
 // virtual
-bool cpsapiObject::setProperty(const cpsapiProperty::Type & property, const CDataValue & value, const CCore::Framework & framework)
+bool cpsapiObject::setProperty(const cpsapiProperty::Type & property, const cpsapiVariant & value, const CCore::Framework & framework)
 {
   if (!isValidProperty<cpsapiObject>(property))
     return false;
@@ -165,7 +165,7 @@ bool cpsapiObject::setProperty(const cpsapiProperty::Type & property, const CDat
   switch (property)
     {
     case cpsapiProperty::Type::OBJECT_NAME:
-      if (value.getType() == CDataValue::Type::STRING)
+      if (value.getType() == cpsapiVariant::Type::String)
         success = getObject()->setObjectName(value.toString());
 
       break;
@@ -178,27 +178,27 @@ bool cpsapiObject::setProperty(const cpsapiProperty::Type & property, const CDat
 }
 
 // virtual 
-CDataValue cpsapiObject::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
+cpsapiVariant cpsapiObject::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
 {
   if (!operator bool()
       || !isValidProperty<cpsapiObject>(property))
-    return CDataValue();
+    return cpsapiVariant();
 
   switch (property)
     {
     case cpsapiProperty::Type::OBJECT_NAME:
-      return CDataValue(getObject()->getObjectName());
+      return cpsapiVariant(getObject()->getObjectName());
       break;
 
     case cpsapiProperty::Type::DISPLAY_NAME:
       return getObject()->getObjectDisplayName();
 
     case cpsapiProperty::Type::CN:
-      return getObject()->getCN();
+      return static_cast< std::string >(getObject()->getCN());
 
     default:
       break;
     }
 
-  return CDataValue();
+  return cpsapiVariant();
 }

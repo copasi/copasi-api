@@ -49,7 +49,7 @@ protected:
    * @param wrapped * pWrapped (default: nullptr)
    * @param const Type & type (default: Type::cpsapiContainer)
   */
-  cpsapiContainer(wrapped * pWrapped = nullptr, const Type & type = Type::cpsapiContainer);
+  cpsapiContainer(wrapped * pWrapped = nullptr, const Type & type = Type::Container);
 
 public:
   /**

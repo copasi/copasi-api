@@ -44,7 +44,7 @@ void cpsapiContainer::accept(cpsapiVisitor & visitor)
   if (!operator bool())
     return;
 
-  visitor.visit(this, Type::cpsapiContainer);
+  visitor.visit(this, Type::Container);
 
   wrapped::objectMap & Objects = static_cast< wrapped * >(getObject())->getObjects();
 

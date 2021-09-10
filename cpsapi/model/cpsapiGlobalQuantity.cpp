@@ -28,7 +28,7 @@ const cpsapiGlobalQuantity::Properties cpsapiGlobalQuantity::SupportedProperties
   };
 
 cpsapiGlobalQuantity::cpsapiGlobalQuantity(wrapped * pWrapped)
-  : base(pWrapped, Type::cpsapiGlobalQuantity)
+  : base(pWrapped, Type::GlobalQuantity)
 {}
 
 cpsapiGlobalQuantity::cpsapiGlobalQuantity(const cpsapiGlobalQuantity & src)
@@ -45,22 +45,22 @@ void cpsapiGlobalQuantity::accept(cpsapiVisitor & visitor)
   if (!operator bool())
     return;
 
-  visitor.visit(this, Type::cpsapiGlobalQuantity);
+  visitor.visit(this, Type::GlobalQuantity);
   base::accept(visitor);
 }
 
-bool cpsapiGlobalQuantity::setProperty(const cpsapiGlobalQuantity::Property & property, const CDataValue & value, const CCore::Framework & framework)
+bool cpsapiGlobalQuantity::setProperty(const cpsapiGlobalQuantity::Property & property, const cpsapiVariant & value, const CCore::Framework & framework)
 {
   return setProperty(static_cast< const cpsapiProperty::Type >(property), value, framework);
 }
 
-CDataValue cpsapiGlobalQuantity::getProperty(const cpsapiGlobalQuantity::Property & property, const CCore::Framework & framework) const
+cpsapiVariant cpsapiGlobalQuantity::getProperty(const cpsapiGlobalQuantity::Property & property, const CCore::Framework & framework) const
 {
   return getProperty(static_cast< const cpsapiProperty::Type >(property), framework);
 }
 
 // virtual
-bool cpsapiGlobalQuantity::setProperty(const cpsapiProperty::Type & property, const CDataValue & value, const CCore::Framework & framework)
+bool cpsapiGlobalQuantity::setProperty(const cpsapiProperty::Type & property, const cpsapiVariant & value, const CCore::Framework & framework)
 {
   if (!operator bool())
     return false;
@@ -77,7 +77,7 @@ bool cpsapiGlobalQuantity::setProperty(const cpsapiProperty::Type & property, co
   switch (property)
     {
     case cpsapiProperty::Type::UNIT:
-      if (value.getType() == CDataValue::Type::STRING)
+      if (value.getType() == cpsapiVariant::Type::String)
         success &= pWrapped->setUnitExpression(value.toString());
       break;
 
@@ -90,10 +90,10 @@ bool cpsapiGlobalQuantity::setProperty(const cpsapiProperty::Type & property, co
 }
 
 // virtual
-CDataValue cpsapiGlobalQuantity::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
+cpsapiVariant cpsapiGlobalQuantity::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
 {
   if (!operator bool())
-    return CDataValue();
+    return cpsapiVariant();
 
   if (!isValidProperty<cpsapiGlobalQuantity>(property))
     return base::getProperty(property, CCore::Framework::__SIZE);
@@ -110,5 +110,5 @@ CDataValue cpsapiGlobalQuantity::getProperty(const cpsapiProperty::Type & proper
       break;
     }
 
-  return CDataValue();
+  return cpsapiVariant();
 }

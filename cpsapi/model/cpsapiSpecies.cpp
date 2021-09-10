@@ -27,7 +27,7 @@ const cpsapiSpecies::Properties cpsapiSpecies::SupportedProperties =
   };
 
 cpsapiSpecies::cpsapiSpecies(wrapped * pWrapped)
-  : base(pWrapped, Type::cpsapiSpecies)
+  : base(pWrapped, Type::Species)
 {}
 
 cpsapiSpecies::cpsapiSpecies(const cpsapiSpecies & src)
@@ -44,22 +44,22 @@ void cpsapiSpecies::accept(cpsapiVisitor & visitor)
   if (!operator bool())
     return;
 
-  visitor.visit(this, Type::cpsapiSpecies);
+  visitor.visit(this, Type::Species);
   base::accept(visitor);
 }
 
-bool cpsapiSpecies::setProperty(const cpsapiSpecies::Property & property, const CDataValue & value, const CCore::Framework & framework)
+bool cpsapiSpecies::setProperty(const cpsapiSpecies::Property & property, const cpsapiVariant & value, const CCore::Framework & framework)
 {
   return setProperty(static_cast< const cpsapiProperty::Type >(property), value, framework);
 }
 
-CDataValue cpsapiSpecies::getProperty(const Property & property, const CCore::Framework & framework) const
+cpsapiVariant cpsapiSpecies::getProperty(const Property & property, const CCore::Framework & framework) const
 {
   return getProperty(static_cast< const cpsapiProperty::Type >(property), framework);
 }
 
 // virtual
-bool cpsapiSpecies::setProperty(const cpsapiProperty::Type & property, const CDataValue & value, const CCore::Framework & framework)
+bool cpsapiSpecies::setProperty(const cpsapiProperty::Type & property, const cpsapiVariant & value, const CCore::Framework & framework)
 {
   if (operator=(nullptr))
     return false;
@@ -79,7 +79,7 @@ bool cpsapiSpecies::setProperty(const cpsapiProperty::Type & property, const CDa
       if (Framework == CCore::Framework::__SIZE)
         Framework = CCore::Framework::Concentration;
 
-      if (value.getType() == CData::Type::DOUBLE)
+      if (value.getType() == cpsapiVariant::Type::Double)
         switch (Framework)
           {
           case CCore::Framework::Concentration:
@@ -113,10 +113,10 @@ bool cpsapiSpecies::setProperty(const cpsapiProperty::Type & property, const CDa
 }
 
 // virtual 
-CDataValue cpsapiSpecies::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
+cpsapiVariant cpsapiSpecies::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
 {
   if (!operator bool())
-    return CDataValue();
+    return cpsapiVariant();
 
   if (!isValidProperty<cpsapiSpecies>(property))
     return base::getProperty(property, CCore::Framework::__SIZE);
@@ -140,5 +140,5 @@ CDataValue cpsapiSpecies::getProperty(const cpsapiProperty::Type & property, con
       break;
     }
 
-  return CDataValue();
+  return cpsapiVariant();
 }

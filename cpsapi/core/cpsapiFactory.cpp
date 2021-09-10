@@ -51,13 +51,19 @@ void cpsapiFactory::init()
     }
 }
 
-cpsapiFactory::TypeInfo::TypeInfo(const std::type_index & cpsapiClass, std::shared_ptr< create > cpsapiCreate, const std::type_index & copasiClass, const std::string copasiString)
+cpsapiFactory::TypeInfo::TypeInfo(const std::type_index & cpsapiClass,
+                                  std::shared_ptr< cpsapiFactory::create > cpsapiCreate,
+                                  std::shared_ptr< cpsapiFactory::_copy > cpsapiCopy,
+                                  const std::type_index & copasiClass,
+                                  const std::string copasiString)
   : cpsapiClass(cpsapiClass)
   , cpsapiCreate()
+  , cpsapiCopy()
   , copasiClass(copasiClass)
   , copasiString(copasiString)
 {
   this->cpsapiCreate = cpsapiCreate;
+  this->cpsapiCopy = cpsapiCopy;
 }
 
 cpsapiFactory::TypeInfo & cpsapiFactory::TypeInfo::operator=(const cpsapiFactory::TypeInfo & rhs)
@@ -66,6 +72,7 @@ cpsapiFactory::TypeInfo & cpsapiFactory::TypeInfo::operator=(const cpsapiFactory
     {
       cpsapiClass = rhs.cpsapiClass;
       cpsapiCreate = rhs.cpsapiCreate;
+      cpsapiCopy = rhs.cpsapiCopy;
       copasiClass = rhs.copasiClass;
       copasiString = rhs.copasiString;
     }
@@ -107,6 +114,18 @@ const cpsapiFactory::TypeInfo & cpsapiFactory::info(const cpsapiObject & from)
 
   return Unknown;
 }
+
+// static 
+cpsapiObject * cpsapiFactory::copy(const cpsapiObject & object)
+{
+  const TypeInfo & Info = info(object);
+
+  if (Info.cpsapiCopy)
+    return (*Info.cpsapiCopy)(object);
+
+  return nullptr;
+}
+
 
 // static
 cpsapiObject * cpsapiFactory::make(CDataObject * pDataObject, const TypeInfo * pTypeInfo)

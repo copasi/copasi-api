@@ -28,7 +28,7 @@ const cpsapiCompartment::Properties cpsapiCompartment::SupportedProperties =
   };
 
 cpsapiCompartment::cpsapiCompartment(cpsapiCompartment::wrapped * pWrapped)
-  : base(pWrapped, Type::cpsapiCompartment)
+  : base(pWrapped, Type::Compartment)
 {
   assertData(Data(*std::static_pointer_cast< base::Data >(mpData)));
 }
@@ -47,7 +47,7 @@ void cpsapiCompartment::accept(cpsapiVisitor & visitor)
   if (!operator bool())
     return;
 
-  visitor.visit(this, Type::cpsapiCompartment);
+  visitor.visit(this, Type::Compartment);
   base::accept(visitor);
 }
 
@@ -128,18 +128,18 @@ void cpsapiCompartment::updateDefaultSpecies(const cpsapiSpecies & species)
   DATA(mpData)->mDefaultSpecies = species;
 }
 
-bool cpsapiCompartment::setProperty(const cpsapiCompartment::Property & property, const CDataValue & value, const CCore::Framework & framework)
+bool cpsapiCompartment::setProperty(const cpsapiCompartment::Property & property, const cpsapiVariant & value, const CCore::Framework & framework)
 {
   return setProperty(static_cast< const cpsapiProperty::Type >(property), value, framework);
 }
 
-CDataValue cpsapiCompartment::getProperty(const cpsapiCompartment::Property & property, const CCore::Framework & framework) const
+cpsapiVariant cpsapiCompartment::getProperty(const cpsapiCompartment::Property & property, const CCore::Framework & framework) const
 {
   return getProperty(static_cast< const cpsapiProperty::Type >(property), framework);
 }
 
 // virtual
-bool cpsapiCompartment::setProperty(const cpsapiProperty::Type & property, const CDataValue & value, const CCore::Framework & framework)
+bool cpsapiCompartment::setProperty(const cpsapiProperty::Type & property, const cpsapiVariant & value, const CCore::Framework & framework)
 {
   if (!operator bool())
     return false;
@@ -158,10 +158,10 @@ bool cpsapiCompartment::setProperty(const cpsapiProperty::Type & property, const
     case cpsapiProperty::Type::DIMENSIONALITY:
       Framework = CCore::Framework::__SIZE;
       
-      if (value.getType() == CDataValue::Type::UINT)
-        success = pWrapped->setDimensionality(value.toUint());
-      else if (value.getType() == CDataValue::Type::INT)
-        success = pWrapped->setDimensionality(value.toInt());
+      if (value.getType() == cpsapiVariant::Type::Int32)
+        success = pWrapped->setDimensionality(value.toInt32());
+      else if (value.getType() == cpsapiVariant::Type::UnsignedInt32)
+        success = pWrapped->setDimensionality(value.toUnsignedInt32());
 
       break;
 
@@ -169,7 +169,7 @@ bool cpsapiCompartment::setProperty(const cpsapiProperty::Type & property, const
       if (Framework == CCore::Framework::__SIZE)
         Framework = CCore::Framework::Concentration;
 
-      if (value.getType() == CDataValue::Type::DOUBLE)
+      if (value.getType() == cpsapiVariant::Type::Double)
         {
           pChangedObject = pWrapped->getInitialValueReference();
           pWrapped->setInitialValue(value.toDouble());
@@ -192,10 +192,10 @@ bool cpsapiCompartment::setProperty(const cpsapiProperty::Type & property, const
 }
 
 // virtual
-CDataValue cpsapiCompartment::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
+cpsapiVariant cpsapiCompartment::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
 {
   if (!operator bool())
-    return CDataValue();
+    return cpsapiVariant();
 
   if (!isValidProperty<cpsapiCompartment>(property))
     return base::getProperty(property, CCore::Framework::__SIZE);
@@ -220,5 +220,5 @@ CDataValue cpsapiCompartment::getProperty(const cpsapiProperty::Type & property,
       break;
     }
 
-  return CDataValue();
+  return cpsapiVariant();
 }

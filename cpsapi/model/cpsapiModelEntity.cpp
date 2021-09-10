@@ -48,22 +48,22 @@ void cpsapiModelEntity::accept(cpsapiVisitor & visitor)
   if (!operator bool())
     return;
 
-  visitor.visit(this, Type::cpsapiModelEntity);
+  visitor.visit(this, Type::ModelEntity);
   base::accept(visitor);
 }
 
-bool cpsapiModelEntity::setProperty(const cpsapiModelEntity::Property & property, const CDataValue & value, const CCore::Framework & framework)
+bool cpsapiModelEntity::setProperty(const cpsapiModelEntity::Property & property, const cpsapiVariant & value, const CCore::Framework & framework)
 {
   return setProperty(static_cast<const cpsapiProperty::Type >(property), value, framework);
 }
 
-CDataValue cpsapiModelEntity::getProperty(const Property & property, const CCore::Framework & framework) const
+cpsapiVariant cpsapiModelEntity::getProperty(const Property & property, const CCore::Framework & framework) const
 {
   return getProperty(static_cast<const cpsapiProperty::Type >(property), framework);
 }
 
 // virtual
-bool cpsapiModelEntity::setProperty(const cpsapiProperty::Type & property, const CDataValue & value, const CCore::Framework & framework)
+bool cpsapiModelEntity::setProperty(const cpsapiProperty::Type & property, const cpsapiVariant & value, const CCore::Framework & framework)
 {
   if (!operator bool())
     return false;
@@ -78,19 +78,19 @@ bool cpsapiModelEntity::setProperty(const cpsapiProperty::Type & property, const
   switch (property)
     {
     case cpsapiProperty::Type::EXPRESSION:
-      if (value.getType() == CDataValue::Type::STRING)
+      if (value.getType() == cpsapiVariant::Type::String)
         success = pEntity->setExpression(value.toString());
 
       break;
 
     case cpsapiProperty::Type::INITIAL_EXPRESSION:
-      if (value.getType() == CDataValue::Type::STRING)
+      if (value.getType() == cpsapiVariant::Type::String)
         success = pEntity->setInitialExpression(value.toString());
 
       break;
 
     case cpsapiProperty::Type::INITIAL_VALUE:
-      if (value.getType() == CDataValue::Type::DOUBLE)
+      if (value.getType() == cpsapiVariant::Type::Double)
         {
           pChangedObject = pEntity->getInitialValueReference();
           pEntity->setInitialValue(value.toDouble());
@@ -100,13 +100,13 @@ bool cpsapiModelEntity::setProperty(const cpsapiProperty::Type & property, const
       break;
 
     case cpsapiProperty::Type::SIMULATION_TYPE:
-      if (value.getType() == CDataValue::Type::STRING)
+      if (value.getType() == cpsapiVariant::Type::String)
         success = pEntity->setStatus(CModelEntity::StatusName.toEnum(value.toString()));
 
       break;
 
     case cpsapiProperty::Type::ADD_NOISE:
-      if (value.getType() == CDataValue::Type::BOOL)
+      if (value.getType() == cpsapiVariant::Type::Bool)
         {
           pEntity->setHasNoise(value.toBool());
           success = true;
@@ -115,7 +115,7 @@ bool cpsapiModelEntity::setProperty(const cpsapiProperty::Type & property, const
       break;
 
     case cpsapiProperty::Type::NOISE_EXPRESSION:
-      if (value.getType() == CDataValue::Type::STRING)
+      if (value.getType() == cpsapiVariant::Type::String)
         success = pEntity->setNoiseExpression(value.toString());
 
       break;
@@ -128,10 +128,10 @@ bool cpsapiModelEntity::setProperty(const cpsapiProperty::Type & property, const
 }
 
 // virtual 
-CDataValue cpsapiModelEntity::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
+cpsapiVariant cpsapiModelEntity::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
 {
   if (!operator bool())
-    return CDataValue();
+    return cpsapiVariant();
 
   if (!isValidProperty<cpsapiModelEntity>(property))
     return base::getProperty(property, framework);
@@ -173,5 +173,5 @@ CDataValue cpsapiModelEntity::getProperty(const cpsapiProperty::Type & property,
       break;
     }
 
-  return CDataValue();
+  return cpsapiVariant();
 }

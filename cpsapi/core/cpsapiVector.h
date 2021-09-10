@@ -120,7 +120,7 @@ public:
    * @param wrapped * pWrapped (default: nullptr)
    * @param const Type & type (default: Type::cpsapiVector)
   */
-  cpsapiVector(wrapped * pWrapped = nullptr, const Type & type = Type::cpsapiVector);
+  cpsapiVector(wrapped * pWrapped = nullptr, const Type & type = Type::Vector);
 
   /**
    * Copy constructor
@@ -173,7 +173,7 @@ void cpsapiVector< Object >::accept(cpsapiVisitor & visitor)
   if (!operator bool())
     return;
 
-  visitor.visit(this, Type::cpsapiVector);
+  visitor.visit(this, Type::Vector);
   base::accept(visitor);
 }
 

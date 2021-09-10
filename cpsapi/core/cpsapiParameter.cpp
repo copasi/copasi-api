@@ -42,22 +42,22 @@ void cpsapiParameter::accept(cpsapiVisitor & visitor)
   if (!operator bool())
     return;
 
-  visitor.visit(this, Type::cpsapiParameter);
+  visitor.visit(this, Type::Parameter);
   base::accept(visitor);
 }
 
-bool cpsapiParameter::setProperty(const cpsapiParameter::Property & property, const CDataValue & value, const CCore::Framework & framework)
+bool cpsapiParameter::setProperty(const cpsapiParameter::Property & property, const cpsapiVariant & value, const CCore::Framework & framework)
 {
   return setProperty(static_cast<const cpsapiProperty::Type >(property), value, framework);
 }
 
-CDataValue cpsapiParameter::getProperty(const Property & property, const CCore::Framework & framework) const
+cpsapiVariant cpsapiParameter::getProperty(const Property & property, const CCore::Framework & framework) const
 {
   return getProperty(static_cast<const cpsapiProperty::Type >(property), framework);
 }
 
 // virtual
-bool cpsapiParameter::setProperty(const cpsapiProperty::Type & property, const CDataValue & value, const CCore::Framework & framework)
+bool cpsapiParameter::setProperty(const cpsapiProperty::Type & property, const cpsapiVariant & value, const CCore::Framework & framework)
 {
   if (!operator bool())
     return false;
@@ -75,22 +75,22 @@ bool cpsapiParameter::setProperty(const cpsapiProperty::Type & property, const C
         {
         case wrapped::Type::DOUBLE:
         case wrapped::Type::UDOUBLE:
-          if (value.getType() == CDataValue::Type::DOUBLE)
+          if (value.getType() == cpsapiVariant::Type::Double)
             pParameter->setValue(value.toDouble());
           break;
 
         case wrapped::Type::INT:
-          if (value.getType() == CDataValue::Type::INT)
-            success = pParameter->setValue(value.toUint());
+          if (value.getType() == cpsapiVariant::Type::Int32)
+            success = pParameter->setValue(value.toInt32());
           break;
 
         case wrapped::Type::UINT:
-          if (value.getType() == CDataValue::Type::UINT)
-            success = pParameter->setValue(value.toInt());
+          if (value.getType() == cpsapiVariant::Type::UnsignedInt32)
+            success = pParameter->setValue(value.toUnsignedInt32());
           break;
 
         case wrapped::Type::BOOL:
-          if (value.getType() == CDataValue::Type::BOOL)
+          if (value.getType() == cpsapiVariant::Type::Bool)
             success = pParameter->setValue(value.toBool());
           break;
 
@@ -98,12 +98,12 @@ bool cpsapiParameter::setProperty(const cpsapiProperty::Type & property, const C
         case wrapped::Type::KEY:
         case wrapped::Type::FILE:
         case wrapped::Type::EXPRESSION:
-          if (value.getType() == CDataValue::Type::STRING)
+          if (value.getType() == cpsapiVariant::Type::String)
             success = pParameter->setValue(value.toString());
           break;
 
         case wrapped::Type::CN:
-          if (value.getType() == CDataValue::Type::STRING)
+          if (value.getType() == cpsapiVariant::Type::String)
             success = pParameter->setValue(CCommonName(value.toString()));
           break;
 
@@ -120,10 +120,10 @@ bool cpsapiParameter::setProperty(const cpsapiProperty::Type & property, const C
 }
 
 // virtual 
-CDataValue cpsapiParameter::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
+cpsapiVariant cpsapiParameter::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
 {
   if (!operator bool())
-    return CDataValue();
+    return cpsapiVariant();
 
   if (!isValidProperty<cpsapiParameter>(property))
     return base::getProperty(property, framework);
@@ -171,5 +171,5 @@ CDataValue cpsapiParameter::getProperty(const cpsapiProperty::Type & property, c
       break;
     }
 
-  return CDataValue();
+  return cpsapiVariant();
 }

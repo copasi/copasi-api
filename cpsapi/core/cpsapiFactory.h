@@ -31,6 +31,27 @@ private:
     }
   };
 
+  struct _copy
+  {
+    virtual ~_copy()
+    {}
+
+    virtual cpsapiObject * operator()(const cpsapiObject &) = 0;
+  };
+
+  template < class CType >
+  struct copyTemplate : public _copy
+  {
+    virtual ~copyTemplate()
+    {}
+
+    virtual cpsapiObject * operator()(const cpsapiObject & object)
+    {
+      return new CType(*static_cast< const CType *>(&object));
+    }
+  };
+
+
 public:
   typedef void (*free_unique_t)(void *);
 
@@ -41,6 +62,7 @@ public:
   {
     std::type_index cpsapiClass;
     std::shared_ptr< create > cpsapiCreate;
+    std::shared_ptr< _copy > cpsapiCopy;
     std::type_index copasiClass;
     std::string copasiString;
 
@@ -48,6 +70,7 @@ public:
     static void initProtected()
     {
       insert(TypeInfo(std::type_index(typeid(Target)),
+                      nullptr,
                       nullptr,
                       std::type_index(typeid(Source)),
                       typeid(Source).name()));
@@ -58,12 +81,14 @@ public:
     {
       insert(TypeInfo(std::type_index(typeid(Target)),
                       std::make_shared< createTemplate< Target, Source > >(),
+                      std::make_shared< copyTemplate< Target > >(),
                       std::type_index(typeid(Source)),
                       typeid(Source).name()));
     }
 
     TypeInfo(const std::type_index & cpsapiClass = std::type_index(typeid(cpsapiObject)),
              std::shared_ptr< create > cpsapiCreate = nullptr,
+             std::shared_ptr< _copy > cpsapiCopy = nullptr,
              const std::type_index & copasiClass = std::type_index(typeid(CDataObject)),
              const std::string copasiString = "unknown");
 
@@ -98,6 +123,8 @@ public:
   template < class CType >
   static std::unique_ptr< CType, free_unique_t > make_unique(const cpsapiObject & from);
 
+  static cpsapiObject * copy(const cpsapiObject & object);
+
 private:
   static cpsapiObject * make(CDataObject * pObject, const TypeInfo * pTypeInfo = nullptr);
 };
@@ -111,7 +138,7 @@ inline std::shared_ptr< cpsapiObject > cpsapiFactory::make_shared(CDataObject * 
 template <>
 inline std::shared_ptr< cpsapiObject > cpsapiFactory::make_shared(const cpsapiObject & from)
 {
-  return std::shared_ptr< cpsapiObject >(make(from.getObject(), from ? nullptr : &info(from)));
+  return std::shared_ptr< cpsapiObject >(copy(from));
 }
 
 template < class CType >
@@ -123,7 +150,7 @@ inline std::shared_ptr< CType > cpsapiFactory::make_shared(CDataObject * pFrom)
 template < class CType >
 inline std::shared_ptr< CType > cpsapiFactory::make_shared(const cpsapiObject & from)
 {
-  return std::shared_ptr< CType >(dynamic_cast< CType * >(make(from.getObject(), from ? nullptr : &info(std::type_index(typeid(CType))))));
+  return std::shared_ptr< CType >(dynamic_cast< CType * >(copy(from)));
 }
 
 template <>
@@ -135,7 +162,7 @@ inline std::unique_ptr< cpsapiObject, cpsapiFactory::free_unique_t > cpsapiFacto
 template <>
 inline std::unique_ptr< cpsapiObject, cpsapiFactory::free_unique_t > cpsapiFactory::make_unique(const cpsapiObject & from)
 {
-  return std::unique_ptr< cpsapiObject, cpsapiFactory::free_unique_t >(make(from.getObject(), from ? nullptr : &info(from)), &free_unique< cpsapiObject >);
+  return std::unique_ptr< cpsapiObject, cpsapiFactory::free_unique_t >(copy(from), &free_unique< cpsapiObject >);
 }
 
 template < class CType >
@@ -147,7 +174,7 @@ std::unique_ptr< CType, cpsapiFactory::free_unique_t > cpsapiFactory::make_uniqu
 template < class CType >
 std::unique_ptr< CType, cpsapiFactory::free_unique_t > cpsapiFactory::make_unique(const cpsapiObject & from)
 {
-  return std::unique_ptr< CType, cpsapiFactory::free_unique_t >(dynamic_cast< CType * >(make(from.getObject(), from ? nullptr : &info(std::type_index(typeid(CType))))), &free_unique< CType >);
+  return std::unique_ptr< CType, cpsapiFactory::free_unique_t >(dynamic_cast< CType * >(copy(from)), &free_unique< CType >);
 }
 
 template <>

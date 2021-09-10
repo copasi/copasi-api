@@ -12,23 +12,24 @@ CPSAPI_NAMESPACE_BEGIN
 class cpsapiVariant
 {
 public:
-  enum struct Variant
+  enum struct Type
   {
-    cpsapiDouble,
-    cpsapiInt32,
-    cpsapiUnsignedInt32,
-    cpsapiSizeType,
-    cpsapiBool,
-    cpsapiString,
-    cpsapiCommonName,
-    cpsapiObject,
-    cpsapiVector,
+    Double,
+    Int32,
+    UnsignedInt32,
+    SizeType,
+    Bool,
+    String,
+    CommonName,
+    Object,
     __SIZE
   };
 
-  static const CEnumAnnotation< std::string, Variant > Name;
+  typedef std::unique_ptr< void, cpsapiFactory::free_unique_t > DataPointer;
 
-  cpsapiVariant() = delete;
+  static const CEnumAnnotation< std::string, Type > Name;
+
+  cpsapiVariant();
 
   cpsapiVariant(const C_FLOAT64 & value);
 
@@ -42,11 +43,11 @@ public:
 
   cpsapiVariant(const std::string & value);
 
+  cpsapiVariant(const char * value);
+
   cpsapiVariant(const CRegisteredCommonName & value);
 
   template < class Object > cpsapiVariant(const Object & value);
-
-  template < class Object > cpsapiVariant(const std::vector< Object > & value);
 
   cpsapiVariant(const cpsapiVariant & src);
 
@@ -68,42 +69,53 @@ public:
 
   template < class Object > Object toObject() const;
 
-  template < class Object > std::vector< Object > toVector() const;
+  const Type & getType() const;
 
 private:
-  std::unique_ptr< void, cpsapiFactory::free_unique_t > copyData() const;
+  DataPointer copyData() const;
 
-  template < class Type > void assign(const Type * pValue, const Variant & variant);
+  template < class CType > void assign(const CType * pValue, const Type & type);
 
-  template < class Type > static void free_unique(void *);
+  template < class CType > static void free_unique(void *);
 
-  Variant mVariant;
+  Type mType;
 
-  std::unique_ptr< void, cpsapiFactory::free_unique_t > mpData;
+  DataPointer mpData;
 };
 
 template < class Object > 
 cpsapiVariant::cpsapiVariant(const Object & value)
-  : mVariant(Variant::cpsapiObject)
+  : mType(Type::Object)
   , mpData(cpsapiFactory::make_unique(value))
 {}
 
-template < class Object > 
-cpsapiVariant::cpsapiVariant(const std::vector< Object > & value)
-  : mVariant(Variant::cpsapiDouble)
-  , mpData(cpsapiFactory::make_unique((value)))
-{}
-
-template < class Type > 
-void cpsapiVariant::assign(const Type * pValue, const cpsapiVariant::Variant & variant)
+template <> inline
+void cpsapiVariant::assign(const cpsapiObject * pValue, const cpsapiVariant::Type & type)
 {
-  if (mVariant == variant)
-    *static_cast< Type * >(mpData.get()) = *pValue;
+  mType = type;
+  mpData = cpsapiFactory::make_unique< cpsapiObject >(*pValue);
+}
+
+template < class CType > 
+void cpsapiVariant::assign(const CType * pValue, const cpsapiVariant::Type & type)
+{
+  if (mType == type)
+    *static_cast< CType * >(mpData.get()) = *pValue;
   else
     {
-      mVariant = variant;
-      mpData = std::unique_ptr< Type, cpsapiFactory::free_unique_t >(new Type(*pValue), &cpsapiFactory::free_unique< Type >);
+      mType = type;
+      mpData = std::unique_ptr< CType, cpsapiFactory::free_unique_t >(new CType(*pValue), &cpsapiFactory::free_unique< Type >);
     }
 }
+
+template < class Object > 
+Object cpsapiVariant::toObject() const
+{
+  if (mType == Type::Object)
+    return *static_cast< Object * >(mpData.get());
+
+  return cpsapiObject(nullptr, cpsapiObject::Type::__SIZE);
+}
+
 
 CPSAPI_NAMESPACE_END

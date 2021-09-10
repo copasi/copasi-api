@@ -23,7 +23,7 @@
 CPSAPI_NAMESPACE_USE
 
 cpsapiDataModel::cpsapiDataModel(wrapped * pWrapped)
-  : base(pWrapped, Type::cpsapiDataModel)
+  : base(pWrapped, Type::DataModel)
 {
   assertData(Data(*std::static_pointer_cast< base::Data >(mpData)));
 }
@@ -42,7 +42,7 @@ void cpsapiDataModel::accept(cpsapiVisitor & visitor)
   if (!operator bool())
     return;
 
-  visitor.visit(this, Type::cpsapiDataModel);
+  visitor.visit(this, Type::DataModel);
   base::accept(visitor);
 }
 

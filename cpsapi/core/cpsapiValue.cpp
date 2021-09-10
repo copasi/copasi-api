@@ -23,7 +23,7 @@ const cpsapiValue::Properties cpsapiValue::SupportedProperties =
   };
 
 cpsapiValue::cpsapiValue(wrapped * pWrapped)
-  : base(pWrapped, Type::cpsapiValue)
+  : base(pWrapped, Type::Value)
 {
   if (getType() == CDataValue::Type::INVALID)
     operator=(nullptr);
@@ -42,22 +42,22 @@ void cpsapiValue::accept(cpsapiVisitor & visitor)
   if (!operator bool())
     return;
 
-  visitor.visit(this, Type::cpsapiValue);
+  visitor.visit(this, Type::Value);
   base::accept(visitor);
 }
 
-bool cpsapiValue::setProperty(const cpsapiValue::Property & property, const CDataValue & value, const CCore::Framework & framework)
+bool cpsapiValue::setProperty(const cpsapiValue::Property & property, const cpsapiVariant & value, const CCore::Framework & framework)
 {
   return setProperty(static_cast< const cpsapiProperty::Type >(property), value, framework);
 }
 
-CDataValue cpsapiValue::getProperty(const cpsapiValue::Property & property, const CCore::Framework & framework) const
+cpsapiVariant cpsapiValue::getProperty(const cpsapiValue::Property & property, const CCore::Framework & framework) const
 {
   return getProperty(static_cast< const cpsapiProperty::Type >(property), framework);
 }
 
 // virtual
-bool cpsapiValue::setProperty(const cpsapiProperty::Type & property, const CDataValue & value, const CCore::Framework & framework)
+bool cpsapiValue::setProperty(const cpsapiProperty::Type & property, const cpsapiVariant & value, const CCore::Framework & framework)
 {
   if (!operator bool())
     return false;
@@ -68,7 +68,7 @@ bool cpsapiValue::setProperty(const cpsapiProperty::Type & property, const CData
   switch (getType())
   {
     case CDataValue::Type::DOUBLE:
-      if (value.getType() == CDataValue::Type::DOUBLE)
+      if (value.getType() == cpsapiVariant::Type::Double)
         {
           *(double *) getObject()->getValuePointer() = value.toDouble();
           return true;
@@ -76,23 +76,23 @@ bool cpsapiValue::setProperty(const cpsapiProperty::Type & property, const CData
       break;
 
     case CDataValue::Type::INT:
-      if (value.getType() == CDataValue::Type::INT)
+      if (value.getType() == cpsapiVariant::Type::Int32)
         {
-          *(C_INT32 *) getObject()->getValuePointer() = value.toInt();
+          *(C_INT32 *) getObject()->getValuePointer() = value.toInt32();
           return true;
         }
       break;
       
     case CDataValue::Type::UINT:
-      if (value.getType() == CDataValue::Type::UINT)
+      if (value.getType() == cpsapiVariant::Type::UnsignedInt32)
         {
-          *(unsigned C_INT32 *) getObject()->getValuePointer() = value.toInt();
+          *(unsigned C_INT32 *) getObject()->getValuePointer() = value.toUnsignedInt32();
           return true;
         }
       break;
       
     case CDataValue::Type::BOOL:
-      if (value.getType() == CDataValue::Type::BOOL)
+      if (value.getType() == cpsapiVariant::Type::Bool)
         {
           *(bool *) getObject()->getValuePointer() = value.toBool();
           return true;
@@ -100,7 +100,7 @@ bool cpsapiValue::setProperty(const cpsapiProperty::Type & property, const CData
       break;
       
     case CDataValue::Type::STRING:
-      if (value.getType() == CDataValue::Type::STRING)
+      if (value.getType() == cpsapiVariant::Type::String)
         {
           *(std::string *) getObject()->getValuePointer() = value.toString();
           return true;
@@ -115,10 +115,10 @@ bool cpsapiValue::setProperty(const cpsapiProperty::Type & property, const CData
 }
 
 // virtual
-CDataValue cpsapiValue::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
+cpsapiVariant cpsapiValue::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
 {
   if (!operator bool())
-    return CDataValue();
+    return cpsapiVariant();
 
   if (!isValidProperty<cpsapiValue>(property))
     return base::getProperty(property, framework);
@@ -149,10 +149,10 @@ CDataValue cpsapiValue::getProperty(const cpsapiProperty::Type & property, const
       break;      
   }
 
-  return CDataValue();
+  return cpsapiVariant();
 }
 
-cpsapiValue::operator CDataValue() const
+cpsapiValue::operator cpsapiVariant() const
 {
   return getProperty(cpsapiProperty::VALUE, CCore::Framework::__SIZE);
 }
