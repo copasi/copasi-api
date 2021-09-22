@@ -293,6 +293,82 @@ void cpsapiModel::updateDefaultGlobalQuantity(const cpsapiGlobalQuantity & globa
   DATA(mpData)->mDefaultGlobalQuantity = globalQuantity;
 }
 
+cpsapiReaction cpsapiModel::addReaction(const std::string & name)
+{
+  if (!operator bool())
+    return nullptr;
+
+  cpsapiTransaction::beginStructureChange(static_cast< wrapped * >(getObject()));
+
+  CReaction * pReaction = static_cast< wrapped * >(getObject())->createReaction(name);
+
+  if (pReaction != nullptr)
+    updateDefaultReaction(pReaction);
+
+  return pReaction;
+}
+
+bool cpsapiModel::deleteReaction(const std::string & name)
+{
+  CReaction * pReaction = static_cast< CReaction *>(__reaction(name).getObject());;
+
+  if (pReaction == nullptr)
+    return false;
+
+  if (DATA(mpData)->mDefaultReaction.getObject() == pReaction)
+    updateDefaultReaction(nullptr);
+
+  cpsapiTransaction::beginStructureChange(static_cast< wrapped * >(getObject()));
+
+  deleteAllDependents(pReaction);
+  deleted(pReaction);
+  delete pReaction;
+
+  return true;
+}
+
+cpsapiReaction cpsapiModel::reaction(const std::string & name)
+{
+  cpsapiReaction Reaction = __reaction(name);
+
+  if (!Reaction)
+    return nullptr;
+
+  if (DATA(mpData)->mDefaultReaction.getObject() != Reaction.getObject())
+    updateDefaultReaction(Reaction);
+
+  return Reaction;
+}
+
+cpsapiVector< cpsapiReaction > cpsapiModel::getReactions() const
+{
+  if (!operator bool())
+    return cpsapiVector< cpsapiReaction >();
+
+  return cpsapiVector< cpsapiReaction >(&static_cast< wrapped * >(getObject())->getReactions());
+}
+
+cpsapiReaction cpsapiModel::__reaction(const std::string & name) const
+{
+  if (!operator bool())
+    return nullptr;
+
+  if (name.empty())
+    return DATA(mpData)->mDefaultReaction;
+
+  size_t Index = static_cast< wrapped * >(getObject())->getReactions().getIndex(name);
+
+  if (Index == C_INVALID_INDEX)
+    return nullptr;
+
+  return &static_cast< wrapped * >(getObject())->getReactions()[Index];
+}
+
+void cpsapiModel::updateDefaultReaction(const cpsapiReaction & reaction)
+{
+  DATA(mpData)->mDefaultReaction = reaction;
+}
+
 void cpsapiModel::deleteDependents(const CDataObject::DataObjectSet & set)
 {
   for (const CDataObject * pObject : set)

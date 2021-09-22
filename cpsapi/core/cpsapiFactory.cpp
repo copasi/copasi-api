@@ -34,6 +34,7 @@ void cpsapiFactory::init()
       TypeInfo::init< cpsapiVector< cpsapiSpecies >, CDataVector< CMetab > >();
       TypeInfo::init< cpsapiVector< cpsapiSpecies >, CDataVectorNS< CMetab > >();
       TypeInfo::init< cpsapiVector< cpsapiGlobalQuantity >, CDataVectorN< CModelValue > >();
+      TypeInfo::init< cpsapiVector< cpsapiReaction >, CDataVectorNS< CReaction > >();
       TypeInfo::init< cpsapiVector< cpsapiDataModel >, CDataVector< CDataModel > >();
       TypeInfo::init< cpsapiValue, CDataObjectReference< C_FLOAT64 > >();
       TypeInfo::init< cpsapiValue, CDataObjectReference< C_INT32 > >();
@@ -45,6 +46,7 @@ void cpsapiFactory::init()
       TypeInfo::init< cpsapiCompartment, CCompartment >();
       TypeInfo::init< cpsapiSpecies, CMetab >();
       TypeInfo::init< cpsapiGlobalQuantity, CModelValue >();
+      TypeInfo::init< cpsapiReaction, CReaction >();
       TypeInfo::init< cpsapiDataModel, CDataModel >();
       TypeInfo::init< cpsapiParameter, CCopasiParameter >();
       TypeInfo::init< cpsapiGroup, CCopasiParameterGroup >();
@@ -52,8 +54,8 @@ void cpsapiFactory::init()
 }
 
 cpsapiFactory::TypeInfo::TypeInfo(const std::type_index & cpsapiClass,
-                                  std::shared_ptr< cpsapiFactory::create > cpsapiCreate,
-                                  std::shared_ptr< cpsapiFactory::_copy > cpsapiCopy,
+                                  std::shared_ptr< cpsapiFactory::createInterface > cpsapiCreate,
+                                  std::shared_ptr< cpsapiFactory::copyInterface > cpsapiCopy,
                                   const std::type_index & copasiClass,
                                   const std::string copasiString)
   : cpsapiClass(cpsapiClass)
@@ -107,12 +109,7 @@ const cpsapiFactory::TypeInfo & cpsapiFactory::info(CDataObject * pFrom)
 // static
 const cpsapiFactory::TypeInfo & cpsapiFactory::info(const cpsapiObject & from)
 {
-  static const TypeInfo Unknown;
-
-  if (from)
-    return info(std::type_index(typeid(*from.getObject())));
-
-  return Unknown;
+  return info(std::type_index(typeid(from)));
 }
 
 // static 
@@ -126,6 +123,16 @@ cpsapiObject * cpsapiFactory::copy(const cpsapiObject & object)
   return nullptr;
 }
 
+// static 
+cpsapiObject * cpsapiFactory::create(CDataObject * pFrom)
+{
+  const TypeInfo & Info = info(pFrom);
+
+  if (Info.cpsapiCreate)
+    return (*Info.cpsapiCreate)(pFrom);
+
+  return nullptr;
+}
 
 // static
 cpsapiObject * cpsapiFactory::make(CDataObject * pDataObject, const TypeInfo * pTypeInfo)

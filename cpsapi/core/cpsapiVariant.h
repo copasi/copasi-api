@@ -86,7 +86,7 @@ private:
 template < class Object > 
 cpsapiVariant::cpsapiVariant(const Object & value)
   : mType(Type::Object)
-  , mpData(cpsapiFactory::make_unique(value))
+  , mpData(cpsapiFactory::make_unique< Object >(value))
 {}
 
 template <> inline
@@ -111,10 +111,11 @@ void cpsapiVariant::assign(const CType * pValue, const cpsapiVariant::Type & typ
 template < class Object > 
 Object cpsapiVariant::toObject() const
 {
-  if (mType == Type::Object)
+  if (mType == Type::Object
+      && dynamic_cast< Object * >(static_cast< cpsapiObject * >(mpData.get())) != nullptr)
     return *static_cast< Object * >(mpData.get());
 
-  return cpsapiObject(nullptr, cpsapiObject::Type::__SIZE);
+  return Object(nullptr);
 }
 
 

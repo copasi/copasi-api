@@ -42,6 +42,8 @@ public:
  */
 class cpsapiObject
 {
+  friend class cpsapiVariant;
+
 protected:
   typedef std::shared_ptr< cpsapiData > DataPointer;
 
@@ -63,6 +65,8 @@ public:
     Compartment,
     Species,
     GlobalQuantity,
+    Reaction,
+    ReactionParameter,
     DataModel,
     Parameter,
     Group,
@@ -148,12 +152,6 @@ public:
    * @param accept(cpsapiVisitor& visitor)
    */
   virtual void accept(cpsapiVisitor & visitor);
-
-  /**
-   * Retrieve the pointer to the underlying COPASI CDataObject.
-   * @return CDataObject * pObject
-   */
-  CDataObject * getObject();
 
   /**
    * Retrieve the pointer to the underlying COPASI CDataObject.

@@ -40,18 +40,20 @@ void cpsapiObject::deleted(const CDataObject * pObject)
 // static
 const CEnumAnnotation< std::string, cpsapiObject::Type > cpsapiObject::TypeName(
 {
-  "cpsapiObject",
-  "cpsapiContainer",
-  "cpsapiVector",
-  "cpsapiModelEntity",
-  "cpsapiValue",
-  "cpsapiModel",
-  "cpsapiCompartment",
-  "cpsapiSpecies",
-  "cpsapiGlobalQuantity",
-  "cpsapiDataModel",
-  "cpsapiParameter",
-  "cpsapiGroup"
+  "Object",
+  "Container",
+  "Vector",
+  "ModelEntity",
+  "Value",
+  "Model",
+  "Compartment",
+  "Species",
+  "GlobalQuantity",
+  "Reaction",
+  "ReactionParameter",
+  "DataModel",
+  "Parameter",
+  "Group"
 });
 
 // static
@@ -112,14 +114,9 @@ cpsapiObject::operator bool() const
   return std::static_pointer_cast< Data >(mpData)->mpObject != nullptr;
 }
 
-CDataObject * cpsapiObject::getObject()
-{
-  return operator*();
-}
-
 CDataObject * cpsapiObject::getObject() const
 {
-  return operator*();
+  return std::static_pointer_cast< Data >(mpData)->mpObject;
 }
 
 // virtual 

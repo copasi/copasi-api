@@ -61,6 +61,7 @@ const CEnumAnnotation< std::string, cpsapiProperty::Type > cpsapiProperty::Name(
   "Parameter Role", // PARAMETER_ROLE
   "Parameter Used", //  PARAMETER_USED
   "Parameter Value", // PARAMETER_VALUE
+  "Parameter Mapping", // PARAMETER_MAPPING
   "Unit", // UNIT
   "Volume Unit", // VOLUME_UNIT
   "Area Unit", // AREA_UNIT

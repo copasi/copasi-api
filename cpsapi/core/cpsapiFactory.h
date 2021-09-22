@@ -11,16 +11,16 @@ CPSAPI_NAMESPACE_BEGIN
 class cpsapiFactory
 {
 private:
-  struct create
+  struct createInterface
   {
-    virtual ~create()
+    virtual ~createInterface()
     {}
 
     virtual cpsapiObject * operator()(CDataObject *) = 0;
   };
 
   template < class Target, class Source >
-  struct createTemplate : public create
+  struct createTemplate : public createInterface
   {
     virtual ~createTemplate()
     {}
@@ -31,16 +31,16 @@ private:
     }
   };
 
-  struct _copy
+  struct copyInterface
   {
-    virtual ~_copy()
+    virtual ~copyInterface()
     {}
 
     virtual cpsapiObject * operator()(const cpsapiObject &) = 0;
   };
 
   template < class CType >
-  struct copyTemplate : public _copy
+  struct copyTemplate : public copyInterface
   {
     virtual ~copyTemplate()
     {}
@@ -61,8 +61,8 @@ public:
   struct TypeInfo
   {
     std::type_index cpsapiClass;
-    std::shared_ptr< create > cpsapiCreate;
-    std::shared_ptr< _copy > cpsapiCopy;
+    std::shared_ptr< createInterface > cpsapiCreate;
+    std::shared_ptr< copyInterface > cpsapiCopy;
     std::type_index copasiClass;
     std::string copasiString;
 
@@ -87,8 +87,8 @@ public:
     }
 
     TypeInfo(const std::type_index & cpsapiClass = std::type_index(typeid(cpsapiObject)),
-             std::shared_ptr< create > cpsapiCreate = nullptr,
-             std::shared_ptr< _copy > cpsapiCopy = nullptr,
+             std::shared_ptr< createInterface > cpsapiCreate = nullptr,
+             std::shared_ptr< copyInterface > cpsapiCopy = nullptr,
              const std::type_index & copasiClass = std::type_index(typeid(CDataObject)),
              const std::string copasiString = "unknown");
 
@@ -124,6 +124,8 @@ public:
   static std::unique_ptr< CType, free_unique_t > make_unique(const cpsapiObject & from);
 
   static cpsapiObject * copy(const cpsapiObject & object);
+
+  static cpsapiObject * create(CDataObject * pFrom);
 
 private:
   static cpsapiObject * make(CDataObject * pObject, const TypeInfo * pTypeInfo = nullptr);

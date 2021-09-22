@@ -71,6 +71,10 @@ void Visitor::visit(cpsapiObject * pObject, const cpsapiObject::Type & type)
       std::cout << "visit cpsapiValue: " << static_cast< cpsapiValue * >(pObject)->getObject()->getCN() << std::endl;
       break;
 
+    case cpsapiObject::Type::Reaction:
+      std::cout << "visit cpsapiReaction: " << static_cast< cpsapiReaction * >(pObject)->getObject()->getCN() << std::endl;
+      break;
+
     default:
       std::cout << "visit unhandled (" << cpsapiObject::TypeName[type] << "): " << static_cast< cpsapiObject * >(pObject)->getObject()->getCN() << std::endl;
       break;

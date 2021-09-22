@@ -1,16 +1,19 @@
 #pragma once
 
+#include "cpsapi/model/cpsapiReactionParameter.h"
 #include "cpsapi/core/cpsapiContainer.h"
+#include "cpsapi/core/cpsapiVector.h"
 
 class CReaction;
 
 CPSAPI_NAMESPACE_BEGIN
 
-class cpsapiReaction: public cpsapiContainer
+class cpsapiReaction : public cpsapiContainer
 {
 public:
-  typedef cpsapiContainer base;
-
+  /**
+   * Enumeration of the exposed properties
+   */ 
   enum class Property
   {
     CHEMICAL_EQUATION = cpsapiProperty::Type::CHEMICAL_EQUATION,
@@ -26,26 +29,88 @@ public:
     CN = cpsapiProperty::Type::CN
   };
 
+  /**
+   * Static set of supported properties
+   */
   static const Properties SupportedProperties;
 
-  cpsapiReaction() = delete;
+  /**
+   * The base class
+   */
+  typedef cpsapiContainer base;
 
-  cpsapiReaction(CReaction * pReaction);
+  /**
+   * The wrapped COPASI class
+   */
+  typedef CReaction wrapped;
 
+  typedef std::map< std::string, cpsapiReactionParameter::FakeData * > ParameterManager;
+  typedef CDataVector< cpsapiReactionParameter::FakeData > ParameterVector;
+  class Data : public base::Data
+  {
+  public:
+    Data(const base::Data & data)
+      : base::Data(data)
+      , mManager()
+      , mpVector(new ParameterVector)
+      , mDefaultParameter()
+    {}
+
+    Data(const Data & src)
+      : base::Data(src)
+      , mManager()
+      , mpVector(new ParameterVector)
+      , mDefaultParameter(src.mDefaultParameter)
+    {}
+
+    virtual ~Data() 
+    {
+      if (mpVector)
+        delete mpVector;
+
+      ParameterManager::iterator it = mManager.begin();
+      ParameterManager::iterator end = mManager.end();
+      
+      for (; it != end; ++it)
+        {
+          deleted(it->second);
+          delete it->second;
+        }
+    }
+
+    ParameterManager mManager;
+    ParameterVector * mpVector;
+    cpsapiReactionParameter mDefaultParameter;
+  };
+
+  /**
+   * Specific constructor
+   * @param wrapped * pWrapped
+   */
+  cpsapiReaction(wrapped * pWrapped = nullptr);
+
+  /**
+   * Copy constructor
+   * @param const cpsapiReaction & src
+   */
   cpsapiReaction(const cpsapiReaction & src);
 
   virtual ~cpsapiReaction();
 
   virtual void accept(cpsapiVisitor & visitor) override;
 
-  bool setProperty(const Property & property, const CDataValue & value, const CCore::Framework & framework = CCore::Framework::__SIZE);
+  cpsapiReactionParameter parameter(const std::string & name = "");
 
-  CDataValue getProperty(const Property & property, const CCore::Framework & framework = CCore::Framework::__SIZE) const;
+  cpsapiVector< cpsapiReactionParameter > parameters();
+
+  bool setProperty(const Property & property, const cpsapiVariant & value, const CCore::Framework & framework = CCore::Framework::__SIZE);
+
+  cpsapiVariant getProperty(const Property & property, const CCore::Framework & framework = CCore::Framework::__SIZE) const;
 
 protected:
-  virtual bool setProperty(const cpsapiProperty::Type & property, const CDataValue & value, const CCore::Framework & framework) override;
+  virtual bool setProperty(const cpsapiProperty::Type & property, const cpsapiVariant & value, const CCore::Framework & framework) override;
 
-  virtual CDataValue getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const override;
+  virtual cpsapiVariant getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const override;
 };
 
 CPSAPI_NAMESPACE_END

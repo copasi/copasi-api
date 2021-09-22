@@ -8,6 +8,7 @@ CPSAPI_NAMESPACE_BEGIN
 
 template < class Object > class cpsapiVector : public cpsapiContainer
 {
+public:
   /**
    * Enumeration of the exposed properties
    */ 
@@ -28,43 +29,78 @@ template < class Object > class cpsapiVector : public cpsapiContainer
    */
   typedef CDataVector< typename Object::wrapped > wrapped;
 
-public:
+  /**
+   * We need to keep the cpsapiObjects around since the iterator returns references or pointers. 
+   */ 
+  typedef std::map< typename Object::wrapped *, Object > ObjectMap;
+
+  class Data : public base::Data
+  {
+  public:
+    Data(const base::Data & data)
+      : base::Data(data)
+      , mMap()
+    {}
+
+    virtual ~Data() {}
+
+    ObjectMap mMap;
+  };
+
+
   class iterator: public wrapped::iterator
   {
   public:
-    iterator()
-      : wrapped::iterator()
-      , mObject(nullptr)
-    {}
+    iterator() = delete;
 
     iterator(const iterator & src)
       : wrapped::iterator(src)
-      , mObject(src.mObject)
+      , mMap(src.mMap)
     {}
 
-    iterator(const typename wrapped::iterator & src)
+    iterator(const typename wrapped::iterator & src, ObjectMap & map)
       : wrapped::iterator(src)
-      , mObject(nullptr)
+      , mMap(map)
+    {}
+
+    iterator(ObjectMap & map)
+      : wrapped::iterator()
+      , mMap(map)
     {}
 
     ~iterator() {}
 
     Object & operator*() const
     {
-      mObject = Object(&wrapped::iterator::operator*());
-      return mObject;
+      typename Object::wrapped & Wrapped = wrapped::iterator::operator*();
+      typename ObjectMap::iterator found = mMap.find(&Wrapped);
+
+      if (found == mMap.end())
+        found = mMap.insert(std::make_pair(&Wrapped, Object(&Wrapped))).first;
+
+      return found->second;
     }
 
     Object * operator->() const
     {
-      mObject = Object(&wrapped::iterator::operator*());
-      return &mObject;
+      typename Object::wrapped & Wrapped = wrapped::iterator::operator*();
+      typename ObjectMap::iterator found = mMap.find(&Wrapped);
+
+      if (found == mMap.end())
+        found = mMap.insert(std::make_pair(&Wrapped, Object(&Wrapped))).first;
+
+      return &found->second;
     }
 
     operator Object * () const
     {
-      mObject = Object(&wrapped::iterator::operator*());
-      return &mObject;
+      typename Object::wrapped & Wrapped = wrapped::iterator::operator*();
+      typename ObjectMap::iterator found = mMap.find(&Wrapped);
+
+      if (found == mMap.end())
+        found = mMap.insert(std::make_pair(&Wrapped, Object(&Wrapped))).first;
+
+      return &found->second;
     }
 
     iterator & operator++()
@@ -111,8 +147,8 @@ public:
       return iterator(wrapped::iterator::operator-(n));
     }
 
-    private:
-      mutable Object mObject;
+  protected:
+    ObjectMap & mMap;
   };
 
   /**
@@ -156,7 +192,9 @@ const typename cpsapiVector< Object >::Properties cpsapiVector< Object >::Suppor
 template < class Object > 
 cpsapiVector< Object >::cpsapiVector(wrapped * pWrapped, const cpsapiObject::Type & type)
   : base(pWrapped, type)
-{}
+{
+  assertData(Data(*std::static_pointer_cast< base::Data >(mpData)));
+}
 
 template < class Object > 
 cpsapiVector< Object >::cpsapiVector(const cpsapiVector & src)
@@ -190,18 +228,18 @@ template < class Object >
 typename cpsapiVector< Object >::iterator cpsapiVector< Object >::begin()
 {
   if (!operator bool())
-    return iterator();
+    return iterator(DATA(mpData)->mMap);
 
-  return iterator(static_cast< wrapped * >(getObject())->begin());
+  return iterator(static_cast< wrapped * >(getObject())->begin(), DATA(mpData)->mMap);
 }
 
 template < class Object > 
 typename cpsapiVector< Object >::iterator cpsapiVector< Object >::end()
 {
   if (!operator bool())
-    return iterator();
+    return iterator(DATA(mpData)->mMap);
 
-  return iterator(static_cast< wrapped * >(getObject())->end());
+  return iterator(static_cast< wrapped * >(getObject())->end(), DATA(mpData)->mMap);
 }
 
 template < class Object > 

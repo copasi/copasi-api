@@ -18,6 +18,7 @@
 #include "cpsapi/model/cpsapiCompartment.h"
 #include "cpsapi/model/cpsapiSpecies.h"
 #include "cpsapi/model/cpsapiGlobalQuantity.h"
+#include "cpsapi/model/cpsapiReaction.h"
 
 #include <memory>
 
@@ -80,7 +81,7 @@ public:
     Data(const base::Data & data)
       : base::Data(data)
       , mDefaultCompartment()
-      , mpDefaultReaction(nullptr)
+      , mDefaultReaction()
       , mDefaultGlobalQuantity()
       , mpDefaultEvent(nullptr)
     {}
@@ -88,7 +89,7 @@ public:
     virtual ~Data() {}
 
     cpsapiCompartment mDefaultCompartment;
-    CReaction * mpDefaultReaction;
+    cpsapiReaction mDefaultReaction;
     cpsapiGlobalQuantity mDefaultGlobalQuantity;
     CEvent * mpDefaultEvent;
   };
@@ -140,6 +141,14 @@ public:
   cpsapiGlobalQuantity globalQuantity(const std::string & name = "");
 
   cpsapiVector< cpsapiGlobalQuantity > getGlobalQuantities() const;
+
+  cpsapiReaction addReaction(const std::string & name);
+
+  bool deleteReaction(const std::string & name = "");
+
+  cpsapiReaction reaction(const std::string & name = "");
+
+  cpsapiVector< cpsapiReaction > getReactions() const;
   
   void deleteAllDependents(CDataContainer * pContainer);
 
@@ -162,6 +171,10 @@ private:
   cpsapiGlobalQuantity __globalQuantity(const std::string & name) const;
 
   void updateDefaultGlobalQuantity(const cpsapiGlobalQuantity & globalQuantity);
+  
+  cpsapiReaction __reaction(const std::string & name) const;
+
+  void updateDefaultReaction(const cpsapiReaction & reaction);
   
   void deleteDependents(const CDataObject::DataObjectSet & set);
 };
