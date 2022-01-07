@@ -31,7 +31,7 @@ jobs:
       shell: bash
       run: |
         cmake --version
-        curl -L https://github.com/copasi/copasi-dependencies/releases/download/Version-4.31.243/${{ matrix.platform }}.zip -o ${{ matrix.platform }}.zip
+        curl -L https://github.com/copasi/copasi-dependencies/releases/download/Version-4.34.251/${{ matrix.platform }}.zip -o ${{ matrix.platform }}.zip
         unzip ${{ matrix.platform }}.zip -d dependencies
 
     - name: Patch dependencies (windows)
@@ -67,7 +67,7 @@ jobs:
     - name: Download COPASI
       shell: bash
       run: |
-        git clone --single-branch --branch release/Version-4.32 https://github.com/copasi/COPASI
+        git clone --single-branch --branch release/Version-4.35 https://github.com/copasi/COPASI
 
     - name: Update COPASI Version
       shell: bash
