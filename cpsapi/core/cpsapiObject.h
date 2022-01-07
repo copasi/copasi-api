@@ -24,7 +24,8 @@
 
 class CDataObject;
 
-#define DATA(share) std::static_pointer_cast< Data >(share)
+#define DATA std::static_pointer_cast< Data >(mpData)
+#define WRAPPED static_cast< wrapped * >(getObject())
 
 CPSAPI_NAMESPACE_BEGIN
 
@@ -52,6 +53,10 @@ protected:
   static Map Manager;
 
 public:
+  static void release();
+
+  static void erase(const CDataObject * pObject);
+
   static void deleted(const CDataObject * pObject);
 
   enum struct Type
@@ -261,6 +266,8 @@ void cpsapiObject::assertData(const CData & data)
 }
 
 CPSAPI_NAMESPACE_END
+
+std::ostream & operator << (std::ostream &os, const CPSAPI_NAMESPACE_QUALIFIER cpsapiObject & object);
 
 #include "cpsapi/core/cpsapiFactory.h"
 #include "cpsapi/core/cpsapiVariant.h"

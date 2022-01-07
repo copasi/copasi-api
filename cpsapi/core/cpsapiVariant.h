@@ -108,6 +108,15 @@ void cpsapiVariant::assign(const CType * pValue, const cpsapiVariant::Type & typ
     }
 }
 
+template <>
+inline cpsapiObject cpsapiVariant::toObject() const
+{
+  if (mType == Type::Object)
+    return *static_cast< cpsapiObject * >(mpData.get());
+
+  return cpsapiObject(nullptr, cpsapiObject::Type::Object);
+}
+
 template < class Object > 
 Object cpsapiVariant::toObject() const
 {

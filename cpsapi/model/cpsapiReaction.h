@@ -18,9 +18,8 @@ public:
   {
     CHEMICAL_EQUATION = cpsapiProperty::Type::CHEMICAL_EQUATION,
     KINETIC_LAW = cpsapiProperty::Type::KINETIC_LAW,
+    KINETIC_LAW_EXPRESSION = cpsapiProperty::Type::KINETIC_LAW_EXPRESSION,
     KINETIC_LAW_UNIT_TYPE = cpsapiProperty::Type::KINETIC_LAW_UNIT_TYPE,
-    KINETIC_LAW_VARIABLE_MAPPING = cpsapiProperty::Type::KINETIC_LAW_VARIABLE_MAPPING,
-    LOCAL_REACTION_PARAMETERS = cpsapiProperty::Type::LOCAL_REACTION_PARAMETERS,
     SCALING_COMPARTMENT = cpsapiProperty::Type::SCALING_COMPARTMENT,
     ADD_NOISE = cpsapiProperty::Type::ADD_NOISE,
     NOISE_EXPRESSION = cpsapiProperty::Type::NOISE_EXPRESSION,
@@ -52,22 +51,12 @@ public:
     Data(const base::Data & data)
       : base::Data(data)
       , mManager()
-      , mpVector(new ParameterVector)
+      , mpVector(nullptr)
       , mDefaultParameter()
-    {}
-
-    Data(const Data & src)
-      : base::Data(src)
-      , mManager()
-      , mpVector(new ParameterVector)
-      , mDefaultParameter(src.mDefaultParameter)
     {}
 
     virtual ~Data() 
     {
-      if (mpVector)
-        delete mpVector;
-
       ParameterManager::iterator it = mManager.begin();
       ParameterManager::iterator end = mManager.end();
       
@@ -76,10 +65,19 @@ public:
           deleted(it->second);
           delete it->second;
         }
+
+      mManager.clear();
+
+      if (mpVector != nullptr)
+        {
+          deleted(mpVector);
+          delete mpVector;
+          mpVector = nullptr;
+        }
     }
 
     ParameterManager mManager;
-    ParameterVector * mpVector;
+    ParameterVector  * mpVector;
     cpsapiReactionParameter mDefaultParameter;
   };
 
@@ -111,6 +109,9 @@ protected:
   virtual bool setProperty(const cpsapiProperty::Type & property, const cpsapiVariant & value, const CCore::Framework & framework) override;
 
   virtual cpsapiVariant getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const override;
+
+private:
+  cpsapiReactionParameter::FakeData * assertParameter(const std::string & name);
 };
 
 CPSAPI_NAMESPACE_END

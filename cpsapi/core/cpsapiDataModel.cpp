@@ -52,8 +52,20 @@ bool cpsapiDataModel::loadFromFile(const std::string & fileName)
 
   if (operator bool())
     {
-      success = static_cast< wrapped * >(getObject())->loadFromFile(fileName);
-      DATA(mpData)->mModel = cpsapiModel(static_cast< wrapped * >(getObject())->getModel());
+      success = WRAPPED->loadFromFile(fileName, nullptr, false);
+
+      if (success)
+        {
+          // We need to mark all old data as deleted before we actually delete it
+          std::shared_ptr< Data > pData = DATA; 
+          deleted(pData->mModel.getObject());
+          pData->mpDefaultTask = nullptr;
+          pData->mpDefaultReportDefinition = nullptr;
+          pData->mpDefaultPlotSpecification = nullptr;
+          WRAPPED->deleteOldData();
+
+          pData->mModel = cpsapiModel(WRAPPED->getModel());
+        }
     }
 
   return success;
@@ -65,8 +77,20 @@ bool cpsapiDataModel::loadFromString(const std::string & content, const std::str
 
   if (operator bool())
     {
-      success = static_cast< wrapped * >(getObject())->loadFromString(content, referenceDir);
-      DATA(mpData)->mModel = cpsapiModel(static_cast< wrapped * >(getObject())->getModel());
+      success = WRAPPED->loadFromString(content, referenceDir, nullptr, false);
+
+      if (success)
+        {
+          // We need to mark all old data as deleted before we actually delete it
+          std::shared_ptr< Data > pData = DATA; 
+          deleted(pData->mModel.getObject());
+          pData->mpDefaultTask = nullptr;
+          pData->mpDefaultReportDefinition = nullptr;
+          pData->mpDefaultPlotSpecification = nullptr;
+          WRAPPED->deleteOldData();
+
+          pData->mModel = cpsapiModel(WRAPPED->getModel());
+        }
     }
 
   return success;
@@ -75,10 +99,10 @@ bool cpsapiDataModel::loadFromString(const std::string & content, const std::str
 cpsapiModel & cpsapiDataModel::model()
 {
   if (operator bool()
-      && !DATA(mpData)->mModel)
-    DATA(mpData)->mModel = static_cast< wrapped * >(getObject())->getModel();
+      && !DATA->mModel)
+    DATA->mModel = WRAPPED->getModel();
 
-  return DATA(mpData)->mModel;
+  return DATA->mModel;
 }
 
 void cpsapiDataModel::beginTransaction()

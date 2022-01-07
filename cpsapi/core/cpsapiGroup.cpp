@@ -121,7 +121,7 @@ cpsapiParameter cpsapiGroup::addParameter(const std::string & name, const CDataV
 
   if (pParameter != nullptr)
     {
-      static_cast< wrapped * >(getObject())->addParameter(pParameter);
+      WRAPPED->addParameter(pParameter);
       Parameter = cpsapiParameter(pParameter, Type::Parameter);
 
       updateDefaultParameter(Parameter);
@@ -141,7 +141,7 @@ cpsapiGroup cpsapiGroup::addGroup(const std::string & name)
 
   if (pWrapped != nullptr)
     {
-      static_cast< wrapped * >(getObject())->addParameter(pWrapped);
+      WRAPPED->addParameter(pWrapped);
       Group = cpsapiGroup(pWrapped);
 
       updateDefaultParameter(Group);
@@ -157,7 +157,7 @@ bool cpsapiGroup::deleteParameter(const std::string & name)
   if (pParameter == nullptr)
     return false;
 
-  if (DATA(mpData)->mDefaultParameter.getObject() == pParameter)
+  if (DATA->mDefaultParameter.getObject() == pParameter)
     updateDefaultParameter(cpsapiParameter(nullptr, Type::Parameter));
 
   deleted(pParameter);
@@ -173,10 +173,10 @@ cpsapiParameter cpsapiGroup::parameter(const std::string & name)
   if (!Parameter)
     return Parameter;
 
-  if (DATA(mpData)->mDefaultParameter.getObject() != Parameter.getObject())
+  if (DATA->mDefaultParameter.getObject() != Parameter.getObject())
     updateDefaultParameter(Parameter);
 
-  return DATA(mpData)->mDefaultParameter;
+  return DATA->mDefaultParameter;
 }
 
 std::vector< cpsapiParameter > cpsapiGroup::getParameters() const
@@ -185,10 +185,10 @@ std::vector< cpsapiParameter > cpsapiGroup::getParameters() const
 
   if (operator bool())
     {
-      wrapped::elements::iterator it = static_cast< wrapped::elements * >(static_cast< wrapped * >(getObject())->getValuePointer())->begin();
-      wrapped::elements::iterator end = static_cast< wrapped::elements * >(static_cast< wrapped * >(getObject())->getValuePointer())->end();
+      wrapped::elements::iterator it = static_cast< wrapped::elements * >(WRAPPED->getValuePointer())->begin();
+      wrapped::elements::iterator end = static_cast< wrapped::elements * >(WRAPPED->getValuePointer())->end();
 
-      for (CCopasiParameter * pParameter : *static_cast< wrapped::elements * >(static_cast< wrapped * >(getObject())->getValuePointer()))
+      for (CCopasiParameter * pParameter : *static_cast< wrapped::elements * >(WRAPPED->getValuePointer()))
         {
           if (pParameter == nullptr)
             continue;
@@ -209,9 +209,9 @@ cpsapiParameter cpsapiGroup::__parameter(const std::string & name) const
     return cpsapiParameter(nullptr, Type::Parameter);
 
   if (name.empty())
-    return DATA(mpData)->mDefaultParameter;
+    return DATA->mDefaultParameter;
 
-  CCopasiParameter * pParameter = static_cast< wrapped * >(getObject())->getParameter(name);
+  CCopasiParameter * pParameter = WRAPPED->getParameter(name);
 
   if (pParameter == nullptr
       || pParameter->getType() != CCopasiParameter::Type::GROUP)
@@ -222,5 +222,5 @@ cpsapiParameter cpsapiGroup::__parameter(const std::string & name) const
 
 void cpsapiGroup::updateDefaultParameter(const cpsapiParameter & parameter)
 {
-  DATA(mpData)->mDefaultParameter = parameter;
+  DATA->mDefaultParameter = parameter;
 }

@@ -69,7 +69,7 @@ bool cpsapiSpecies::setProperty(const cpsapiProperty::Type & property, const cps
 
   CCore::Framework Framework(framework);
 
-  wrapped * pWrapped = static_cast< wrapped * >(getObject());
+  wrapped * pWrapped = WRAPPED;
   CDataObject * pChangedObject = pWrapped;
   bool success = cpsapiTransaction::endStructureChange(pWrapped->getModel());
 
@@ -121,7 +121,7 @@ cpsapiVariant cpsapiSpecies::getProperty(const cpsapiProperty::Type & property, 
   if (!isValidProperty<cpsapiSpecies>(property))
     return base::getProperty(property, CCore::Framework::__SIZE);
 
-  wrapped * pWrapped = static_cast< wrapped * >(getObject());
+  wrapped * pWrapped = WRAPPED;
 
   switch (property)
     {

@@ -21,6 +21,7 @@ const CEnumAnnotation< std::string, cpsapiProperty::Type > cpsapiProperty::Name(
   "Noise Expression", // NOISE_EXPRESSION
   "Chemical Equation", // CHEMICAL_EQUATION
   "Kinetic Law", // KINETIC_LAW
+  "Kinetic Expression", // KINETIC_LAW_EXPRESSION
   "Kinetic Law Unit Type", // KINETIC_LAW_UNIT_TYPE
   "Kinetic Law Variable Mapping", // KINETIC_LAW_VARIABLE_MAPPING
   "Local Reaction Parameters", // LOCAL_REACTION_PARAMETERS

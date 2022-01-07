@@ -46,7 +46,7 @@ void cpsapiContainer::accept(cpsapiVisitor & visitor)
 
   visitor.visit(this, Type::Container);
 
-  wrapped::objectMap & Objects = static_cast< wrapped * >(getObject())->getObjects();
+  wrapped::objectMap & Objects = WRAPPED->getObjects();
 
   for (CDataObject * pDataObject : Objects)
     {

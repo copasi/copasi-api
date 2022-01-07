@@ -8,11 +8,21 @@
 CPSAPI_NAMESPACE_USE
 
 // static
-const cpsapiReactionParameter::Properties cpsapiReactionParameter::SupportedProperties{
-  cpsapiProperty::Type::OBJECT_NAME,
-  cpsapiProperty::Type::PARAMETER_ROLE,
-  cpsapiProperty::Type::PARAMETER_VALUE,
-  cpsapiProperty::Type::PARAMETER_MAPPING};
+const cpsapiReactionParameter::Properties cpsapiReactionParameter::SupportedProperties =
+  {
+    cpsapiProperty::Type::OBJECT_NAME,
+    cpsapiProperty::Type::PARAMETER_ROLE,
+    cpsapiProperty::Type::PARAMETER_VALUE,
+    cpsapiProperty::Type::PARAMETER_MAPPING
+  };
+
+// static
+const cpsapiReactionParameter::Properties cpsapiReactionParameter::HiddenProperties =
+  {
+    cpsapiProperty::Type::DISPLAY_NAME,
+    cpsapiProperty::Type::CN
+  };
+
 
 cpsapiReactionParameter::cpsapiReactionParameter(wrapped * pWrapped)
   : base(pWrapped, Type::ReactionParameter)
@@ -64,7 +74,7 @@ bool cpsapiReactionParameter::setProperty(const cpsapiProperty::Type & property,
   CCore::Framework Framework(framework);
 
   const std::string & Name = static_cast< FakeData * >(getObject())->mName;
-  wrapped * pWrapped = static_cast< wrapped * >(getObject());
+  wrapped * pWrapped = WRAPPED;
   CReaction * pChangedObject = pWrapped->mpReaction;
 
   const CFunctionParameter * pParameter;
@@ -74,6 +84,7 @@ bool cpsapiReactionParameter::setProperty(const cpsapiProperty::Type & property,
     return false;
 
   CDataObject * pObject = nullptr;
+  
   if (pChangedObject->getParameterObjects()[Index].size() == 1)
     pObject = const_cast< CDataObject * >(pChangedObject->getParameterObjects()[Index][0]);
 

@@ -184,6 +184,8 @@ public:
   Object & operator[](const size_t & index);
 
   Object & operator[](const std::string & name);
+
+  size_t index(const std::string & name) const;
 };
 
 template < class Object > 
@@ -221,25 +223,25 @@ size_t cpsapiVector< Object >::size() const
   if (!operator bool())
     return 0;
 
-  return static_cast< wrapped * >(getObject())->size();
+  return WRAPPED->size();
 }
 
 template < class Object > 
 typename cpsapiVector< Object >::iterator cpsapiVector< Object >::begin()
 {
   if (!operator bool())
-    return iterator(DATA(mpData)->mMap);
+    return iterator(DATA->mMap);
 
-  return iterator(static_cast< wrapped * >(getObject())->begin(), DATA(mpData)->mMap);
+  return iterator(WRAPPED->begin(), DATA->mMap);
 }
 
 template < class Object > 
 typename cpsapiVector< Object >::iterator cpsapiVector< Object >::end()
 {
   if (!operator bool())
-    return iterator(DATA(mpData)->mMap);
+    return iterator(DATA->mMap);
 
-  return iterator(static_cast< wrapped * >(getObject())->end(), DATA(mpData)->mMap);
+  return iterator(WRAPPED->end(), DATA->mMap);
 }
 
 template < class Object > 
@@ -248,7 +250,7 @@ Object & cpsapiVector< Object >::operator[](const size_t & index)
   static Object NotFound(nullptr);
 
   if (index < size())
-    return Object(&static_cast< wrapped * >(getObject())->operator[](index));
+    return *(begin() += index);
 
   return NotFound;
 }
@@ -259,9 +261,18 @@ Object & cpsapiVector< Object >::operator[](const std::string & name)
   static Object NotFound(nullptr);
 
   if (operator bool())
-    return operator[](static_cast< wrapped * >(getObject())->getIndex(name));
+    return operator[](index(name));
 
   return NotFound;
 };
+
+template < class Object > 
+size_t cpsapiVector< Object >::index(const std::string & name) const
+{
+  if (static_cast< CDataVectorN < typename Object::wrapped > * >(getObject()) != nullptr)
+    return static_cast< CDataVectorN < typename Object::wrapped > * >(getObject())->getIndex(name);
+
+  return C_INVALID_INDEX;
+}
 
 CPSAPI_NAMESPACE_END

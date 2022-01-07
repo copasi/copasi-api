@@ -70,7 +70,7 @@ bool cpsapiGlobalQuantity::setProperty(const cpsapiProperty::Type & property, co
 
   CCore::Framework Framework(framework);
 
-  wrapped * pWrapped = static_cast< wrapped * >(getObject());
+  wrapped * pWrapped = WRAPPED;
   CDataObject * pChangedObject = pWrapped;
   bool success = cpsapiTransaction::endStructureChange(pWrapped->getModel());
 
@@ -98,7 +98,7 @@ cpsapiVariant cpsapiGlobalQuantity::getProperty(const cpsapiProperty::Type & pro
   if (!isValidProperty<cpsapiGlobalQuantity>(property))
     return base::getProperty(property, CCore::Framework::__SIZE);
 
-  wrapped * pWrapped = static_cast< wrapped * >(getObject());
+  wrapped * pWrapped = WRAPPED;
 
   switch (property)
     {

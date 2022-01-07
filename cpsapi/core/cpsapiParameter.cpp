@@ -65,7 +65,7 @@ bool cpsapiParameter::setProperty(const cpsapiProperty::Type & property, const c
   if (!isValidProperty<cpsapiParameter>(property))
     return base::setProperty(property, value, framework);
 
-  wrapped * pParameter = static_cast< wrapped * >(getObject());
+  wrapped * pParameter = WRAPPED;
   bool success = false;
 
   switch (property)
@@ -109,6 +109,7 @@ bool cpsapiParameter::setProperty(const cpsapiProperty::Type & property, const c
 
         case wrapped::Type::GROUP:
         case wrapped::Type::INVALID:
+        case wrapped::Type::__SIZE:
           break;
         }
 
@@ -128,7 +129,7 @@ cpsapiVariant cpsapiParameter::getProperty(const cpsapiProperty::Type & property
   if (!isValidProperty<cpsapiParameter>(property))
     return base::getProperty(property, framework);
 
-  wrapped * pParameter = static_cast< wrapped * >(getObject());
+  wrapped * pParameter = WRAPPED;
   bool success = false;
 
   switch (property)

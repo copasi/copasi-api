@@ -21,8 +21,18 @@ CPSAPI_NAMESPACE_USE
 // static 
 cpsapiObject::Map cpsapiObject::Manager;
 
+// static
+void cpsapiObject::release()
+{
+  Map::iterator it = Manager.begin();
+  Map::iterator end = Manager.end();
+
+  for (; it != end; ++it)
+    it->second.reset();
+}
+
 // static 
-void cpsapiObject::deleted(const CDataObject * pObject)
+void cpsapiObject::erase(const CDataObject * pObject)
 {
   if (pObject == nullptr)
     return;
@@ -31,10 +41,22 @@ void cpsapiObject::deleted(const CDataObject * pObject)
   
   if (found == Manager.end())
     return;
+
   
-  std::static_pointer_cast< Data >(found->second)->mpObject = nullptr;
+  if (found->second.get() != nullptr)
+    std::static_pointer_cast< Data >(found->second)->mpObject = nullptr;
 
   Manager.erase(pObject);
+}
+
+// static
+void cpsapiObject::deleted(const CDataObject * pObject)
+{
+  if (dynamic_cast< const CDataContainer * >(pObject))
+    for (const CDataObject * pChildObject : static_cast< const CDataContainer * >(pObject)->getObjects())
+      deleted(pChildObject);
+
+  erase(pObject);
 }
 
 // static
@@ -66,6 +88,13 @@ const cpsapiObject::Properties cpsapiObject::SupportedProperties =
 
 // static
 const cpsapiObject::Properties cpsapiObject::HiddenProperties = {};
+
+std::ostream & operator << (std::ostream &os, const cpsapiObject & object)
+{
+  os << cpsapiObject::TypeName[object.getType()] << ": " << object.getProperty(cpsapiObject::Property::OBJECT_NAME).toString();
+
+  return os;
+}
 
 cpsapiObject::cpsapiObject(CDataObject * pObject, const cpsapiObject::Type & type)
   : mpData()

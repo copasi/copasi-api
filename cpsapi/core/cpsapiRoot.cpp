@@ -61,7 +61,14 @@ cpsapiDataModel & cpsapi::addDataModel(const std::string & name)
 // static
 bool cpsapi::deleteDataModel(const std::string & name)
 {
-  std::map< std::string, CDataModel * >::iterator found = DataModels.find(name);
+  cpsapiDataModel DataModel = dataModel(name);
+
+  std::map< std::string, CDataModel * >::const_iterator found = DataModels.begin();
+  std::map< std::string, CDataModel * >::const_iterator end = DataModels.end();
+
+  for (; found != end; ++found)
+    if (DataModel.getObject() == found->second)
+      break;
 
   if (found == DataModels.end())
     return false;
@@ -69,7 +76,9 @@ bool cpsapi::deleteDataModel(const std::string & name)
   if (DefaultDataModel.getObject() == found->second)
     DefaultDataModel = cpsapiDataModel(nullptr);
 
-  delete found->second;
+  deleted(found->second);
+  CRootContainer::removeDatamodel(found->second);
+
   DataModels.erase(found);
 
   return true;
@@ -233,5 +242,6 @@ void cpsapi::init()
 // static 
 void cpsapi::release()
 {
+  cpsapiObject::release();
   CRootContainer::destroy();
 }

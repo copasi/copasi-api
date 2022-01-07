@@ -1,6 +1,7 @@
 #pragma once
 
 #include "cpsapi/core/cpsapiContainer.h"
+#include "cpsapi/core/cpsapiVector.h"
 #include "copasi/model/CReaction.h"
 
 class CReaction;
@@ -53,6 +54,11 @@ public:
   static const Properties SupportedProperties;
 
   /**
+   * Static set of hidden properties
+   */
+  static const Properties HiddenProperties;
+
+  /**
    * The base class
    */
   typedef cpsapiObject base;
@@ -89,4 +95,25 @@ protected:
 
 };
 
+template <>
+inline size_t cpsapiVector< cpsapiReactionParameter >::index(const std::string & name) const
+{
+  if (operator bool())
+    {
+      wrapped * pWrapped = WRAPPED;
+      wrapped::const_iterator itParameter = pWrapped->begin();
+      wrapped::const_iterator endParameter = pWrapped->end();
+      
+      for (size_t Index = 0; itParameter != endParameter; ++itParameter, ++Index)
+        {
+          if (itParameter->mName == name)
+            return Index;
+        }
+    }
+
+  return C_INVALID_INDEX;
+};
+
 CPSAPI_NAMESPACE_END
+
+

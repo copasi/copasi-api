@@ -37,8 +37,10 @@ TEST_CASE("load COPASI file and access via cpsapi", "[cpsapi]")
 {
   std::string fileName = getTestFile("test-data/brusselator.cps");
 
-  REQUIRE(cpsapi::addDataModel() == true);
+  REQUIRE(cpsapi::addDataModel("brusselator") == true);
   REQUIRE(cpsapi::loadFromFile(fileName) == true);
   REQUIRE(cpsapi::model() == true);
   REQUIRE(cpsapi::model().getSpecies().size() == 6);
+
+  REQUIRE(cpsapi::deleteDataModel());
 }

@@ -56,15 +56,15 @@ cpsapiSpecies cpsapiCompartment::addSpecies(const std::string & name)
   if (!operator bool())
     return nullptr;
   
-  cpsapiSpecies Species = cpsapiModel(static_cast< wrapped * >(getObject())->getModel()).addSpecies(name, getObject()->getObjectName());
+  cpsapiSpecies Species = cpsapiModel(WRAPPED->getModel()).addSpecies(name, getObject()->getObjectName());
 
   if (!Species)
     return nullptr;
 
-  if (DATA(mpData)->mDefaultSpecies.getObject() != Species.getObject())
+  if (DATA->mDefaultSpecies.getObject() != Species.getObject())
     updateDefaultSpecies(Species);
 
-  return DATA(mpData)->mDefaultSpecies;
+  return DATA->mDefaultSpecies;
 }
 
 bool cpsapiCompartment::deleteSpecies(const std::string & name)
@@ -74,12 +74,12 @@ bool cpsapiCompartment::deleteSpecies(const std::string & name)
   if (pSpecies == nullptr)
     return false;
   
-  if (DATA(mpData)->mDefaultSpecies.getObject() == pSpecies)
+  if (DATA->mDefaultSpecies.getObject() == pSpecies)
     updateDefaultSpecies(nullptr);
   
-  cpsapiTransaction::beginStructureChange(static_cast< wrapped * >(getObject())->getModel());
+  cpsapiTransaction::beginStructureChange(WRAPPED->getModel());
 
-  cpsapiModel(static_cast< wrapped * >(getObject())->getModel()).deleteAllDependents(pSpecies);
+  cpsapiModel(WRAPPED->getModel()).deleteAllDependents(pSpecies);
   deleted(pSpecies);
   pdelete(pSpecies);
 
@@ -93,10 +93,10 @@ cpsapiSpecies cpsapiCompartment::species(const std::string & name)
   if (!Species)
     return Species;
 
-  if (DATA(mpData)->mDefaultSpecies.getObject() != Species.getObject())
+  if (DATA->mDefaultSpecies.getObject() != Species.getObject())
     updateDefaultSpecies(Species);
 
-  return DATA(mpData)->mDefaultSpecies;
+  return DATA->mDefaultSpecies;
 }
 
 cpsapiVector< cpsapiSpecies > cpsapiCompartment::getSpecies() const
@@ -104,7 +104,7 @@ cpsapiVector< cpsapiSpecies > cpsapiCompartment::getSpecies() const
   if (!operator bool())
     return cpsapiVector< cpsapiSpecies >();
 
-  return cpsapiVector< cpsapiSpecies >(&static_cast< wrapped * >(getObject())->getMetabolites());
+  return cpsapiVector< cpsapiSpecies >(&WRAPPED->getMetabolites());
 }
 
 cpsapiSpecies cpsapiCompartment::__species(const std::string & name) const
@@ -113,19 +113,19 @@ cpsapiSpecies cpsapiCompartment::__species(const std::string & name) const
     return nullptr;
     
   if (name.empty())
-    return DATA(mpData)->mDefaultSpecies;
+    return DATA->mDefaultSpecies;
 
-  size_t Index = static_cast< wrapped * >(getObject())->getMetabolites().getIndex(name);
+  size_t Index = WRAPPED->getMetabolites().getIndex(name);
 
   if (Index == C_INVALID_INDEX)
     return nullptr;
 
-  return  &static_cast< wrapped * >(getObject())->getMetabolites()[Index];
+  return  &WRAPPED->getMetabolites()[Index];
 }
 
 void cpsapiCompartment::updateDefaultSpecies(const cpsapiSpecies & species)
 {
-  DATA(mpData)->mDefaultSpecies = species;
+  DATA->mDefaultSpecies = species;
 }
 
 bool cpsapiCompartment::setProperty(const cpsapiCompartment::Property & property, const cpsapiVariant & value, const CCore::Framework & framework)
@@ -149,7 +149,7 @@ bool cpsapiCompartment::setProperty(const cpsapiProperty::Type & property, const
 
   CCore::Framework Framework(framework);
 
-  wrapped * pWrapped = static_cast< wrapped * >(getObject());
+  wrapped * pWrapped = WRAPPED;
   CDataObject * pChangedObject = pWrapped;
   bool success = cpsapiTransaction::endStructureChange(pWrapped->getModel());
 
@@ -200,7 +200,7 @@ cpsapiVariant cpsapiCompartment::getProperty(const cpsapiProperty::Type & proper
   if (!isValidProperty<cpsapiCompartment>(property))
     return base::getProperty(property, CCore::Framework::__SIZE);
 
-  wrapped * pWrapped = static_cast< wrapped * >(getObject());
+  wrapped * pWrapped = WRAPPED;
 
   switch (property)
     {

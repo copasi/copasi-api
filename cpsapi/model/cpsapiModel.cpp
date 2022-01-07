@@ -67,13 +67,13 @@ void cpsapiModel::accept(cpsapiVisitor & visitor)
 void cpsapiModel::beginTransaction() const
 {
   if (operator bool())
-    cpsapiTransaction::beginTransaction(static_cast< wrapped * >(getObject()));
+    cpsapiTransaction::beginTransaction(WRAPPED);
 }
 
 void cpsapiModel::endTransaction() const
 {
   if (operator bool())
-    cpsapiTransaction::endTransaction(static_cast< wrapped * >(getObject()));
+    cpsapiTransaction::endTransaction(WRAPPED);
 }
 
 bool cpsapiModel::synchronize(std::set< const CDataObject * > & /* changedObjects */, const CCore::Framework & framework)
@@ -81,7 +81,7 @@ bool cpsapiModel::synchronize(std::set< const CDataObject * > & /* changedObject
   if (!operator bool())
     return false;
 
-  static_cast< wrapped * >(getObject())->updateInitialValues(framework != CCore::Framework::__SIZE ? framework : CCore::Framework::Concentration);
+  WRAPPED->updateInitialValues(framework != CCore::Framework::__SIZE ? framework : CCore::Framework::Concentration);
 
   return true;
 }
@@ -91,7 +91,7 @@ bool cpsapiModel::compile()
   if (!operator bool())
     return false;
 
-  return static_cast< wrapped * >(getObject())->compileIfNecessary(nullptr);
+  return WRAPPED->compileIfNecessary(nullptr);
 }
 
 cpsapiCompartment cpsapiModel::addCompartment(const std::string & name)
@@ -99,16 +99,16 @@ cpsapiCompartment cpsapiModel::addCompartment(const std::string & name)
   if (!operator bool())
     return nullptr;
 
-  cpsapiTransaction::beginStructureChange(static_cast< wrapped * >(getObject()));
+  cpsapiTransaction::beginStructureChange(WRAPPED);
 
-  CCompartment * pCompartment = static_cast< wrapped * >(getObject())->createCompartment(name);
+  CCompartment * pCompartment = WRAPPED->createCompartment(name);
 
   if (pCompartment == nullptr)
     return nullptr;
 
   updateDefaultCompartment(pCompartment);
 
-  return DATA(mpData)->mDefaultCompartment;
+  return DATA->mDefaultCompartment;
 }
 
 bool cpsapiModel::deleteCompartment(const std::string & name)
@@ -118,10 +118,10 @@ bool cpsapiModel::deleteCompartment(const std::string & name)
   if (pCompartment == nullptr)
     return false;
 
-  if (DATA(mpData)->mDefaultCompartment.getObject() == pCompartment)
+  if (DATA->mDefaultCompartment.getObject() == pCompartment)
     updateDefaultCompartment(nullptr);
 
-  cpsapiTransaction::beginStructureChange(static_cast< wrapped * >(getObject()));
+  cpsapiTransaction::beginStructureChange(WRAPPED);
 
   deleteAllDependents(pCompartment);
   deleted(pCompartment);
@@ -137,10 +137,10 @@ cpsapiCompartment cpsapiModel::compartment(const std::string & name)
   if (!Compartment)
     return nullptr;
 
-  if (DATA(mpData)->mDefaultCompartment.getObject() != Compartment.getObject())
+  if (DATA->mDefaultCompartment.getObject() != Compartment.getObject())
     updateDefaultCompartment(Compartment);
 
-  return DATA(mpData)->mDefaultCompartment;
+  return DATA->mDefaultCompartment;
 }
 
 cpsapiVector< cpsapiCompartment > cpsapiModel::getCompartments() const
@@ -148,7 +148,7 @@ cpsapiVector< cpsapiCompartment > cpsapiModel::getCompartments() const
   if (!operator bool())
     return cpsapiVector< cpsapiCompartment >();
 
-  return cpsapiVector< cpsapiCompartment >(&static_cast< wrapped * >(getObject())->getCompartments());
+  return cpsapiVector< cpsapiCompartment >(&WRAPPED->getCompartments());
 }
 
 cpsapiCompartment cpsapiModel::__compartment(const std::string & name) const
@@ -157,19 +157,19 @@ cpsapiCompartment cpsapiModel::__compartment(const std::string & name) const
     return nullptr;
 
   if (name.empty())
-    return DATA(mpData)->mDefaultCompartment;
+    return DATA->mDefaultCompartment;
 
-  size_t Index = static_cast< wrapped * >(getObject())->getCompartments().getIndex(name);
+  size_t Index = WRAPPED->getCompartments().getIndex(name);
 
   if (Index == C_INVALID_INDEX)
     return nullptr;
 
-  return &static_cast< wrapped * >(getObject())->getCompartments()[Index];
+  return &WRAPPED->getCompartments()[Index];
 }
 
 void cpsapiModel::updateDefaultCompartment(const cpsapiCompartment & compartment)
 {
-  DATA(mpData)->mDefaultCompartment = compartment;
+  DATA->mDefaultCompartment = compartment;
 }
 
 cpsapiSpecies cpsapiModel::addSpecies(const std::string & name, const std::string & compartment)
@@ -182,14 +182,14 @@ cpsapiSpecies cpsapiModel::addSpecies(const std::string & name, const std::strin
   if (!Compartment)
     return nullptr;
 
-  if (DATA(mpData)->mDefaultCompartment.getObject() != Compartment.getObject())
+  if (DATA->mDefaultCompartment.getObject() != Compartment.getObject())
     updateDefaultCompartment(Compartment);
 
-  cpsapiTransaction::beginStructureChange(static_cast< wrapped * >(getObject()));
-  CMetab * pMetab = static_cast< wrapped * >(getObject())->createMetabolite(name, compartment);
+  cpsapiTransaction::beginStructureChange(WRAPPED);
+  CMetab * pMetab = WRAPPED->createMetabolite(name, compartment);
 
   if (pMetab != nullptr)
-    DATA(mpData)->mDefaultCompartment.species(name);
+    DATA->mDefaultCompartment.species(name);
 
   return pMetab;
 }
@@ -209,7 +209,7 @@ cpsapiVector< cpsapiSpecies > cpsapiModel::getSpecies() const
   if (!operator bool())
     return cpsapiVector< cpsapiSpecies >();
 
-  return cpsapiVector< cpsapiSpecies >(&static_cast< wrapped * >(getObject())->getMetabolites());
+  return cpsapiVector< cpsapiSpecies >(&WRAPPED->getMetabolites());
 }
 
 cpsapiSpecies cpsapiModel::__species(const std::string & name, const std::string & compartment) const
@@ -222,9 +222,9 @@ cpsapiGlobalQuantity cpsapiModel::addGlobalQuantity(const std::string & name)
   if (!operator bool())
     return nullptr;
 
-  cpsapiTransaction::beginStructureChange(static_cast< wrapped * >(getObject()));
+  cpsapiTransaction::beginStructureChange(WRAPPED);
 
-  CModelValue * pGlobalQuantity = static_cast< wrapped * >(getObject())->createModelValue(name);
+  CModelValue * pGlobalQuantity = WRAPPED->createModelValue(name);
 
   if (pGlobalQuantity != nullptr)
     updateDefaultGlobalQuantity(pGlobalQuantity);
@@ -239,10 +239,10 @@ bool cpsapiModel::deleteGlobalQuantity(const std::string & name)
   if (pGlobalQuantity == nullptr)
     return false;
 
-  if (DATA(mpData)->mDefaultGlobalQuantity.getObject() == pGlobalQuantity)
+  if (DATA->mDefaultGlobalQuantity.getObject() == pGlobalQuantity)
     updateDefaultGlobalQuantity(nullptr);
 
-  cpsapiTransaction::beginStructureChange(static_cast< wrapped * >(getObject()));
+  cpsapiTransaction::beginStructureChange(WRAPPED);
 
   deleteAllDependents(pGlobalQuantity);
   deleted(pGlobalQuantity);
@@ -258,7 +258,7 @@ cpsapiGlobalQuantity cpsapiModel::globalQuantity(const std::string & name)
   if (!GlobalQuantity)
     return nullptr;
 
-  if (DATA(mpData)->mDefaultGlobalQuantity.getObject() != GlobalQuantity.getObject())
+  if (DATA->mDefaultGlobalQuantity.getObject() != GlobalQuantity.getObject())
     updateDefaultGlobalQuantity(GlobalQuantity);
 
   return GlobalQuantity;
@@ -269,7 +269,7 @@ cpsapiVector< cpsapiGlobalQuantity > cpsapiModel::getGlobalQuantities() const
   if (!operator bool())
     return cpsapiVector< cpsapiGlobalQuantity >();
 
-  return cpsapiVector< cpsapiGlobalQuantity >(&static_cast< wrapped * >(getObject())->getModelValues());
+  return cpsapiVector< cpsapiGlobalQuantity >(&WRAPPED->getModelValues());
 }
 
 cpsapiGlobalQuantity cpsapiModel::__globalQuantity(const std::string & name) const
@@ -278,19 +278,19 @@ cpsapiGlobalQuantity cpsapiModel::__globalQuantity(const std::string & name) con
     return nullptr;
 
   if (name.empty())
-    return DATA(mpData)->mDefaultGlobalQuantity;
+    return DATA->mDefaultGlobalQuantity;
 
-  size_t Index = static_cast< wrapped * >(getObject())->getModelValues().getIndex(name);
+  size_t Index = WRAPPED->getModelValues().getIndex(name);
 
   if (Index == C_INVALID_INDEX)
     return nullptr;
 
-  return &static_cast< wrapped * >(getObject())->getModelValues()[Index];
+  return &WRAPPED->getModelValues()[Index];
 }
 
 void cpsapiModel::updateDefaultGlobalQuantity(const cpsapiGlobalQuantity & globalQuantity)
 {
-  DATA(mpData)->mDefaultGlobalQuantity = globalQuantity;
+  DATA->mDefaultGlobalQuantity = globalQuantity;
 }
 
 cpsapiReaction cpsapiModel::addReaction(const std::string & name)
@@ -298,9 +298,9 @@ cpsapiReaction cpsapiModel::addReaction(const std::string & name)
   if (!operator bool())
     return nullptr;
 
-  cpsapiTransaction::beginStructureChange(static_cast< wrapped * >(getObject()));
+  cpsapiTransaction::beginStructureChange(WRAPPED);
 
-  CReaction * pReaction = static_cast< wrapped * >(getObject())->createReaction(name);
+  CReaction * pReaction = WRAPPED->createReaction(name);
 
   if (pReaction != nullptr)
     updateDefaultReaction(pReaction);
@@ -315,10 +315,10 @@ bool cpsapiModel::deleteReaction(const std::string & name)
   if (pReaction == nullptr)
     return false;
 
-  if (DATA(mpData)->mDefaultReaction.getObject() == pReaction)
+  if (DATA->mDefaultReaction.getObject() == pReaction)
     updateDefaultReaction(nullptr);
 
-  cpsapiTransaction::beginStructureChange(static_cast< wrapped * >(getObject()));
+  cpsapiTransaction::beginStructureChange(WRAPPED);
 
   deleteAllDependents(pReaction);
   deleted(pReaction);
@@ -334,7 +334,7 @@ cpsapiReaction cpsapiModel::reaction(const std::string & name)
   if (!Reaction)
     return nullptr;
 
-  if (DATA(mpData)->mDefaultReaction.getObject() != Reaction.getObject())
+  if (DATA->mDefaultReaction.getObject() != Reaction.getObject())
     updateDefaultReaction(Reaction);
 
   return Reaction;
@@ -345,7 +345,7 @@ cpsapiVector< cpsapiReaction > cpsapiModel::getReactions() const
   if (!operator bool())
     return cpsapiVector< cpsapiReaction >();
 
-  return cpsapiVector< cpsapiReaction >(&static_cast< wrapped * >(getObject())->getReactions());
+  return cpsapiVector< cpsapiReaction >(&WRAPPED->getReactions());
 }
 
 cpsapiReaction cpsapiModel::__reaction(const std::string & name) const
@@ -354,19 +354,19 @@ cpsapiReaction cpsapiModel::__reaction(const std::string & name) const
     return nullptr;
 
   if (name.empty())
-    return DATA(mpData)->mDefaultReaction;
+    return DATA->mDefaultReaction;
 
-  size_t Index = static_cast< wrapped * >(getObject())->getReactions().getIndex(name);
+  size_t Index = WRAPPED->getReactions().getIndex(name);
 
   if (Index == C_INVALID_INDEX)
     return nullptr;
 
-  return &static_cast< wrapped * >(getObject())->getReactions()[Index];
+  return &WRAPPED->getReactions()[Index];
 }
 
 void cpsapiModel::updateDefaultReaction(const cpsapiReaction & reaction)
 {
-  DATA(mpData)->mDefaultReaction = reaction;
+  DATA->mDefaultReaction = reaction;
 }
 
 void cpsapiModel::deleteDependents(const CDataObject::DataObjectSet & set)
@@ -383,7 +383,7 @@ void cpsapiModel::deleteAllDependents(CDataContainer * pContainer)
   if (!operator bool())
     return;
 
-  static_cast< wrapped * >(getObject())->compileIfNecessary(nullptr);
+  WRAPPED->compileIfNecessary(nullptr);
 
   wrapped::DataObjectSet DependentReactions;
   wrapped::DataObjectSet DependentMetabolites;
@@ -392,14 +392,14 @@ void cpsapiModel::deleteAllDependents(CDataContainer * pContainer)
   wrapped::DataObjectSet DependentEvents;
   wrapped::DataObjectSet DependentEventAssignments;
 
-  static_cast< wrapped * >(getObject())->appendAllDependents(*pContainer,
-                                                          DependentReactions,
-                                                          DependentMetabolites,
-                                                          DependentCompartments,
-                                                          DependentModelValues,
-                                                          DependentEvents,
-                                                          DependentEventAssignments,
-                                                          true);
+  WRAPPED->appendAllDependents(*pContainer,
+                               DependentReactions,
+                               DependentMetabolites,
+                               DependentCompartments,
+                               DependentModelValues,
+                               DependentEvents,
+                               DependentEventAssignments,
+                               true);
 
   deleteDependents(DependentReactions);
   deleteDependents(DependentMetabolites);
@@ -430,7 +430,7 @@ bool cpsapiModel::setProperty(const cpsapiProperty::Type & property, const cpsap
 
   CCore::Framework Framework(framework);
 
-  wrapped * pWrapped = static_cast< wrapped * >(getObject());
+  wrapped * pWrapped = WRAPPED;
   const CDataObject * pChangedObject = pWrapped;
 
   bool success = cpsapiTransaction::endStructureChange(pWrapped);
@@ -559,7 +559,7 @@ cpsapiVariant cpsapiModel::getProperty(const cpsapiProperty::Type & property, co
   CCore::Framework Framework(framework);
   bool success = false;
 
-  wrapped * pWrapped = static_cast< wrapped * >(getObject());
+  wrapped * pWrapped = WRAPPED;
   CDataObject * pChangedObject = pWrapped;
 
   switch (property)

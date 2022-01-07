@@ -12,9 +12,8 @@ const cpsapiReaction::Properties cpsapiReaction::SupportedProperties =
   {
     cpsapiProperty::Type::CHEMICAL_EQUATION,
     cpsapiProperty::Type::KINETIC_LAW,
+    cpsapiProperty::Type::KINETIC_LAW_EXPRESSION,
     cpsapiProperty::Type::KINETIC_LAW_UNIT_TYPE,
-    cpsapiProperty::Type::KINETIC_LAW_VARIABLE_MAPPING,
-    cpsapiProperty::Type::LOCAL_REACTION_PARAMETERS,
     cpsapiProperty::Type::SCALING_COMPARTMENT,
     cpsapiProperty::Type::ADD_NOISE,
     cpsapiProperty::Type::NOISE_EXPRESSION
@@ -44,37 +43,44 @@ void cpsapiReaction::accept(cpsapiVisitor & visitor)
   base::accept(visitor);
 }
 
+cpsapiReactionParameter::FakeData * cpsapiReaction::assertParameter(const std::string & name)
+{
+  ParameterManager::iterator found = DATA->mManager.find(name);
+
+  if (found == DATA->mManager.end())
+    found = DATA->mManager.insert(std::make_pair(name, new cpsapiReactionParameter::FakeData(static_cast< CReaction * >(getObject()), name))).first;
+
+  return found->second;
+}
+
 cpsapiReactionParameter cpsapiReaction::parameter(const std::string & name)
 {
   if (!operator bool())
     return nullptr;
 
   if (!name.empty() &&
-      name != DATA(mpData)->mDefaultParameter.getProperty(cpsapiReactionParameter::Property::NAME).toString())
-    {
-      ParameterManager::iterator found = DATA(mpData)->mManager.insert(std::make_pair(name, new cpsapiReactionParameter::FakeData(static_cast< CReaction * >(getObject()), name))).first;
-      DATA(mpData)->mDefaultParameter = cpsapiReactionParameter(found->second);
-    }
+      name != DATA->mDefaultParameter.getProperty(cpsapiReactionParameter::Property::NAME).toString())
+    DATA->mDefaultParameter = cpsapiReactionParameter(assertParameter(name));
     
-  return DATA(mpData)->mDefaultParameter;
+  return DATA->mDefaultParameter;
 }
 
 cpsapiVector< cpsapiReactionParameter > cpsapiReaction::parameters()
 {
-  DATA(mpData)->mpVector->clear();
+  if (DATA->mpVector == nullptr)
+    DATA->mpVector = new ParameterVector();
+  else
+    DATA->mpVector->clear();
 
   if (operator bool())
     {
-      wrapped * pWrapped = static_cast< wrapped * >(getObject());
+      wrapped * pWrapped = WRAPPED;
 
       for (const CFunctionParameter & Parameter : pWrapped->getFunctionParameters())
-        {
-          ParameterManager::iterator found = DATA(mpData)->mManager.insert(std::make_pair(Parameter.getObjectName(), new cpsapiReactionParameter::FakeData(static_cast< CReaction * >(getObject()), Parameter.getObjectName()))).first;
-          DATA(mpData)->mpVector->add(found->second, false);
-        }
+        DATA->mpVector->add(assertParameter(Parameter.getObjectName()), false);
     }
 
-  return cpsapiVector< cpsapiReactionParameter >(DATA(mpData)->mpVector);
+  return cpsapiVector< cpsapiReactionParameter >(DATA->mpVector);
 }
 
 bool cpsapiReaction::setProperty(const cpsapiReaction::Property & property, const cpsapiVariant & value, const CCore::Framework & framework)
@@ -98,41 +104,63 @@ bool cpsapiReaction::setProperty(const cpsapiProperty::Type & property, const cp
 
   CCore::Framework Framework(framework);
 
-  wrapped * pWrapped = static_cast< wrapped * >(getObject());
+  wrapped * pWrapped = WRAPPED;
   CDataObject * pChangedObject = pWrapped;
   bool success = cpsapiTransaction::endStructureChange(static_cast< CModel * >(pWrapped->getObjectAncestor("Model")));
+
+  CReactionInterface Reaction;
+  Reaction.init(*pWrapped);
+  bool isValid = Reaction.isValid();
 
   switch (property)
     {
     case cpsapiProperty::Type::CHEMICAL_EQUATION:
+      Reaction.setChemEqString(value.toString(), Reaction.getFunctionName());
+      success &= Reaction.createMetabolites();
       break;
 
     case cpsapiProperty::Type::KINETIC_LAW:
+      Reaction.setFunctionAndDoMapping(value.toString());
+      break;
+
+    case cpsapiProperty::Type::KINETIC_LAW_EXPRESSION:
+      {
+        CFunction * pFunction = pWrapped->createFunctionFromExpression(value.toString());
+
+        if (pFunction != nullptr)
+          Reaction.setFunctionAndDoMapping(pFunction->getObjectName());
+        else
+          success = false;
+      }
       break;
 
     case cpsapiProperty::Type::KINETIC_LAW_UNIT_TYPE:
-      break;
-
-    case cpsapiProperty::Type::KINETIC_LAW_VARIABLE_MAPPING:
-      break;
-
-    case cpsapiProperty::Type::LOCAL_REACTION_PARAMETERS:
+      Reaction.setKineticLawUnitType(CReaction::KineticLawUnitTypeName.toEnum(value.toString()));
       break;
 
     case cpsapiProperty::Type::SCALING_COMPARTMENT:
+      Reaction.setScalingCompartment(value.toString());
       break;
 
     case cpsapiProperty::Type::ADD_NOISE:
+      Reaction.setHasNoise(value.toBool());
       break;
 
     case cpsapiProperty::Type::NOISE_EXPRESSION:
+      Reaction.setNoiseExpression(value.toString());
       break;
 
     default:
       break;
     }
 
-  return success && cpsapiTransaction::synchronize(pChangedObject, Framework);
+  isValid = (!isValid || Reaction.isValid());
+  Reaction.writeBackToReaction();
+
+  if (DATA->mpVector != nullptr)
+    parameters();
+    
+  return success && isValid && cpsapiTransaction::synchronize(pChangedObject, Framework);
 }
 
 // virtual
@@ -144,7 +172,7 @@ cpsapiVariant cpsapiReaction::getProperty(const cpsapiProperty::Type & property,
   if (!isValidProperty<cpsapiReaction>(property))
     return base::getProperty(property, CCore::Framework::__SIZE);
 
-  wrapped * pWrapped = static_cast< wrapped * >(getObject());
+  wrapped * pWrapped = WRAPPED;
   CReactionInterface Reaction;
   Reaction.init(*pWrapped);
 
@@ -158,14 +186,12 @@ cpsapiVariant cpsapiReaction::getProperty(const cpsapiProperty::Type & property,
       return Reaction.getFunctionName();
       break;
 
+    case cpsapiProperty::Type::KINETIC_LAW_EXPRESSION:
+      return Reaction.getFunction().getInfix();
+      break;
+
     case cpsapiProperty::Type::KINETIC_LAW_UNIT_TYPE:
       return CReaction::KineticLawUnitTypeName[Reaction.getKineticLawUnitType()];
-      break;
-
-    case cpsapiProperty::Type::KINETIC_LAW_VARIABLE_MAPPING:
-      break;
-
-    case cpsapiProperty::Type::LOCAL_REACTION_PARAMETERS:
       break;
 
     case cpsapiProperty::Type::SCALING_COMPARTMENT:
