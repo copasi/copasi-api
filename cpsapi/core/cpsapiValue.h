@@ -82,9 +82,8 @@ public:
 
   bool valid() const;
   
-protected:
-  CDataValue::Type getType() const;
 
+protected:
   virtual bool setProperty(const cpsapiProperty::Type & property, const cpsapiVariant & value, const CCore::Framework & framework) override;
 
   virtual cpsapiVariant getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const override;

@@ -127,6 +127,8 @@ public:
 
   static cpsapiObject * create(CDataObject * pFrom);
 
+  static CDataValue::Type getDataType(const CObjectInterface * pObject);
+
 private:
   static cpsapiObject * make(CDataObject * pObject, const TypeInfo * pTypeInfo = nullptr);
 };

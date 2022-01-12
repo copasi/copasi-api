@@ -149,3 +149,29 @@ cpsapiObject * cpsapiFactory::make(CDataObject * pDataObject, const TypeInfo * p
 
   return pObject;
 }
+
+// static 
+CDataValue::Type cpsapiFactory::getDataType(const CObjectInterface * pObject)
+{
+  if (pObject == nullptr)
+    return CDataValue::Type::INVALID;
+
+  const CDataObject * pDataObject = pObject->getDataObject();
+
+  if (pDataObject != pObject)
+    return CDataValue::DOUBLE;
+
+  if (pDataObject->hasFlag(CDataObject::ValueDbl))
+    return CDataValue::Type::DOUBLE;
+
+  if (pDataObject->hasFlag(CDataObject::ValueInt))
+    return CDataValue::Type::INT;
+
+  if (pDataObject->hasFlag(CDataObject::ValueBool))
+    return CDataValue::Type::BOOL;
+
+  if (pDataObject->hasFlag(CDataObject::ValueString))
+    return CDataValue::Type::STRING;
+
+  return CDataValue::Type::INVALID;
+}

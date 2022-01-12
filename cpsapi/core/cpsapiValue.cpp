@@ -25,7 +25,7 @@ const cpsapiValue::Properties cpsapiValue::SupportedProperties =
 cpsapiValue::cpsapiValue(wrapped * pWrapped)
   : base(pWrapped, Type::Value)
 {
-  if (getType() == CDataValue::Type::INVALID)
+  if (cpsapiFactory::getDataType(pWrapped) == CDataValue::Type::INVALID)
     operator=(nullptr);
 }
 
@@ -65,7 +65,7 @@ bool cpsapiValue::setProperty(const cpsapiProperty::Type & property, const cpsap
   if (!isValidProperty<cpsapiValue>(property))
     return base::setProperty(property, value, CCore::Framework::__SIZE);
 
-  switch (getType())
+  switch (cpsapiFactory::getDataType(getObject()))
   {
     case CDataValue::Type::DOUBLE:
       if (value.getType() == cpsapiVariant::Type::Double)
@@ -123,7 +123,7 @@ cpsapiVariant cpsapiValue::getProperty(const cpsapiProperty::Type & property, co
   if (!isValidProperty<cpsapiValue>(property))
     return base::getProperty(property, framework);
 
-  switch (getType())
+  switch (cpsapiFactory::getDataType(getObject()))
   {
     case CDataValue::Type::DOUBLE:
       return *(double *) getObject()->getValuePointer();
@@ -159,26 +159,5 @@ cpsapiValue::operator cpsapiVariant() const
 
 bool cpsapiValue::valid() const
 {
-  return getType() != CDataValue::Type::INVALID;
-}
-
-CDataValue::Type cpsapiValue::getType() const
-{
-  if (!operator bool()
-      || !getObject()->hasFlag(wrapped::Reference))
-    return CDataValue::Type::INVALID;
-
-  if (getObject()->hasFlag(wrapped::ValueDbl))
-    return CDataValue::Type::DOUBLE;
-
-  if (getObject()->hasFlag(wrapped::ValueInt))
-    return CDataValue::Type::INT;
-
-  if (getObject()->hasFlag(wrapped::ValueBool))
-    return CDataValue::Type::BOOL;
-
-  if (getObject()->hasFlag(wrapped::ValueString))
-    return CDataValue::Type::STRING;
-
-  return CDataValue::Type::INVALID;
+  return cpsapiFactory::getDataType(getObject()) != CDataValue::Type::INVALID;
 }

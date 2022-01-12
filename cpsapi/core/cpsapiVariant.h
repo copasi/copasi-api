@@ -9,6 +9,8 @@
 
 CPSAPI_NAMESPACE_BEGIN
 
+typedef std::vector< cpsapiVariant > cpsapiData;
+
 class cpsapiVariant
 {
 public:
@@ -22,12 +24,13 @@ public:
     String,
     CommonName,
     Object,
+    Data,
     __SIZE
   };
 
   typedef std::unique_ptr< void, cpsapiFactory::free_unique_t > DataPointer;
 
-  static const CEnumAnnotation< std::string, Type > Name;
+  // static const CEnumAnnotation< std::string, Type > Name;
 
   cpsapiVariant();
 
@@ -47,7 +50,11 @@ public:
 
   cpsapiVariant(const CRegisteredCommonName & value);
 
+  cpsapiVariant(const cpsapiData & value);
+
   template < class Object > cpsapiVariant(const Object & value);
+
+  cpsapiVariant(const Type & type, void * pValue);
 
   cpsapiVariant(const cpsapiVariant & src);
 
@@ -66,6 +73,8 @@ public:
   std::string toString() const;;
 
   CRegisteredCommonName toCommonName() const;
+
+  const cpsapiData & toData() const;
 
   template < class Object > Object toObject() const;
 

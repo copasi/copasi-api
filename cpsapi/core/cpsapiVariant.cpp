@@ -49,6 +49,58 @@ cpsapiVariant::cpsapiVariant(const CRegisteredCommonName & value)
   , mpData(new CRegisteredCommonName(value), &cpsapiFactory::free_unique< CRegisteredCommonName >)
 {}
 
+cpsapiVariant::cpsapiVariant(const cpsapiData & value)
+  : mType(Type::Data)
+  , mpData(new cpsapiData(value), &cpsapiFactory::free_unique< cpsapiData >)
+{}
+
+cpsapiVariant::cpsapiVariant(const cpsapiVariant::Type & type, void * pValue)
+  : mType(type)
+  , mpData(nullptr, &cpsapiFactory::free_unique< void >)
+{
+  switch (mType)
+    {
+    case Type::Double:
+      mpData = DataPointer(new C_FLOAT64(*static_cast< C_FLOAT64 * >(pValue)), &cpsapiFactory::free_unique< C_FLOAT64 >);
+      break;
+
+    case Type::Int32:
+      mpData = DataPointer(new C_INT32(*static_cast< C_INT32 * >(pValue)), &cpsapiFactory::free_unique< C_INT32 >);
+      break;
+
+    case Type::UnsignedInt32:
+      mpData = DataPointer(new unsigned C_INT32(*static_cast< unsigned C_INT32 * >(pValue)), &cpsapiFactory::free_unique< unsigned C_INT32 >);
+      break;
+
+    case Type::SizeType:
+      mpData = DataPointer(new size_t(*static_cast< size_t * >(pValue)), &cpsapiFactory::free_unique< size_t >);
+      break;
+
+    case Type::Bool:
+      mpData = DataPointer(new bool(*static_cast< bool * >(pValue)), &cpsapiFactory::free_unique< bool >);
+      break;
+
+    case Type::String:
+      mpData = DataPointer(new std::string(*static_cast< std::string * >(pValue)), &cpsapiFactory::free_unique< std::string >);
+      break;
+
+    case Type::CommonName:
+      mpData = DataPointer(new CRegisteredCommonName(*static_cast< CRegisteredCommonName * >(pValue)), &cpsapiFactory::free_unique< CRegisteredCommonName >);
+      break;
+
+    case Type::Data:
+      mpData = DataPointer(new cpsapiData(*static_cast< cpsapiData * >(pValue)), &cpsapiFactory::free_unique< cpsapiData >);
+      break;
+
+    case Type::Object:
+      mpData = cpsapiFactory::make_unique< cpsapiObject >(*static_cast< const cpsapiObject * >(pValue));
+      break;
+
+    case Type::__SIZE:
+      break;
+    }
+}
+
 cpsapiVariant::cpsapiVariant(const cpsapiVariant & src)
   : mType(src.mType)
   , mpData(src.copyData())
@@ -249,6 +301,23 @@ CRegisteredCommonName cpsapiVariant::toCommonName() const
   return std::string();
 }
 
+const cpsapiData & cpsapiVariant::toData() const
+{
+  static const cpsapiData Invalid;
+
+  switch (mType)
+  {
+    case Type::Data:
+      return *static_cast< const cpsapiData * >(mpData.get());
+      break;
+
+    default:
+      break;
+  }
+
+  return Invalid;
+}  
+
 const cpsapiVariant::Type & cpsapiVariant::getType() const
 {
   return mType;
@@ -284,6 +353,10 @@ cpsapiVariant::DataPointer cpsapiVariant::copyData() const
 
     case Type::CommonName:
       return DataPointer(new CRegisteredCommonName(*static_cast< CRegisteredCommonName * >(mpData.get())), &cpsapiFactory::free_unique< CRegisteredCommonName >);
+      break;
+
+    case Type::Data:
+      return DataPointer(new cpsapiData(*static_cast< cpsapiData * >(mpData.get())), &cpsapiFactory::free_unique< cpsapiData >);
       break;
 
     case Type::Object:

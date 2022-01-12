@@ -32,11 +32,6 @@ CPSAPI_NAMESPACE_BEGIN
 class cpsapiVisitor;
 class cpsapiVariant;
 
-class cpsapiData
-{
-public:
-  virtual ~cpsapiData() {}
-};
 
 /**
  * The cpsapiObject class is the base class for all COPASI CDataObjects exposed in the cpsapi.
@@ -44,13 +39,6 @@ public:
 class cpsapiObject
 {
   friend class cpsapiVariant;
-
-protected:
-  typedef std::shared_ptr< cpsapiData > DataPointer;
-
-  typedef std::map< const CDataObject *, DataPointer > Map;
-
-  static Map Manager;
 
 public:
   static void release();
@@ -82,6 +70,23 @@ public:
 
   typedef std::set< cpsapiProperty::Type > Properties;
 
+protected:
+  class Data 
+  {
+  public:
+    virtual ~Data() {}
+
+    CDataObject * mpObject;
+    Type mType;
+  };
+
+  typedef std::shared_ptr< Data > DataPointer;
+
+  typedef std::map< const CDataObject *, DataPointer > Map;
+
+  static Map Manager;
+
+public:
   /**
    * Enumeration of the exposed properties
    */
@@ -95,16 +100,6 @@ public:
   static const Properties SupportedProperties;
 
   static const Properties HiddenProperties;
-
-protected:
-  class Data : public cpsapiData
-  {
-  public:
-    virtual ~Data() {}
-
-    CDataObject * mpObject;
-    Type mType;
-  };
 
   DataPointer mpData;
 

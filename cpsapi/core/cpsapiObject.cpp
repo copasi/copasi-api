@@ -213,14 +213,14 @@ cpsapiVariant cpsapiObject::getProperty(const cpsapiProperty::Type & property, c
   switch (property)
     {
     case cpsapiProperty::Type::OBJECT_NAME:
-      return cpsapiVariant(getObject()->getObjectName());
+      return getObject()->getObjectName();
       break;
 
     case cpsapiProperty::Type::DISPLAY_NAME:
       return getObject()->getObjectDisplayName();
 
     case cpsapiProperty::Type::CN:
-      return static_cast< std::string >(getObject()->getCN());
+      return CRegisteredCommonName(getObject()->getCN());
 
     default:
       break;

@@ -51,7 +51,7 @@ endif (COPASI_DEPENDENCY_DIR)
 
 message (STATUS "COPASI dependencies: " ${COPASI_DEPENDENCY_DIR}/${CMAKE_INSTALL_LIBDIR}/cmake)
 
-option (ENABLE_CPP_NAMESPACE "Enable the use of cpsapi namespace." OFF)
+option (ENABLE_CPP_NAMESPACE "Enable the use of cpsapi namespace." ON)
 
 if (ENABLE_CPP_NAMESPACE)
   set(CPSAPI_USE_CPP_NAMESPACE 1)
