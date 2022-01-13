@@ -99,6 +99,7 @@ set(CPSAPI_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/cpsapiConfig.h)
 
 include(core/CMakeLists.txt)
 include(model/CMakeLists.txt)
+include(task/CMakeLists.txt)
 
 add_library (cpsapi STATIC ${CPSAPI_SOURCES} ${CPSAPI_HEADERS})
 set_target_properties(cpsapi PROPERTIES
