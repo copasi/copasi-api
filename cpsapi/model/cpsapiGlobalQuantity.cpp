@@ -1,5 +1,5 @@
 // BEGIN: Copyright 
-// Copyright (C) 2021 by Pedro Mendes, Rector and Visitors of the 
+// Copyright (C) 2021 - 2022 by Pedro Mendes, Rector and Visitors of the 
 // University of Virginia, University of Heidelberg, and University 
 // of Connecticut School of Medicine. 
 // All rights reserved 
@@ -49,18 +49,18 @@ void cpsapiGlobalQuantity::accept(cpsapiVisitor & visitor)
   base::accept(visitor);
 }
 
-bool cpsapiGlobalQuantity::setProperty(const cpsapiGlobalQuantity::Property & property, const cpsapiVariant & value, const CCore::Framework & framework)
+bool cpsapiGlobalQuantity::setProperty(const cpsapiGlobalQuantity::Property & property, const cpsapiData & value, const CCore::Framework & framework)
 {
   return setProperty(static_cast< const cpsapiProperty::Type >(property), value, framework);
 }
 
-cpsapiVariant cpsapiGlobalQuantity::getProperty(const cpsapiGlobalQuantity::Property & property, const CCore::Framework & framework) const
+cpsapiData cpsapiGlobalQuantity::getProperty(const cpsapiGlobalQuantity::Property & property, const CCore::Framework & framework) const
 {
   return getProperty(static_cast< const cpsapiProperty::Type >(property), framework);
 }
 
 // virtual
-bool cpsapiGlobalQuantity::setProperty(const cpsapiProperty::Type & property, const cpsapiVariant & value, const CCore::Framework & framework)
+bool cpsapiGlobalQuantity::setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & framework)
 {
   if (!operator bool())
     return false;
@@ -77,7 +77,7 @@ bool cpsapiGlobalQuantity::setProperty(const cpsapiProperty::Type & property, co
   switch (property)
     {
     case cpsapiProperty::Type::UNIT:
-      if (value.getType() == cpsapiVariant::Type::String)
+      if (value.getType() == cpsapiData::Type::String)
         success &= pWrapped->setUnitExpression(value.toString());
       break;
 
@@ -90,10 +90,10 @@ bool cpsapiGlobalQuantity::setProperty(const cpsapiProperty::Type & property, co
 }
 
 // virtual
-cpsapiVariant cpsapiGlobalQuantity::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
+cpsapiData cpsapiGlobalQuantity::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
 {
   if (!operator bool())
-    return cpsapiVariant();
+    return cpsapiData();
 
   if (!isValidProperty<cpsapiGlobalQuantity>(property))
     return base::getProperty(property, CCore::Framework::__SIZE);
@@ -110,5 +110,5 @@ cpsapiVariant cpsapiGlobalQuantity::getProperty(const cpsapiProperty::Type & pro
       break;
     }
 
-  return cpsapiVariant();
+  return cpsapiData();
 }

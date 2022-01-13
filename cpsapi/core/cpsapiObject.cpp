@@ -1,5 +1,5 @@
 // BEGIN: Copyright 
-// Copyright (C) 2021 by Pedro Mendes, Rector and Visitors of the 
+// Copyright (C) 2021 - 2022 by Pedro Mendes, Rector and Visitors of the 
 // University of Virginia, University of Heidelberg, and University 
 // of Connecticut School of Medicine. 
 // All rights reserved 
@@ -160,28 +160,28 @@ void cpsapiObject::accept(cpsapiVisitor & visitor)
   visitor.visit(this, Type::Object);
 }
 
-bool cpsapiObject::setProperty(const cpsapiObject::Property & property, const cpsapiVariant & value, const CCore::Framework & framework)
+bool cpsapiObject::setProperty(const cpsapiObject::Property & property, const cpsapiData & value, const CCore::Framework & framework)
 {
   return setProperty(static_cast< cpsapiProperty::Type >(property), value, framework);
 }
 
-bool cpsapiObject::setProperty(const std::string & property, const cpsapiVariant & value, const std::string & framework)
+bool cpsapiObject::setProperty(const std::string & property, const cpsapiData & value, const std::string & framework)
 {
   return setProperty(cpsapiProperty::Name.toEnum(property), value, CCore::FrameworkNames.toEnum(framework));
 }
 
-cpsapiVariant cpsapiObject::getProperty(const Property & property, const CCore::Framework & framework ) const
+cpsapiData cpsapiObject::getProperty(const Property & property, const CCore::Framework & framework ) const
 {
   return getProperty(static_cast< cpsapiProperty::Type >(property), framework);
 }
 
-cpsapiVariant cpsapiObject::getProperty(const std::string & property, const std::string & framework) const
+cpsapiData cpsapiObject::getProperty(const std::string & property, const std::string & framework) const
 {
   return getProperty(cpsapiProperty::Name.toEnum(property), CCore::FrameworkNames.toEnum(framework));
 }
 
 // virtual
-bool cpsapiObject::setProperty(const cpsapiProperty::Type & property, const cpsapiVariant & value, const CCore::Framework & framework)
+bool cpsapiObject::setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & framework)
 {
   if (!isValidProperty<cpsapiObject>(property))
     return false;
@@ -194,7 +194,7 @@ bool cpsapiObject::setProperty(const cpsapiProperty::Type & property, const cpsa
   switch (property)
     {
     case cpsapiProperty::Type::OBJECT_NAME:
-      if (value.getType() == cpsapiVariant::Type::String)
+      if (value.getType() == cpsapiData::Type::String)
         success = getObject()->setObjectName(value.toString());
 
       break;
@@ -207,11 +207,11 @@ bool cpsapiObject::setProperty(const cpsapiProperty::Type & property, const cpsa
 }
 
 // virtual 
-cpsapiVariant cpsapiObject::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
+cpsapiData cpsapiObject::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
 {
   if (!operator bool()
       || !isValidProperty<cpsapiObject>(property))
-    return cpsapiVariant();
+    return cpsapiData();
 
   switch (property)
     {
@@ -229,5 +229,5 @@ cpsapiVariant cpsapiObject::getProperty(const cpsapiProperty::Type & property, c
       break;
     }
 
-  return cpsapiVariant();
+  return cpsapiData();
 }

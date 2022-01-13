@@ -1,60 +1,74 @@
+// BEGIN: Copyright 
+// Copyright (C) 2022 by Pedro Mendes, Rector and Visitors of the 
+// University of Virginia, University of Heidelberg, and University 
+// of Connecticut School of Medicine. 
+// All rights reserved 
+// END: Copyright 
+
+// BEGIN: License 
+// Licensed under the Artistic License 2.0 (the "License"); 
+// you may not use this file except in compliance with the License. 
+// You may obtain a copy of the License at 
+//   https://opensource.org/licenses/Artistic-2.0 
+// END: License 
+
 #include "cpsapi/core/cpsapiObject.h"
 #include "cpsapi/core/cpsapiVector.h"
 #include "cpsapi/model/cpsapiModel.h"
 
 CPSAPI_NAMESPACE_USE
 
-cpsapiVariant::cpsapiVariant()
+cpsapiData::cpsapiData()
   : mType(Type::__SIZE)
   , mpData(nullptr, &cpsapiFactory::free_unique< void >)
 {}
 
-cpsapiVariant::cpsapiVariant(const C_FLOAT64 & value)
+cpsapiData::cpsapiData(const C_FLOAT64 & value)
   : mType(Type::Double)
   , mpData(new C_FLOAT64(value), &cpsapiFactory::free_unique< C_FLOAT64 >)
 {}
 
-cpsapiVariant::cpsapiVariant(const C_INT32 & value)
+cpsapiData::cpsapiData(const C_INT32 & value)
   : mType(Type::Int32)
   , mpData(new C_INT32(value), &cpsapiFactory::free_unique< C_INT32 >)
 {}
 
-cpsapiVariant::cpsapiVariant(const unsigned C_INT32 & value)
+cpsapiData::cpsapiData(const unsigned C_INT32 & value)
   : mType(Type::UnsignedInt32)
   , mpData(new unsigned C_INT32(value), &cpsapiFactory::free_unique< unsigned C_INT32 >)
 {}
 
-cpsapiVariant::cpsapiVariant(const size_t & value)
+cpsapiData::cpsapiData(const size_t & value)
   : mType(Type::SizeType)
   , mpData(new size_t(value), &cpsapiFactory::free_unique< size_t >)
 {}
 
-cpsapiVariant::cpsapiVariant(const bool & value)
+cpsapiData::cpsapiData(const bool & value)
   : mType(Type::Bool)
   , mpData(new bool(value), &cpsapiFactory::free_unique< bool >)
 {}
 
-cpsapiVariant::cpsapiVariant(const std::string & value)
+cpsapiData::cpsapiData(const std::string & value)
   : mType(Type::String)
   , mpData(new std::string(value), &cpsapiFactory::free_unique< std::string >)
 {}
 
-cpsapiVariant::cpsapiVariant(const char * value)
+cpsapiData::cpsapiData(const char * value)
   : mType(Type::String)
   , mpData(new std::string(value), &cpsapiFactory::free_unique< std::string >)
 {}
 
-cpsapiVariant::cpsapiVariant(const CRegisteredCommonName & value)
+cpsapiData::cpsapiData(const CRegisteredCommonName & value)
   : mType(Type::CommonName)
   , mpData(new CRegisteredCommonName(value), &cpsapiFactory::free_unique< CRegisteredCommonName >)
 {}
 
-cpsapiVariant::cpsapiVariant(const cpsapiData & value)
+cpsapiData::cpsapiData(const cpsapiDataVector & value)
   : mType(Type::Data)
-  , mpData(new cpsapiData(value), &cpsapiFactory::free_unique< cpsapiData >)
+  , mpData(new cpsapiDataVector(value), &cpsapiFactory::free_unique< cpsapiDataVector >)
 {}
 
-cpsapiVariant::cpsapiVariant(const cpsapiVariant::Type & type, void * pValue)
+cpsapiData::cpsapiData(const cpsapiData::Type & type, void * pValue)
   : mType(type)
   , mpData(nullptr, &cpsapiFactory::free_unique< void >)
 {
@@ -89,7 +103,7 @@ cpsapiVariant::cpsapiVariant(const cpsapiVariant::Type & type, void * pValue)
       break;
 
     case Type::Data:
-      mpData = DataPointer(new cpsapiData(*static_cast< cpsapiData * >(pValue)), &cpsapiFactory::free_unique< cpsapiData >);
+      mpData = DataPointer(new cpsapiDataVector(*static_cast< cpsapiDataVector * >(pValue)), &cpsapiFactory::free_unique< cpsapiDataVector >);
       break;
 
     case Type::Object:
@@ -101,15 +115,15 @@ cpsapiVariant::cpsapiVariant(const cpsapiVariant::Type & type, void * pValue)
     }
 }
 
-cpsapiVariant::cpsapiVariant(const cpsapiVariant & src)
+cpsapiData::cpsapiData(const cpsapiData & src)
   : mType(src.mType)
   , mpData(src.copyData())
 {}
 
-cpsapiVariant::~cpsapiVariant()
+cpsapiData::~cpsapiData()
 {}
 
-C_FLOAT64 cpsapiVariant::toDouble() const
+C_FLOAT64 cpsapiData::toDouble() const
 {
   switch (mType)
   {
@@ -140,7 +154,7 @@ C_FLOAT64 cpsapiVariant::toDouble() const
   return std::numeric_limits< C_FLOAT64 >::quiet_NaN();
 }
 
-C_INT32 cpsapiVariant::toInt32() const
+C_INT32 cpsapiData::toInt32() const
 {
   switch (mType)
   {
@@ -171,7 +185,7 @@ C_INT32 cpsapiVariant::toInt32() const
   return 0;
 }
 
-unsigned C_INT32 cpsapiVariant::toUnsignedInt32() const
+unsigned C_INT32 cpsapiData::toUnsignedInt32() const
 {
   switch (mType)
   {
@@ -202,7 +216,7 @@ unsigned C_INT32 cpsapiVariant::toUnsignedInt32() const
   return 0;
 }
 
-size_t cpsapiVariant::toSizeType() const
+size_t cpsapiData::toSizeType() const
 {
   switch (mType)
   {
@@ -233,7 +247,7 @@ size_t cpsapiVariant::toSizeType() const
   return 0;
 }
 
-bool cpsapiVariant::toBool() const
+bool cpsapiData::toBool() const
 {
   switch (mType)
   {
@@ -263,7 +277,7 @@ bool cpsapiVariant::toBool() const
 
   return 0;
 }
-std::string cpsapiVariant::toString() const
+std::string cpsapiData::toString() const
 {
   switch (mType)
   {
@@ -282,7 +296,7 @@ std::string cpsapiVariant::toString() const
   return std::string();
 }
 
-CRegisteredCommonName cpsapiVariant::toCommonName() const
+CRegisteredCommonName cpsapiData::toCommonName() const
 {
   switch (mType)
   {
@@ -301,14 +315,14 @@ CRegisteredCommonName cpsapiVariant::toCommonName() const
   return std::string();
 }
 
-const cpsapiData & cpsapiVariant::toData() const
+const cpsapiDataVector & cpsapiData::toData() const
 {
-  static const cpsapiData Invalid;
+  static const cpsapiDataVector Invalid;
 
   switch (mType)
   {
     case Type::Data:
-      return *static_cast< const cpsapiData * >(mpData.get());
+      return *static_cast< const cpsapiDataVector * >(mpData.get());
       break;
 
     default:
@@ -318,12 +332,12 @@ const cpsapiData & cpsapiVariant::toData() const
   return Invalid;
 }  
 
-const cpsapiVariant::Type & cpsapiVariant::getType() const
+const cpsapiData::Type & cpsapiData::getType() const
 {
   return mType;
 }
 
-cpsapiVariant::DataPointer cpsapiVariant::copyData() const
+cpsapiData::DataPointer cpsapiData::copyData() const
 {
   switch (mType)
     {
@@ -356,7 +370,7 @@ cpsapiVariant::DataPointer cpsapiVariant::copyData() const
       break;
 
     case Type::Data:
-      return DataPointer(new cpsapiData(*static_cast< cpsapiData * >(mpData.get())), &cpsapiFactory::free_unique< cpsapiData >);
+      return DataPointer(new cpsapiDataVector(*static_cast< cpsapiDataVector * >(mpData.get())), &cpsapiFactory::free_unique< cpsapiDataVector >);
       break;
 
     case Type::Object:

@@ -1,3 +1,17 @@
+// BEGIN: Copyright 
+// Copyright (C) 2021 - 2022 by Pedro Mendes, Rector and Visitors of the 
+// University of Virginia, University of Heidelberg, and University 
+// of Connecticut School of Medicine. 
+// All rights reserved 
+// END: Copyright 
+
+// BEGIN: License 
+// Licensed under the Artistic License 2.0 (the "License"); 
+// you may not use this file except in compliance with the License. 
+// You may obtain a copy of the License at 
+//   https://opensource.org/licenses/Artistic-2.0 
+// END: License 
+
 #include "cpsapi/model/cpsapiReaction.h"
 #include "cpsapi/model/cpsapiTransaction.h"
 
@@ -83,18 +97,18 @@ cpsapiVector< cpsapiReactionParameter > cpsapiReaction::parameters()
   return cpsapiVector< cpsapiReactionParameter >(DATA->mpVector);
 }
 
-bool cpsapiReaction::setProperty(const cpsapiReaction::Property & property, const cpsapiVariant & value, const CCore::Framework & framework)
+bool cpsapiReaction::setProperty(const cpsapiReaction::Property & property, const cpsapiData & value, const CCore::Framework & framework)
 {
   return setProperty(static_cast< const cpsapiProperty::Type >(property), value, framework);
 }
 
-cpsapiVariant cpsapiReaction::getProperty(const cpsapiReaction::Property & property, const CCore::Framework & framework) const
+cpsapiData cpsapiReaction::getProperty(const cpsapiReaction::Property & property, const CCore::Framework & framework) const
 {
   return getProperty(static_cast< const cpsapiProperty::Type >(property), framework);
 }
 
 // virtual
-bool cpsapiReaction::setProperty(const cpsapiProperty::Type & property, const cpsapiVariant & value, const CCore::Framework & framework)
+bool cpsapiReaction::setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & framework)
 {
   if (!operator bool())
     return false;
@@ -164,10 +178,10 @@ bool cpsapiReaction::setProperty(const cpsapiProperty::Type & property, const cp
 }
 
 // virtual
-cpsapiVariant cpsapiReaction::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
+cpsapiData cpsapiReaction::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
 {
   if (!operator bool())
-    return cpsapiVariant();
+    return cpsapiData();
 
   if (!isValidProperty<cpsapiReaction>(property))
     return base::getProperty(property, CCore::Framework::__SIZE);
@@ -210,5 +224,5 @@ cpsapiVariant cpsapiReaction::getProperty(const cpsapiProperty::Type & property,
       break;
     }
 
-  return cpsapiVariant();
+  return cpsapiData();
 }

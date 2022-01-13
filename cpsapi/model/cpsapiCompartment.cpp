@@ -1,5 +1,5 @@
 // BEGIN: Copyright 
-// Copyright (C) 2021 by Pedro Mendes, Rector and Visitors of the 
+// Copyright (C) 2021 - 2022 by Pedro Mendes, Rector and Visitors of the 
 // University of Virginia, University of Heidelberg, and University 
 // of Connecticut School of Medicine. 
 // All rights reserved 
@@ -128,18 +128,18 @@ void cpsapiCompartment::updateDefaultSpecies(const cpsapiSpecies & species)
   DATA->mDefaultSpecies = species;
 }
 
-bool cpsapiCompartment::setProperty(const cpsapiCompartment::Property & property, const cpsapiVariant & value, const CCore::Framework & framework)
+bool cpsapiCompartment::setProperty(const cpsapiCompartment::Property & property, const cpsapiData & value, const CCore::Framework & framework)
 {
   return setProperty(static_cast< const cpsapiProperty::Type >(property), value, framework);
 }
 
-cpsapiVariant cpsapiCompartment::getProperty(const cpsapiCompartment::Property & property, const CCore::Framework & framework) const
+cpsapiData cpsapiCompartment::getProperty(const cpsapiCompartment::Property & property, const CCore::Framework & framework) const
 {
   return getProperty(static_cast< const cpsapiProperty::Type >(property), framework);
 }
 
 // virtual
-bool cpsapiCompartment::setProperty(const cpsapiProperty::Type & property, const cpsapiVariant & value, const CCore::Framework & framework)
+bool cpsapiCompartment::setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & framework)
 {
   if (!operator bool())
     return false;
@@ -158,9 +158,9 @@ bool cpsapiCompartment::setProperty(const cpsapiProperty::Type & property, const
     case cpsapiProperty::Type::DIMENSIONALITY:
       Framework = CCore::Framework::__SIZE;
       
-      if (value.getType() == cpsapiVariant::Type::Int32)
+      if (value.getType() == cpsapiData::Type::Int32)
         success = pWrapped->setDimensionality(value.toInt32());
-      else if (value.getType() == cpsapiVariant::Type::UnsignedInt32)
+      else if (value.getType() == cpsapiData::Type::UnsignedInt32)
         success = pWrapped->setDimensionality(value.toUnsignedInt32());
 
       break;
@@ -169,7 +169,7 @@ bool cpsapiCompartment::setProperty(const cpsapiProperty::Type & property, const
       if (Framework == CCore::Framework::__SIZE)
         Framework = CCore::Framework::Concentration;
 
-      if (value.getType() == cpsapiVariant::Type::Double)
+      if (value.getType() == cpsapiData::Type::Double)
         {
           pChangedObject = pWrapped->getInitialValueReference();
           pWrapped->setInitialValue(value.toDouble());
@@ -192,10 +192,10 @@ bool cpsapiCompartment::setProperty(const cpsapiProperty::Type & property, const
 }
 
 // virtual
-cpsapiVariant cpsapiCompartment::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
+cpsapiData cpsapiCompartment::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
 {
   if (!operator bool())
-    return cpsapiVariant();
+    return cpsapiData();
 
   if (!isValidProperty<cpsapiCompartment>(property))
     return base::getProperty(property, CCore::Framework::__SIZE);
@@ -220,5 +220,5 @@ cpsapiVariant cpsapiCompartment::getProperty(const cpsapiProperty::Type & proper
       break;
     }
 
-  return cpsapiVariant();
+  return cpsapiData();
 }

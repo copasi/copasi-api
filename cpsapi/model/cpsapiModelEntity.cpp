@@ -1,5 +1,5 @@
 // BEGIN: Copyright 
-// Copyright (C) 2021 by Pedro Mendes, Rector and Visitors of the 
+// Copyright (C) 2021 - 2022 by Pedro Mendes, Rector and Visitors of the 
 // University of Virginia, University of Heidelberg, and University 
 // of Connecticut School of Medicine. 
 // All rights reserved 
@@ -52,18 +52,18 @@ void cpsapiModelEntity::accept(cpsapiVisitor & visitor)
   base::accept(visitor);
 }
 
-bool cpsapiModelEntity::setProperty(const cpsapiModelEntity::Property & property, const cpsapiVariant & value, const CCore::Framework & framework)
+bool cpsapiModelEntity::setProperty(const cpsapiModelEntity::Property & property, const cpsapiData & value, const CCore::Framework & framework)
 {
   return setProperty(static_cast<const cpsapiProperty::Type >(property), value, framework);
 }
 
-cpsapiVariant cpsapiModelEntity::getProperty(const Property & property, const CCore::Framework & framework) const
+cpsapiData cpsapiModelEntity::getProperty(const Property & property, const CCore::Framework & framework) const
 {
   return getProperty(static_cast<const cpsapiProperty::Type >(property), framework);
 }
 
 // virtual
-bool cpsapiModelEntity::setProperty(const cpsapiProperty::Type & property, const cpsapiVariant & value, const CCore::Framework & framework)
+bool cpsapiModelEntity::setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & framework)
 {
   if (!operator bool())
     return false;
@@ -78,19 +78,19 @@ bool cpsapiModelEntity::setProperty(const cpsapiProperty::Type & property, const
   switch (property)
     {
     case cpsapiProperty::Type::EXPRESSION:
-      if (value.getType() == cpsapiVariant::Type::String)
+      if (value.getType() == cpsapiData::Type::String)
         success = pEntity->setExpression(value.toString());
 
       break;
 
     case cpsapiProperty::Type::INITIAL_EXPRESSION:
-      if (value.getType() == cpsapiVariant::Type::String)
+      if (value.getType() == cpsapiData::Type::String)
         success = pEntity->setInitialExpression(value.toString());
 
       break;
 
     case cpsapiProperty::Type::INITIAL_VALUE:
-      if (value.getType() == cpsapiVariant::Type::Double)
+      if (value.getType() == cpsapiData::Type::Double)
         {
           pChangedObject = pEntity->getInitialValueReference();
           pEntity->setInitialValue(value.toDouble());
@@ -100,13 +100,13 @@ bool cpsapiModelEntity::setProperty(const cpsapiProperty::Type & property, const
       break;
 
     case cpsapiProperty::Type::SIMULATION_TYPE:
-      if (value.getType() == cpsapiVariant::Type::String)
+      if (value.getType() == cpsapiData::Type::String)
         success = pEntity->setStatus(CModelEntity::StatusName.toEnum(value.toString()));
 
       break;
 
     case cpsapiProperty::Type::ADD_NOISE:
-      if (value.getType() == cpsapiVariant::Type::Bool)
+      if (value.getType() == cpsapiData::Type::Bool)
         {
           pEntity->setHasNoise(value.toBool());
           success = true;
@@ -115,7 +115,7 @@ bool cpsapiModelEntity::setProperty(const cpsapiProperty::Type & property, const
       break;
 
     case cpsapiProperty::Type::NOISE_EXPRESSION:
-      if (value.getType() == cpsapiVariant::Type::String)
+      if (value.getType() == cpsapiData::Type::String)
         success = pEntity->setNoiseExpression(value.toString());
 
       break;
@@ -128,10 +128,10 @@ bool cpsapiModelEntity::setProperty(const cpsapiProperty::Type & property, const
 }
 
 // virtual 
-cpsapiVariant cpsapiModelEntity::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
+cpsapiData cpsapiModelEntity::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
 {
   if (!operator bool())
-    return cpsapiVariant();
+    return cpsapiData();
 
   if (!isValidProperty<cpsapiModelEntity>(property))
     return base::getProperty(property, framework);
@@ -173,5 +173,5 @@ cpsapiVariant cpsapiModelEntity::getProperty(const cpsapiProperty::Type & proper
       break;
     }
 
-  return cpsapiVariant();
+  return cpsapiData();
 }

@@ -1,21 +1,36 @@
+// BEGIN: Copyright 
+// Copyright (C) 2022 by Pedro Mendes, Rector and Visitors of the 
+// University of Virginia, University of Heidelberg, and University 
+// of Connecticut School of Medicine. 
+// All rights reserved 
+// END: Copyright 
+
+// BEGIN: License 
+// Licensed under the Artistic License 2.0 (the "License"); 
+// you may not use this file except in compliance with the License. 
+// You may obtain a copy of the License at 
+//   https://opensource.org/licenses/Artistic-2.0 
+// END: License 
+
 #include "cpsapi/core/cpsapiDataCollector.h"
 #include "cpsapi/core/cpsapiValue.h"
 
 CPSAPI_NAMESPACE_USE
 
 // static
-void cpsapiDataCollector::collect(cpsapiData & data, const std::vector< std::pair< cpsapiVariant::Type, void * > > & values)
+void cpsapiDataCollector::collect(cpsapiDataVector & data, const std::vector< std::pair< cpsapiData::Type, void * > > & values)
 {
-  data.push_back(cpsapiData());
-  cpsapiData * pCollected = const_cast< cpsapiData * >(&data[data.size() - 1].toData());
+  data.push_back(cpsapiDataVector());
+  
+  cpsapiDataVector * pCollected = const_cast< cpsapiDataVector *>(&data.back().toData());
 
-  for (const std::pair< cpsapiVariant::Type, void * > & value: values)
-    pCollected->push_back(cpsapiVariant(value.first, value.second));
+  for (const std::pair< cpsapiData::Type, void * > & value: values)
+    pCollected->push_back(cpsapiData(value.first, value.second));
 }
 
 bool cpsapiDataCollector::generateValues(const CObjectInterface::ContainerList & listOfContainer,
                                          const std::vector< CRegisteredCommonName > & cns,
-                                         std::vector< std::pair< cpsapiVariant::Type, void * > > & values)
+                                         std::vector< std::pair< cpsapiData::Type, void * > > & values)
 {
   bool success = true;
   values.clear();
@@ -32,7 +47,7 @@ bool cpsapiDataCollector::generateValues(const CObjectInterface::ContainerList &
         }
 
       // CMathObject is double
-      cpsapiVariant::Type Type = cpsapiVariant::Type::Double;
+      cpsapiData::Type Type = cpsapiData::Type::Double;
 
       // This will be false for CMathObject
       if (pObjectInterface == pObjectInterface->getDataObject())
@@ -40,19 +55,19 @@ bool cpsapiDataCollector::generateValues(const CObjectInterface::ContainerList &
           switch (cpsapiFactory::getDataType(pObjectInterface))
             {
             case CDataValue::Type::DOUBLE:
-              Type = cpsapiVariant::Type::Double;
+              Type = cpsapiData::Type::Double;
               break;
 
             case CDataValue::Type::INT:
-              Type = cpsapiVariant::Type::Int32;
+              Type = cpsapiData::Type::Int32;
               break;
 
             case CDataValue::Type::BOOL:
-              Type = cpsapiVariant::Type::Bool;
+              Type = cpsapiData::Type::Bool;
               break;
 
             case CDataValue::Type::STRING:
-              Type = cpsapiVariant::Type::String;
+              Type = cpsapiData::Type::String;
               break;
 
             default:
@@ -116,15 +131,15 @@ void cpsapiDataCollector::separate(const Activity & activity)
   switch (activity)
   {
     case BEFORE:
-      mDataBefore.push_back(cpsapiVariant());
+      mDataBefore.push_back(cpsapiData());
       break;
 
     case DURING:
-      mDataDuring.push_back(cpsapiVariant());
+      mDataDuring.push_back(cpsapiData());
       break;
 
     case AFTER:
-      mDataAfter.push_back(cpsapiVariant());
+      mDataAfter.push_back(cpsapiData());
       break;
 
     case MONITORING:
@@ -177,17 +192,17 @@ const std::vector< CRegisteredCommonName > & cpsapiDataCollector::getObjectsAfte
   return mCNsAfter;
 }
 
-const cpsapiData & cpsapiDataCollector::getDataBefore() const
+const cpsapiDataVector & cpsapiDataCollector::getDataBefore() const
 {
   return mDataBefore;
 }
 
-const cpsapiData & cpsapiDataCollector::getDataDuring() const
+const cpsapiDataVector & cpsapiDataCollector::getDataDuring() const
 {
   return mDataDuring;
 }
 
-const cpsapiData & cpsapiDataCollector::getDataAfter() const
+const cpsapiDataVector & cpsapiDataCollector::getDataAfter() const
 {
   return mDataAfter;
 }

@@ -1,3 +1,17 @@
+// BEGIN: Copyright 
+// Copyright (C) 2022 by Pedro Mendes, Rector and Visitors of the 
+// University of Virginia, University of Heidelberg, and University 
+// of Connecticut School of Medicine. 
+// All rights reserved 
+// END: Copyright 
+
+// BEGIN: License 
+// Licensed under the Artistic License 2.0 (the "License"); 
+// you may not use this file except in compliance with the License. 
+// You may obtain a copy of the License at 
+//   https://opensource.org/licenses/Artistic-2.0 
+// END: License 
+
 #pragma once
 
 #include <copasi/output/COutputHandler.h>
@@ -49,28 +63,28 @@ public:
   const std::vector< CRegisteredCommonName > & getObjectsDuring() const;
   const std::vector< CRegisteredCommonName > & getObjectsAfter() const;
 
-  const cpsapiData & getDataBefore() const;
-  const cpsapiData & getDataDuring() const;
-  const cpsapiData & getDataAfter() const;
+  const cpsapiDataVector & getDataBefore() const;
+  const cpsapiDataVector & getDataDuring() const;
+  const cpsapiDataVector & getDataAfter() const;
 
 private:
-  static void collect(cpsapiData & data, const std::vector< std::pair< cpsapiVariant::Type, void * > > & values);
+  static void collect(cpsapiDataVector & data, const std::vector< std::pair< cpsapiData::Type, void * > > & values);
 
   bool generateValues(const CObjectInterface::ContainerList & listOfContainer,
                       const std::vector< CRegisteredCommonName > & cns,
-                      std::vector< std::pair< cpsapiVariant::Type, void * > > & values);
+                      std::vector< std::pair< cpsapiData::Type, void * > > & values);
 
-  cpsapiData mDataBefore;
-  cpsapiData mDataDuring;
-  cpsapiData mDataAfter;
+  cpsapiDataVector mDataBefore;
+  cpsapiDataVector mDataDuring;
+  cpsapiDataVector mDataAfter;
 
   std::vector< CRegisteredCommonName > mCNsBefore;
   std::vector< CRegisteredCommonName > mCNsDuring;
   std::vector< CRegisteredCommonName > mCNsAfter;
 
-  std::vector< std::pair< cpsapiVariant::Type, void * > > mValuesBefore;
-  std::vector< std::pair< cpsapiVariant::Type, void * > > mValuesDuring;
-  std::vector< std::pair< cpsapiVariant::Type, void * > > mValuesAfter;
+  std::vector< std::pair< cpsapiData::Type, void * > > mValuesBefore;
+  std::vector< std::pair< cpsapiData::Type, void * > > mValuesDuring;
+  std::vector< std::pair< cpsapiData::Type, void * > > mValuesAfter;
 };
 
 CPSAPI_NAMESPACE_END

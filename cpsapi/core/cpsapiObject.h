@@ -1,16 +1,16 @@
-// BEGIN: Copyright
-// Copyright (C) 2021 by Pedro Mendes, Rector and Visitors of the
-// University of Virginia, University of Heidelberg, and University
-// of Connecticut School of Medicine.
-// All rights reserved
-// END: Copyright
+// BEGIN: Copyright 
+// Copyright (C) 2021 - 2022 by Pedro Mendes, Rector and Visitors of the 
+// University of Virginia, University of Heidelberg, and University 
+// of Connecticut School of Medicine. 
+// All rights reserved 
+// END: Copyright 
 
-// BEGIN: License
-// Licensed under the Artistic License 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//   https://opensource.org/licenses/Artistic-2.0
-// END: License
+// BEGIN: License 
+// Licensed under the Artistic License 2.0 (the "License"); 
+// you may not use this file except in compliance with the License. 
+// You may obtain a copy of the License at 
+//   https://opensource.org/licenses/Artistic-2.0 
+// END: License 
 
 #pragma once
 
@@ -30,7 +30,7 @@ class CDataObject;
 CPSAPI_NAMESPACE_BEGIN
 
 class cpsapiVisitor;
-class cpsapiVariant;
+class cpsapiData;
 
 
 /**
@@ -38,7 +38,7 @@ class cpsapiVariant;
  */
 class cpsapiObject
 {
-  friend class cpsapiVariant;
+  friend class cpsapiData;
 
 public:
   static void release();
@@ -169,11 +169,11 @@ public:
    * The value must match the underlying value of the property.
    * The default framework is unspecified
    * @param const Property & property
-   * @param const cpsapiVariant & value
+   * @param const cpsapiData & value
    * @param const CCore::Framework & framework (default: CCore::Framework::__SIZE)
    * @return bool success
    */
-  bool setProperty(const Property & property, const cpsapiVariant & value, const CCore::Framework & framework = CCore::Framework::__SIZE);
+  bool setProperty(const Property & property, const cpsapiData & value, const CCore::Framework & framework = CCore::Framework::__SIZE);
 
   /**
    * Set a property of the object to the provided value under the given framework.
@@ -181,20 +181,20 @@ public:
    * The value must match the underlying value of the property.
    * The framework must be string in CCore::FrameworkNames
    * @param const std::string & property
-   * @param const cpsapiVariant & value
+   * @param const cpsapiData & value
    * @param const std::string & framework (default: "")
    * @return bool success
    */
-  bool setProperty(const std::string & property, const cpsapiVariant & value, const std::string & framework = "");
+  bool setProperty(const std::string & property, const cpsapiData & value, const std::string & framework = "");
 
   /**
    * Retrieve a property of the object to the provided value under the given framework.
    * The default framework is unspecified
    * @param const Property & property
    * @param const CCore::Framework & framework (default: CCore::Framework::__SIZE)
-   * @return cpsapiVariant value
+   * @return cpsapiData value
    */
-  cpsapiVariant getProperty(const Property & property, const CCore::Framework & framework = CCore::Framework::__SIZE) const;
+  cpsapiData getProperty(const Property & property, const CCore::Framework & framework = CCore::Framework::__SIZE) const;
 
   /**
    * Retrieve a property of the object to the provided value under the given framework.
@@ -202,9 +202,9 @@ public:
    * The framework must be string in CCore::FrameworkNames
    * @param const std::string & property
    * @param const std::string & framework (default: "")
-   * @return cpsapiVariant value
+   * @return cpsapiData value
    */
-  cpsapiVariant getProperty(const std::string & property, const std::string & framework = "") const;
+  cpsapiData getProperty(const std::string & property, const std::string & framework = "") const;
 
   template < class CType >
   static Properties AllSupportedProperties();
@@ -213,9 +213,9 @@ protected:
   template < class CType >
   static bool isValidProperty(const cpsapiProperty::Type & property);
 
-  virtual bool setProperty(const cpsapiProperty::Type & property, const cpsapiVariant & value, const CCore::Framework & framework);
+  virtual bool setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & framework);
 
-  virtual cpsapiVariant getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const;
+  virtual cpsapiData getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const;
 
   template < class CData >
   void assertData(const CData & data);
@@ -270,5 +270,5 @@ CPSAPI_NAMESPACE_END
 std::ostream & operator << (std::ostream &os, const CPSAPI_NAMESPACE_QUALIFIER cpsapiObject & object);
 
 #include "cpsapi/core/cpsapiFactory.h"
-#include "cpsapi/core/cpsapiVariant.h"
+#include "cpsapi/core/cpsapiData.h"
 #include "cpsapi/core/cpsapiVisitor.h"

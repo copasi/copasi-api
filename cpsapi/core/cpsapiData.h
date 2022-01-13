@@ -1,3 +1,17 @@
+// BEGIN: Copyright 
+// Copyright (C) 2022 by Pedro Mendes, Rector and Visitors of the 
+// University of Virginia, University of Heidelberg, and University 
+// of Connecticut School of Medicine. 
+// All rights reserved 
+// END: Copyright 
+
+// BEGIN: License 
+// Licensed under the Artistic License 2.0 (the "License"); 
+// you may not use this file except in compliance with the License. 
+// You may obtain a copy of the License at 
+//   https://opensource.org/licenses/Artistic-2.0 
+// END: License 
+
 #pragma once
 
 #include <string>
@@ -9,9 +23,9 @@
 
 CPSAPI_NAMESPACE_BEGIN
 
-typedef std::vector< cpsapiVariant > cpsapiData;
+typedef std::vector< cpsapiData > cpsapiDataVector;
 
-class cpsapiVariant
+class cpsapiData
 {
 public:
   enum struct Type
@@ -32,33 +46,33 @@ public:
 
   // static const CEnumAnnotation< std::string, Type > Name;
 
-  cpsapiVariant();
+  cpsapiData();
 
-  cpsapiVariant(const C_FLOAT64 & value);
+  cpsapiData(const C_FLOAT64 & value);
 
-  cpsapiVariant(const C_INT32 & value);
+  cpsapiData(const C_INT32 & value);
 
-  cpsapiVariant(const unsigned C_INT32 & value);
+  cpsapiData(const unsigned C_INT32 & value);
 
-  cpsapiVariant(const size_t & value);
+  cpsapiData(const size_t & value);
 
-  cpsapiVariant(const bool & value);
+  cpsapiData(const bool & value);
 
-  cpsapiVariant(const std::string & value);
+  cpsapiData(const std::string & value);
 
-  cpsapiVariant(const char * value);
+  cpsapiData(const char * value);
 
-  cpsapiVariant(const CRegisteredCommonName & value);
+  cpsapiData(const CRegisteredCommonName & value);
 
-  cpsapiVariant(const cpsapiData & value);
+  cpsapiData(const cpsapiDataVector & value);
 
-  template < class Object > cpsapiVariant(const Object & value);
+  template < class Object > cpsapiData(const Object & value);
 
-  cpsapiVariant(const Type & type, void * pValue);
+  cpsapiData(const Type & type, void * pValue);
 
-  cpsapiVariant(const cpsapiVariant & src);
+  cpsapiData(const cpsapiData & src);
 
-  ~cpsapiVariant();
+  ~cpsapiData();
 
   C_FLOAT64 toDouble() const;
 
@@ -74,7 +88,7 @@ public:
 
   CRegisteredCommonName toCommonName() const;
 
-  const cpsapiData & toData() const;
+  const cpsapiDataVector & toData() const;
 
   template < class Object > Object toObject() const;
 
@@ -93,20 +107,20 @@ private:
 };
 
 template < class Object > 
-cpsapiVariant::cpsapiVariant(const Object & value)
+cpsapiData::cpsapiData(const Object & value)
   : mType(Type::Object)
   , mpData(cpsapiFactory::make_unique< Object >(value))
 {}
 
 template <> inline
-void cpsapiVariant::assign(const cpsapiObject * pValue, const cpsapiVariant::Type & type)
+void cpsapiData::assign(const cpsapiObject * pValue, const cpsapiData::Type & type)
 {
   mType = type;
   mpData = cpsapiFactory::make_unique< cpsapiObject >(*pValue);
 }
 
 template < class CType > 
-void cpsapiVariant::assign(const CType * pValue, const cpsapiVariant::Type & type)
+void cpsapiData::assign(const CType * pValue, const cpsapiData::Type & type)
 {
   if (mType == type)
     *static_cast< CType * >(mpData.get()) = *pValue;
@@ -118,7 +132,7 @@ void cpsapiVariant::assign(const CType * pValue, const cpsapiVariant::Type & typ
 }
 
 template <>
-inline cpsapiObject cpsapiVariant::toObject() const
+inline cpsapiObject cpsapiData::toObject() const
 {
   if (mType == Type::Object)
     return *static_cast< cpsapiObject * >(mpData.get());
@@ -127,7 +141,7 @@ inline cpsapiObject cpsapiVariant::toObject() const
 }
 
 template < class Object > 
-Object cpsapiVariant::toObject() const
+Object cpsapiData::toObject() const
 {
   if (mType == Type::Object
       && dynamic_cast< Object * >(static_cast< cpsapiObject * >(mpData.get())) != nullptr)

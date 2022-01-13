@@ -1,16 +1,16 @@
-// BEGIN: Copyright
-// Copyright (C) 2021 by Pedro Mendes, Rector and Visitors of the
-// University of Virginia, University of Heidelberg, and University
-// of Connecticut School of Medicine.
-// All rights reserved
-// END: Copyright
+// BEGIN: Copyright 
+// Copyright (C) 2021 - 2022 by Pedro Mendes, Rector and Visitors of the 
+// University of Virginia, University of Heidelberg, and University 
+// of Connecticut School of Medicine. 
+// All rights reserved 
+// END: Copyright 
 
-// BEGIN: License
-// Licensed under the Artistic License 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//   https://opensource.org/licenses/Artistic-2.0
-// END: License
+// BEGIN: License 
+// Licensed under the Artistic License 2.0 (the "License"); 
+// you may not use this file except in compliance with the License. 
+// You may obtain a copy of the License at 
+//   https://opensource.org/licenses/Artistic-2.0 
+// END: License 
 
 #include "cpsapi/model/cpsapiModel.h"
 #include "cpsapi/model/cpsapiTransaction.h"
@@ -409,18 +409,18 @@ void cpsapiModel::deleteAllDependents(CDataContainer * pContainer)
   deleteDependents(DependentEvents);
 }
 
-bool cpsapiModel::setProperty(const cpsapiModel::Property & property, const cpsapiVariant & value, const CCore::Framework & framework)
+bool cpsapiModel::setProperty(const cpsapiModel::Property & property, const cpsapiData & value, const CCore::Framework & framework)
 {
   return setProperty(static_cast< const cpsapiProperty::Type >(property), value, framework);
 }
 
-cpsapiVariant cpsapiModel::getProperty(const cpsapiModel::Property & property, const CCore::Framework & framework) const
+cpsapiData cpsapiModel::getProperty(const cpsapiModel::Property & property, const CCore::Framework & framework) const
 {
   return getProperty(static_cast< const cpsapiProperty::Type >(property), framework);
 }
 
 // virtual
-bool cpsapiModel::setProperty(const cpsapiProperty::Type & property, const cpsapiVariant & value, const CCore::Framework & framework)
+bool cpsapiModel::setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & framework)
 {
   if (!operator bool())
     return false;
@@ -438,7 +438,7 @@ bool cpsapiModel::setProperty(const cpsapiProperty::Type & property, const cpsap
   switch (property)
     {
     case cpsapiProperty::Type::VOLUME_UNIT:
-      if (value.getType() == cpsapiVariant::Type::String)
+      if (value.getType() == cpsapiData::Type::String)
         {
           CUnit Unit;
           success &= !Unit.setExpression(value.toString());
@@ -453,7 +453,7 @@ bool cpsapiModel::setProperty(const cpsapiProperty::Type & property, const cpsap
       break;
 
     case cpsapiProperty::Type::AREA_UNIT:
-      if (value.getType() == cpsapiVariant::Type::String)
+      if (value.getType() == cpsapiData::Type::String)
         {
           CUnit Unit;
           success &= !Unit.setExpression(value.toString());
@@ -468,7 +468,7 @@ bool cpsapiModel::setProperty(const cpsapiProperty::Type & property, const cpsap
       break;
 
     case cpsapiProperty::Type::LENGTH_UNIT:
-      if (value.getType() == cpsapiVariant::Type::String)
+      if (value.getType() == cpsapiData::Type::String)
         {
           CUnit Unit;
           success &= !Unit.setExpression(value.toString());
@@ -484,7 +484,7 @@ bool cpsapiModel::setProperty(const cpsapiProperty::Type & property, const cpsap
 
     case cpsapiProperty::Type::UNIT:
     case cpsapiProperty::Type::TIME_UNIT:
-      if (value.getType() == cpsapiVariant::Type::String)
+      if (value.getType() == cpsapiData::Type::String)
         {
           CUnit Unit;
           success &= !Unit.setExpression(value.toString());
@@ -499,7 +499,7 @@ bool cpsapiModel::setProperty(const cpsapiProperty::Type & property, const cpsap
       break;
 
     case cpsapiProperty::Type::QUANTITY_UNIT:
-      if (value.getType() == cpsapiVariant::Type::String)
+      if (value.getType() == cpsapiData::Type::String)
         {
           if (Framework == CCore::Framework::__SIZE)
             Framework = CCore::Framework::Concentration;
@@ -519,7 +519,7 @@ bool cpsapiModel::setProperty(const cpsapiProperty::Type & property, const cpsap
       break;
 
     case cpsapiProperty::Type::MODEL_TYPE:
-      if (value.getType() == cpsapiVariant::Type::String && wrapped::ModelTypeNames.toEnum(value.toString()) != wrapped::ModelType::__SIZE)
+      if (value.getType() == cpsapiData::Type::String && wrapped::ModelTypeNames.toEnum(value.toString()) != wrapped::ModelType::__SIZE)
         pWrapped->setModelType(wrapped::ModelTypeNames.toEnum(value.toString()));
       else
         success = false;
@@ -527,7 +527,7 @@ bool cpsapiModel::setProperty(const cpsapiProperty::Type & property, const cpsap
       break;
 
     case cpsapiProperty::Type::AVOGADRO_NUMBER:
-      if (value.getType() == cpsapiVariant::Type::Double)
+      if (value.getType() == cpsapiData::Type::Double)
         {
           if (Framework == CCore::Framework::__SIZE)
             Framework = CCore::Framework::Concentration;
@@ -548,10 +548,10 @@ bool cpsapiModel::setProperty(const cpsapiProperty::Type & property, const cpsap
 }
 
 // virtual
-cpsapiVariant cpsapiModel::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
+cpsapiData cpsapiModel::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
 {
   if (!operator bool())
-    return cpsapiVariant();
+    return cpsapiData();
 
   if (!isValidProperty< cpsapiModel >(property))
     return base::getProperty(property, CCore::Framework::__SIZE);
@@ -600,5 +600,5 @@ cpsapiVariant cpsapiModel::getProperty(const cpsapiProperty::Type & property, co
       break;
     }
 
-  return cpsapiVariant();
+  return cpsapiData();
 }

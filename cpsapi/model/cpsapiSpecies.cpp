@@ -1,5 +1,5 @@
 // BEGIN: Copyright 
-// Copyright (C) 2021 by Pedro Mendes, Rector and Visitors of the 
+// Copyright (C) 2021 - 2022 by Pedro Mendes, Rector and Visitors of the 
 // University of Virginia, University of Heidelberg, and University 
 // of Connecticut School of Medicine. 
 // All rights reserved 
@@ -48,18 +48,18 @@ void cpsapiSpecies::accept(cpsapiVisitor & visitor)
   base::accept(visitor);
 }
 
-bool cpsapiSpecies::setProperty(const cpsapiSpecies::Property & property, const cpsapiVariant & value, const CCore::Framework & framework)
+bool cpsapiSpecies::setProperty(const cpsapiSpecies::Property & property, const cpsapiData & value, const CCore::Framework & framework)
 {
   return setProperty(static_cast< const cpsapiProperty::Type >(property), value, framework);
 }
 
-cpsapiVariant cpsapiSpecies::getProperty(const Property & property, const CCore::Framework & framework) const
+cpsapiData cpsapiSpecies::getProperty(const Property & property, const CCore::Framework & framework) const
 {
   return getProperty(static_cast< const cpsapiProperty::Type >(property), framework);
 }
 
 // virtual
-bool cpsapiSpecies::setProperty(const cpsapiProperty::Type & property, const cpsapiVariant & value, const CCore::Framework & framework)
+bool cpsapiSpecies::setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & framework)
 {
   if (operator=(nullptr))
     return false;
@@ -79,7 +79,7 @@ bool cpsapiSpecies::setProperty(const cpsapiProperty::Type & property, const cps
       if (Framework == CCore::Framework::__SIZE)
         Framework = CCore::Framework::Concentration;
 
-      if (value.getType() == cpsapiVariant::Type::Double)
+      if (value.getType() == cpsapiData::Type::Double)
         switch (Framework)
           {
           case CCore::Framework::Concentration:
@@ -113,10 +113,10 @@ bool cpsapiSpecies::setProperty(const cpsapiProperty::Type & property, const cps
 }
 
 // virtual 
-cpsapiVariant cpsapiSpecies::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
+cpsapiData cpsapiSpecies::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
 {
   if (!operator bool())
-    return cpsapiVariant();
+    return cpsapiData();
 
   if (!isValidProperty<cpsapiSpecies>(property))
     return base::getProperty(property, CCore::Framework::__SIZE);
@@ -140,5 +140,5 @@ cpsapiVariant cpsapiSpecies::getProperty(const cpsapiProperty::Type & property, 
       break;
     }
 
-  return cpsapiVariant();
+  return cpsapiData();
 }
