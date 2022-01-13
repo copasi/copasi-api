@@ -112,7 +112,7 @@ bool cpsapiReactionParameter::setProperty(const cpsapiProperty::Type & property,
         case CFunctionParameter::Role::PRODUCT:
         case CFunctionParameter::Role::MODIFIER:
           if (value.toObject< cpsapiSpecies >())
-            success &= pChangedObject->setParameterObject(Index, value.toObject< cpsapiSpecies >().getObject());
+            success &= pChangedObject->setParameterObject(Index, *value.toObject< cpsapiSpecies >());
           else
             success = false;
 
@@ -120,7 +120,7 @@ bool cpsapiReactionParameter::setProperty(const cpsapiProperty::Type & property,
 
         case CFunctionParameter::Role::PARAMETER:
           if (value.toObject< cpsapiGlobalQuantity >())
-            success &= pChangedObject->setParameterObject(Index, value.toObject< cpsapiGlobalQuantity >().getObject());
+            success &= pChangedObject->setParameterObject(Index, *value.toObject< cpsapiGlobalQuantity >());
           else
             success = false;
             
@@ -128,7 +128,7 @@ bool cpsapiReactionParameter::setProperty(const cpsapiProperty::Type & property,
 
         case CFunctionParameter::Role::VOLUME:
           if (value.toObject< cpsapiCompartment >())
-            success &= pChangedObject->setParameterObject(Index, value.toObject< cpsapiCompartment >().getObject());
+            success &= pChangedObject->setParameterObject(Index, *value.toObject< cpsapiCompartment >());
           else
             success = false;
 
@@ -136,7 +136,7 @@ bool cpsapiReactionParameter::setProperty(const cpsapiProperty::Type & property,
 
         case CFunctionParameter::Role::TIME:
           if (value.toObject< cpsapiModel >())
-            success &= pChangedObject->setParameterObject(Index, value.toObject< cpsapiModel >().getObject());
+            success &= pChangedObject->setParameterObject(Index, *value.toObject< cpsapiModel >());
           else
             success = false;
 

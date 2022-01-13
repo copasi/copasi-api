@@ -53,7 +53,7 @@ cpsapiDataModel & cpsapi::addDataModel(const std::string & name)
   DefaultDataModel = cpsapiDataModel(pDefaultDataModel);
 
   // We start with the names being the same
-  model().getObject()->setObjectName(name);
+  model()->setObjectName(name);
   
   return DefaultDataModel;
 }
@@ -67,13 +67,13 @@ bool cpsapi::deleteDataModel(const std::string & name)
   std::map< std::string, CDataModel * >::const_iterator end = DataModels.end();
 
   for (; found != end; ++found)
-    if (DataModel.getObject() == found->second)
+    if (*DataModel == found->second)
       break;
 
   if (found == DataModels.end())
     return false;
 
-  if (DefaultDataModel.getObject() == found->second)
+  if (*DefaultDataModel == found->second)
     DefaultDataModel = cpsapiDataModel(nullptr);
 
   deleted(found->second);

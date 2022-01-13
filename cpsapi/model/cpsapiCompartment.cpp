@@ -61,7 +61,7 @@ cpsapiSpecies cpsapiCompartment::addSpecies(const std::string & name)
   if (!Species)
     return nullptr;
 
-  if (DATA->mDefaultSpecies.getObject() != Species.getObject())
+  if (*DATA->mDefaultSpecies != *Species)
     updateDefaultSpecies(Species);
 
   return DATA->mDefaultSpecies;
@@ -69,12 +69,12 @@ cpsapiSpecies cpsapiCompartment::addSpecies(const std::string & name)
 
 bool cpsapiCompartment::deleteSpecies(const std::string & name)
 {
-  CMetab * pSpecies = static_cast< CMetab * >(__species(name).getObject());
+  CMetab * pSpecies = static_cast< CMetab * >(*__species(name));
 
   if (pSpecies == nullptr)
     return false;
   
-  if (DATA->mDefaultSpecies.getObject() == pSpecies)
+  if (*DATA->mDefaultSpecies == pSpecies)
     updateDefaultSpecies(nullptr);
   
   cpsapiTransaction::beginStructureChange(WRAPPED->getModel());
@@ -93,7 +93,7 @@ cpsapiSpecies cpsapiCompartment::species(const std::string & name)
   if (!Species)
     return Species;
 
-  if (DATA->mDefaultSpecies.getObject() != Species.getObject())
+  if (*DATA->mDefaultSpecies != *Species)
     updateDefaultSpecies(Species);
 
   return DATA->mDefaultSpecies;

@@ -75,7 +75,10 @@ const CEnumAnnotation< std::string, cpsapiObject::Type > cpsapiObject::TypeName(
   "ReactionParameter",
   "DataModel",
   "Parameter",
-  "Group"
+  "Group",
+  "Method",
+  "Problem",
+  "Task"
 });
 
 // static

@@ -63,6 +63,9 @@ public:
     DataModel,
     Parameter,
     Group,
+    Method,
+    Problem,
+    Task,
     __SIZE
   };
 
@@ -153,12 +156,14 @@ public:
    */
   virtual void accept(cpsapiVisitor & visitor);
 
+protected:
   /**
    * Retrieve the pointer to the underlying COPASI CDataObject.
    * @return CDataObject * pObject
    */
   CDataObject * getObject() const;
 
+public:
   /**
    * Set a property of the object to the provided value under the given framework.
    * The value must match the underlying value of the property.

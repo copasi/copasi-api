@@ -16,6 +16,7 @@
 
 #include "cpsapi/core/cpsapiContainer.h"
 #include "cpsapi/model/cpsapiModel.h"
+#include "cpsapi/task/cpsapiTask.h"
 
 #include <memory>
 
@@ -31,10 +32,6 @@ class CReportDefinition;
 class CPlotSpecification;
 
 CPSAPI_NAMESPACE_BEGIN
-
-class cpsapiModel;
-class cpsapiCompartment;
-class cpsapiGlobalQuantity;
 
 class cpsapiDataModel : public cpsapiContainer
 {
@@ -65,7 +62,7 @@ public:
     Data(const base::Data & data)
       : base::Data(data)
       , mModel()
-      , mpDefaultTask(nullptr)
+      , mDefaultTask()
       , mpDefaultReportDefinition(nullptr)
       , mpDefaultPlotSpecification(nullptr)
     {}
@@ -73,7 +70,7 @@ public:
     virtual ~Data() {}
 
     cpsapiModel mModel;
-    CCopasiTask * mpDefaultTask;
+    cpsapiTask  mDefaultTask;
     CReportDefinition * mpDefaultReportDefinition;
     CPlotSpecification * mpDefaultPlotSpecification;
   };
@@ -144,6 +141,17 @@ public:
   cpsapiGlobalQuantity globalQuantity(const std::string & name = "");
 
   cpsapiVector< cpsapiGlobalQuantity > getGlobalQuantities();
+
+  cpsapiVector< cpsapiTask > getTasks();
+
+  cpsapiTask task(const std::string & name = "");
+
+  cpsapiMethod method();
+
+  cpsapiProblem problem();
+
+private:
+  cpsapiTask __task(const std::string & name) const;
 };
 
 CPSAPI_NAMESPACE_END

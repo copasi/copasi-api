@@ -113,12 +113,12 @@ cpsapiCompartment cpsapiModel::addCompartment(const std::string & name)
 
 bool cpsapiModel::deleteCompartment(const std::string & name)
 {
-  CCompartment * pCompartment = static_cast< CCompartment *>(__compartment(name).getObject());
+  CCompartment * pCompartment = static_cast< CCompartment *>(*__compartment(name));
 
   if (pCompartment == nullptr)
     return false;
 
-  if (DATA->mDefaultCompartment.getObject() == pCompartment)
+  if (*DATA->mDefaultCompartment == pCompartment)
     updateDefaultCompartment(nullptr);
 
   cpsapiTransaction::beginStructureChange(WRAPPED);
@@ -132,12 +132,12 @@ bool cpsapiModel::deleteCompartment(const std::string & name)
 
 cpsapiCompartment cpsapiModel::compartment(const std::string & name)
 {
-  cpsapiCompartment Compartment = static_cast< CCompartment *>(__compartment(name).getObject());
+  cpsapiCompartment Compartment = __compartment(name);
 
   if (!Compartment)
     return nullptr;
 
-  if (DATA->mDefaultCompartment.getObject() != Compartment.getObject())
+  if (*DATA->mDefaultCompartment != *Compartment)
     updateDefaultCompartment(Compartment);
 
   return DATA->mDefaultCompartment;
@@ -182,7 +182,7 @@ cpsapiSpecies cpsapiModel::addSpecies(const std::string & name, const std::strin
   if (!Compartment)
     return nullptr;
 
-  if (DATA->mDefaultCompartment.getObject() != Compartment.getObject())
+  if (*DATA->mDefaultCompartment != *Compartment)
     updateDefaultCompartment(Compartment);
 
   cpsapiTransaction::beginStructureChange(WRAPPED);
@@ -234,12 +234,12 @@ cpsapiGlobalQuantity cpsapiModel::addGlobalQuantity(const std::string & name)
 
 bool cpsapiModel::deleteGlobalQuantity(const std::string & name)
 {
-  CModelValue * pGlobalQuantity = static_cast< CModelValue *>(__globalQuantity(name).getObject());;
+  CModelValue * pGlobalQuantity = static_cast< CModelValue *>(*__globalQuantity(name));;
 
   if (pGlobalQuantity == nullptr)
     return false;
 
-  if (DATA->mDefaultGlobalQuantity.getObject() == pGlobalQuantity)
+  if (*DATA->mDefaultGlobalQuantity == pGlobalQuantity)
     updateDefaultGlobalQuantity(nullptr);
 
   cpsapiTransaction::beginStructureChange(WRAPPED);
@@ -258,7 +258,7 @@ cpsapiGlobalQuantity cpsapiModel::globalQuantity(const std::string & name)
   if (!GlobalQuantity)
     return nullptr;
 
-  if (DATA->mDefaultGlobalQuantity.getObject() != GlobalQuantity.getObject())
+  if (*DATA->mDefaultGlobalQuantity != *GlobalQuantity)
     updateDefaultGlobalQuantity(GlobalQuantity);
 
   return GlobalQuantity;
@@ -310,12 +310,12 @@ cpsapiReaction cpsapiModel::addReaction(const std::string & name)
 
 bool cpsapiModel::deleteReaction(const std::string & name)
 {
-  CReaction * pReaction = static_cast< CReaction *>(__reaction(name).getObject());;
+  CReaction * pReaction = static_cast< CReaction *>(*__reaction(name));
 
   if (pReaction == nullptr)
     return false;
 
-  if (DATA->mDefaultReaction.getObject() == pReaction)
+  if (*DATA->mDefaultReaction == pReaction)
     updateDefaultReaction(nullptr);
 
   cpsapiTransaction::beginStructureChange(WRAPPED);
@@ -334,7 +334,7 @@ cpsapiReaction cpsapiModel::reaction(const std::string & name)
   if (!Reaction)
     return nullptr;
 
-  if (DATA->mDefaultReaction.getObject() != Reaction.getObject())
+  if (*DATA->mDefaultReaction != *Reaction)
     updateDefaultReaction(Reaction);
 
   return Reaction;

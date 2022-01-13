@@ -269,7 +269,7 @@ Object & cpsapiVector< Object >::operator[](const std::string & name)
 template < class Object > 
 size_t cpsapiVector< Object >::index(const std::string & name) const
 {
-  if (static_cast< CDataVectorN < typename Object::wrapped > * >(getObject()) != nullptr)
+  if (dynamic_cast< CDataVectorN < typename Object::wrapped > * >(getObject()) != nullptr)
     return static_cast< CDataVectorN < typename Object::wrapped > * >(getObject())->getIndex(name);
 
   return C_INVALID_INDEX;

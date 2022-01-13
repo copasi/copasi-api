@@ -58,7 +58,7 @@ TEST_CASE("Edit model", "[cpsapi]")
   REQUIRE(Assignment);
   REQUIRE(Assignment == Compartment);
 
-  cpsapiValue Value(static_cast< CCompartment * >(Compartment.getObject())->getInitialValueReference());
+  cpsapiValue Value(static_cast< CCompartment * >(*Compartment)->getInitialValueReference());
   REQUIRE(Value.valid());
   REQUIRE(Value.setProperty(cpsapiValue::Property::VALUE, 5.0));
   REQUIRE(Compartment.getProperty(cpsapiCompartment::Property::INITIAL_VALUE).toDouble() == 5.0);

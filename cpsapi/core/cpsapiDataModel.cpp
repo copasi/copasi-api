@@ -14,12 +14,15 @@
 
 #include <copasi/CopasiDataModel/CDataModel.h>
 #include <copasi/core/CDataVector.h>
+#include <copasi/utilities/CCopasiTask.h>
+#include <copasi/report/CReportDefinitionVector.h>
+#include <copasi/plot/COutputDefinitionVector.h>
+#include <copasi/layout/CListOfLayouts.h>
 
 #include "cpsapi/core/cpsapiDataModel.h"
 #include "cpsapi/model/cpsapiCompartment.h"
 #include "cpsapi/model/cpsapiSpecies.h"
 #include "cpsapi/model/cpsapiGlobalQuantity.h"
-
 CPSAPI_NAMESPACE_USE
 
 cpsapiDataModel::cpsapiDataModel(wrapped * pWrapped)
@@ -52,16 +55,28 @@ bool cpsapiDataModel::loadFromFile(const std::string & fileName)
 
   if (operator bool())
     {
+      std::shared_ptr< Data > pData = DATA;
+
+      const CDataObject * pModel = WRAPPED->getModel();
+      CDataVectorN< CCopasiTask > * pTaskList = WRAPPED->getTaskList();
+      CReportDefinitionVector * pReportDefinitionList = WRAPPED->getReportDefinitionList();
+      COutputDefinitionVector * pPlotDefinitionList = WRAPPED->getPlotDefinitionList();
+      CListOfLayouts * pListOfLayouts = WRAPPED->getListOfLayouts();
+
       success = WRAPPED->loadFromFile(fileName, nullptr, false);
 
       if (success)
         {
           // We need to mark all old data as deleted before we actually delete it
-          std::shared_ptr< Data > pData = DATA; 
-          deleted(pData->mModel.getObject());
-          pData->mpDefaultTask = nullptr;
+          deleted(pModel);
+          deleted(pTaskList);
+          deleted(pReportDefinitionList);
+          deleted(pPlotDefinitionList);
+          deleted(pListOfLayouts);
+
           pData->mpDefaultReportDefinition = nullptr;
           pData->mpDefaultPlotSpecification = nullptr;
+
           WRAPPED->deleteOldData();
 
           pData->mModel = cpsapiModel(WRAPPED->getModel());
@@ -77,14 +92,26 @@ bool cpsapiDataModel::loadFromString(const std::string & content, const std::str
 
   if (operator bool())
     {
+      std::shared_ptr< Data > pData = DATA;
+
+      const CDataObject * pModel = WRAPPED->getModel();
+      CDataVectorN< CCopasiTask > * pTaskList = WRAPPED->getTaskList();
+      CReportDefinitionVector * pReportDefinitionList = WRAPPED->getReportDefinitionList();
+      COutputDefinitionVector * pPlotDefinitionList = WRAPPED->getPlotDefinitionList();
+      CListOfLayouts * pListOfLayouts = WRAPPED->getListOfLayouts();
+
       success = WRAPPED->loadFromString(content, referenceDir, nullptr, false);
 
       if (success)
         {
           // We need to mark all old data as deleted before we actually delete it
-          std::shared_ptr< Data > pData = DATA; 
-          deleted(pData->mModel.getObject());
-          pData->mpDefaultTask = nullptr;
+          // We need to mark all old data as deleted before we actually delete it
+          deleted(pModel);
+          deleted(pTaskList);
+          deleted(pReportDefinitionList);
+          deleted(pPlotDefinitionList);
+          deleted(pListOfLayouts);
+
           pData->mpDefaultReportDefinition = nullptr;
           pData->mpDefaultPlotSpecification = nullptr;
           WRAPPED->deleteOldData();
@@ -175,3 +202,49 @@ cpsapiVector< cpsapiGlobalQuantity > cpsapiDataModel::getGlobalQuantities()
   return model().getGlobalQuantities();
 }
 
+cpsapiVector< cpsapiTask > cpsapiDataModel::getTasks()
+{
+  if (!operator bool())
+    return cpsapiVector< cpsapiTask >();
+
+  return cpsapiVector< cpsapiTask >(WRAPPED->getTaskList());
+}
+
+cpsapiTask cpsapiDataModel::task(const std::string & name)
+{
+  cpsapiTask Task = __task(name);
+
+  if (!Task)
+    return nullptr;
+
+  if (*DATA->mDefaultTask != *Task)
+    DATA->mDefaultTask = Task;
+
+  return DATA->mDefaultTask;
+}
+
+cpsapiMethod cpsapiDataModel::method()
+{
+  return task().method();
+}
+
+cpsapiProblem cpsapiDataModel::problem()
+{
+  return task().problem();
+}
+
+cpsapiTask cpsapiDataModel::__task(const std::string & name) const
+{
+  if (!operator bool())
+    return nullptr;
+
+  if (name.empty())
+    return DATA->mDefaultTask;
+
+  size_t Index = WRAPPED->getTaskList()->getIndex(name);
+
+  if (Index == C_INVALID_INDEX)
+    return nullptr;
+
+  return &WRAPPED->getTaskList()->operator[](Index);
+}

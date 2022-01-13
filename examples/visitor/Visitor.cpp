@@ -48,35 +48,35 @@ void Visitor::visit(cpsapiObject * pObject, const cpsapiObject::Type & type)
   switch (type)
     {
     case cpsapiObject::Type::Model:
-      std::cout << "visit cpsapiModel: " << static_cast< cpsapiModel * >(pObject)->getObject()->getCN() << std::endl;
+      std::cout << "visit cpsapiModel: " << (*static_cast< cpsapiModel * >(pObject))->getCN() << std::endl;
       break;
 
     case cpsapiObject::Type::Compartment:
-      std::cout << "visit cpsapiCompartment: " << static_cast< cpsapiCompartment * >(pObject)->getObject()->getCN() << std::endl;
+      std::cout << "visit cpsapiCompartment: " << (*static_cast< cpsapiCompartment * >(pObject))->getCN() << std::endl;
       break;
 
     case cpsapiObject::Type::Species:
-      std::cout << "visit cpsapiSpecies: " << static_cast< cpsapiSpecies * >(pObject)->getObject()->getCN() << std::endl;
+      std::cout << "visit cpsapiSpecies: " << (*static_cast< cpsapiSpecies * >(pObject))->getCN() << std::endl;
       break;
 
     case cpsapiObject::Type::Object:
-      std::cout << "visit cpsapiObject: " << static_cast< cpsapiObject * >(pObject)->getObject()->getCN() << std::endl;
+      std::cout << "visit cpsapiObject: " << (*static_cast< cpsapiObject * >(pObject))->getCN() << std::endl;
       break;
 
     case cpsapiObject::Type::Container:
-      std::cout << "visit cpsapiContainer: " << static_cast< cpsapiContainer * >(pObject)->getObject()->getCN() << std::endl;
+      std::cout << "visit cpsapiContainer: " << (*static_cast< cpsapiContainer * >(pObject))->getCN() << std::endl;
       break;
 
     case cpsapiObject::Type::Value:
-      std::cout << "visit cpsapiValue: " << static_cast< cpsapiValue * >(pObject)->getObject()->getCN() << std::endl;
+      std::cout << "visit cpsapiValue: " << (*static_cast< cpsapiValue * >(pObject))->getCN() << std::endl;
       break;
 
     case cpsapiObject::Type::Reaction:
-      std::cout << "visit cpsapiReaction: " << static_cast< cpsapiReaction * >(pObject)->getObject()->getCN() << std::endl;
+      std::cout << "visit cpsapiReaction: " << (*static_cast< cpsapiReaction * >(pObject))->getCN() << std::endl;
       break;
 
     default:
-      std::cout << "visit unhandled (" << cpsapiObject::TypeName[type] << "): " << static_cast< cpsapiObject * >(pObject)->getObject()->getCN() << std::endl;
+      std::cout << "visit unhandled (" << cpsapiObject::TypeName[type] << "): " << (*static_cast< cpsapiObject * >(pObject))->getCN() << std::endl;
       break;
     }
 }

@@ -6,9 +6,15 @@
 #include "cpsapi/core/cpsapiGroup.h"
 #include "cpsapi/model/cpsapiModelEntity.h"
 #include "cpsapi/model/cpsapiModel.h"
+#include "cpsapi/task/cpsapiMethod.h"
+#include "cpsapi/task/cpsapiProblem.h"
+#include "cpsapi/task/cpsapiTask.h"
 
 #include <copasi/CopasiDataModel/CDataModel.h>
 #include <copasi/core/CDataObjectReference.h>
+#include <copasi/utilities/CCopasiMethod.h>
+#include <copasi/utilities/CCopasiProblem.h>
+#include <copasi/utilities/CCopasiTask.h>
 
 CPSAPI_NAMESPACE_USE
 
@@ -36,6 +42,7 @@ void cpsapiFactory::init()
       TypeInfo::init< cpsapiVector< cpsapiGlobalQuantity >, CDataVectorN< CModelValue > >();
       TypeInfo::init< cpsapiVector< cpsapiReaction >, CDataVectorNS< CReaction > >();
       TypeInfo::init< cpsapiVector< cpsapiDataModel >, CDataVector< CDataModel > >();
+      TypeInfo::init< cpsapiVector< cpsapiTask >, CDataVectorN< CCopasiTask > >();
       TypeInfo::init< cpsapiValue, CDataObjectReference< C_FLOAT64 > >();
       TypeInfo::init< cpsapiValue, CDataObjectReference< C_INT32 > >();
       TypeInfo::init< cpsapiValue, CDataObjectReference< unsigned C_INT32 > >();
@@ -50,6 +57,9 @@ void cpsapiFactory::init()
       TypeInfo::init< cpsapiDataModel, CDataModel >();
       TypeInfo::init< cpsapiParameter, CCopasiParameter >();
       TypeInfo::init< cpsapiGroup, CCopasiParameterGroup >();
+      TypeInfo::init< cpsapiMethod, CCopasiMethod >();
+      TypeInfo::init< cpsapiProblem, CCopasiProblem >();
+      TypeInfo::init< cpsapiTask, CCopasiTask >();
     }
 }
 

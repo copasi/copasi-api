@@ -60,7 +60,7 @@ public:
    * Specific constructor
    * @param wrapped * pGroup
    */
-  cpsapiGroup(wrapped * pGroup);
+  cpsapiGroup(wrapped * pGroup, const Type & type = Type::Group);
 
   /**
    * Copy constructor

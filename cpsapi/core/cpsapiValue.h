@@ -25,7 +25,7 @@ CPSAPI_NAMESPACE_BEGIN
 class cpsapiValue : public cpsapiObject
 {
 public:
- /**
+  /**
    * Enumeration of the exposed properties
    */ 
   enum class Property

@@ -19,8 +19,8 @@ CPSAPI_NAMESPACE_USE
 // static
 const cpsapiGroup::Properties cpsapiGroup::SupportedProperties = {};
 
-cpsapiGroup::cpsapiGroup(wrapped * pObject)
-  : base(pObject, Type::Group)
+cpsapiGroup::cpsapiGroup(wrapped * pObject, const Type & type)
+  : base(pObject, type)
 {
   assertData(Data(*std::static_pointer_cast< base::Data >(mpData)));
 }
@@ -152,12 +152,12 @@ cpsapiGroup cpsapiGroup::addGroup(const std::string & name)
 
 bool cpsapiGroup::deleteParameter(const std::string & name)
 {
-  CCopasiParameter * pParameter = static_cast< CCopasiParameter * >(__parameter(name).getObject());
+  CCopasiParameter * pParameter = static_cast< CCopasiParameter * >(*__parameter(name));
 
   if (pParameter == nullptr)
     return false;
 
-  if (DATA->mDefaultParameter.getObject() == pParameter)
+  if (*DATA->mDefaultParameter == pParameter)
     updateDefaultParameter(cpsapiParameter(nullptr, Type::Parameter));
 
   deleted(pParameter);
@@ -173,7 +173,7 @@ cpsapiParameter cpsapiGroup::parameter(const std::string & name)
   if (!Parameter)
     return Parameter;
 
-  if (DATA->mDefaultParameter.getObject() != Parameter.getObject())
+  if (*DATA->mDefaultParameter != *Parameter)
     updateDefaultParameter(Parameter);
 
   return DATA->mDefaultParameter;

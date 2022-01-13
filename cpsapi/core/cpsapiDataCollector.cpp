@@ -147,19 +147,19 @@ void cpsapiDataCollector::clear()
 void cpsapiDataCollector::addObjectBefore(const cpsapiObject & object)
 {
   if (object)
-    mCNsBefore.push_back(object.getObject()->getCN());
+    mCNsBefore.push_back(object->getCN());
 }
 
 void cpsapiDataCollector::addObjectDuring(const cpsapiObject & object)
 {
   if (object)
-    mCNsDuring.push_back(object.getObject()->getCN());
+    mCNsDuring.push_back(object->getCN());
 }
 
 void cpsapiDataCollector::addObjectAfter(const cpsapiObject & object)
 {
   if (object)
-    mCNsAfter.push_back(object.getObject()->getCN());
+    mCNsAfter.push_back(object->getCN());
 }
 
 const std::vector< CRegisteredCommonName > & cpsapiDataCollector::getObjectsBefore() const
