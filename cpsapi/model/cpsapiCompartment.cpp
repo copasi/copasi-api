@@ -30,7 +30,7 @@ const cpsapiCompartment::Properties cpsapiCompartment::SupportedProperties =
 cpsapiCompartment::cpsapiCompartment(cpsapiCompartment::wrapped * pWrapped)
   : base(pWrapped, Type::Compartment)
 {
-  assertData(Data(*std::static_pointer_cast< base::Data >(mpData)));
+  assertData< cpsapiCompartment >(pWrapped);
 }
 
 cpsapiCompartment::cpsapiCompartment(const cpsapiCompartment & src)
@@ -144,7 +144,7 @@ bool cpsapiCompartment::setProperty(const cpsapiProperty::Type & property, const
   if (!operator bool())
     return false;
 
-  if (!isValidProperty<cpsapiCompartment>(property))
+  if (!isImplementedProperty<cpsapiCompartment>(property))
     return base::setProperty(property, value, CCore::Framework::__SIZE);
 
   CCore::Framework Framework(framework);
@@ -197,7 +197,7 @@ cpsapiData cpsapiCompartment::getProperty(const cpsapiProperty::Type & property,
   if (!operator bool())
     return cpsapiData();
 
-  if (!isValidProperty<cpsapiCompartment>(property))
+  if (!isImplementedProperty<cpsapiCompartment>(property))
     return base::getProperty(property, CCore::Framework::__SIZE);
 
   wrapped * pWrapped = WRAPPED;

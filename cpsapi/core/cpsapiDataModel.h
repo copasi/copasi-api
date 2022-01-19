@@ -1,5 +1,5 @@
 // BEGIN: Copyright 
-// Copyright (C) 2021 by Pedro Mendes, Rector and Visitors of the 
+// Copyright (C) 2021 - 2022 by Pedro Mendes, Rector and Visitors of the 
 // University of Virginia, University of Heidelberg, and University 
 // of Connecticut School of Medicine. 
 // All rights reserved 
@@ -20,14 +20,6 @@
 
 #include <memory>
 
-class CDataModel;
-class CModel;
-class CCompartment;
-class CMetab;
-class CReaction;
-class CModelValue;
-class CEvent;
-class CCopasiTask;
 class CReportDefinition;
 class CPlotSpecification;
 
@@ -118,7 +110,7 @@ public:
 
   void endTransaction();
 
-  bool addCompartment(const std::string & name);
+  cpsapiCompartment addCompartment(const std::string & name);
 
   bool deleteCompartment(const std::string & name);
 
@@ -126,7 +118,7 @@ public:
 
   cpsapiVector< cpsapiCompartment > getCompartments();
 
-  bool addSpecies(const std::string & name, const std::string & compartmentName = "");
+  cpsapiSpecies addSpecies(const std::string & name, const std::string & compartmentName = "");
 
   bool deleteSpecies(const std::string & name, const std::string & compartmentName = "");
 
@@ -134,7 +126,15 @@ public:
 
   cpsapiVector< cpsapiSpecies > getSpecies();
 
-  bool addGlobalQuantity(const std::string & name);
+  cpsapiReaction addReaction(const std::string & name);
+
+  bool deleteReaction(const std::string & name);
+
+  cpsapiReaction reaction(const std::string & name = "");
+
+  cpsapiVector< cpsapiReaction > getReactions();
+
+  cpsapiGlobalQuantity addGlobalQuantity(const std::string & name);
 
   bool deleteGlobalQuantity(const std::string & name);
 

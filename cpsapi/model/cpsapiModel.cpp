@@ -43,7 +43,7 @@ const cpsapiModel::Properties cpsapiModel::HiddenProperties =
 cpsapiModel::cpsapiModel(wrapped * pWrapped)
   : base(pWrapped, Type::Model)
 {
-  assertData(Data(*std::static_pointer_cast< base::Data >(mpData)));
+  assertData< cpsapiModel >(pWrapped);
 }
 
 cpsapiModel::cpsapiModel(const cpsapiModel & src)
@@ -425,7 +425,7 @@ bool cpsapiModel::setProperty(const cpsapiProperty::Type & property, const cpsap
   if (!operator bool())
     return false;
 
-  if (!isValidProperty< cpsapiModel >(property))
+  if (!isImplementedProperty< cpsapiModel >(property))
     return base::setProperty(property, value, CCore::Framework::__SIZE);
 
   CCore::Framework Framework(framework);
@@ -504,7 +504,7 @@ bool cpsapiModel::setProperty(const cpsapiProperty::Type & property, const cpsap
           if (Framework == CCore::Framework::__SIZE)
             Framework = CCore::Framework::Concentration;
 
-          pChangedObject = CObjectInterface::DataObject(pWrapped->getObject(CCommonName("Reference=Quantity Conversion Factor")));
+          pChangedObject = CObjectInterface::DataObject(pWrapped->getObject(CCommonName ("Reference=Quantity Conversion Factor")));
 
           CUnit Unit;
           success &= !Unit.setExpression(value.toString());
@@ -532,7 +532,7 @@ bool cpsapiModel::setProperty(const cpsapiProperty::Type & property, const cpsap
           if (Framework == CCore::Framework::__SIZE)
             Framework = CCore::Framework::Concentration;
 
-          pChangedObject = CObjectInterface::DataObject(pWrapped->getObject(CCommonName("Reference=Avogadro Constant")));
+          pChangedObject = CObjectInterface::DataObject(pWrapped->getObject(CCommonName ("Reference=Avogadro Constant")));
           pWrapped->setAvogadro(value.toDouble(), Framework);
         }
       else
@@ -553,7 +553,7 @@ cpsapiData cpsapiModel::getProperty(const cpsapiProperty::Type & property, const
   if (!operator bool())
     return cpsapiData();
 
-  if (!isValidProperty< cpsapiModel >(property))
+  if (!isImplementedProperty< cpsapiModel >(property))
     return base::getProperty(property, CCore::Framework::__SIZE);
 
   CCore::Framework Framework(framework);

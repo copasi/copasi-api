@@ -20,12 +20,15 @@ CPSAPI_NAMESPACE_USE
 // static
 void cpsapiDataCollector::collect(cpsapiDataVector & data, const std::vector< std::pair< cpsapiData::Type, void * > > & values)
 {
-  data.push_back(cpsapiDataVector());
+  data.push_back(cpsapiDataVector(values.size()));
   
-  cpsapiDataVector * pCollected = const_cast< cpsapiDataVector *>(&data.back().toData());
+  cpsapiDataVector::iterator it = const_cast< cpsapiDataVector *>(&data.back().toData())->begin();
 
   for (const std::pair< cpsapiData::Type, void * > & value: values)
-    pCollected->push_back(cpsapiData(value.first, value.second));
+    {
+      *it = cpsapiData(value.first, value.second);
+      ++it;
+    }
 }
 
 bool cpsapiDataCollector::generateValues(const CObjectInterface::ContainerList & listOfContainer,
@@ -94,7 +97,7 @@ bool cpsapiDataCollector::compile(CObjectInterface::ContainerList listOfContaine
 {
   bool success = true;
   mObjects.clear();
-  clear();
+  clearData();
 
   success &= generateValues(listOfContainer, mCNsBefore, mValuesBefore);
   success &= generateValues(listOfContainer, mCNsDuring, mValuesDuring);
@@ -152,42 +155,53 @@ void cpsapiDataCollector::separate(const Activity & activity)
 void cpsapiDataCollector::finish()
 {}
 
-void cpsapiDataCollector::clear()
+void cpsapiDataCollector::clearData()
 {
   mDataBefore.clear();
   mDataDuring.clear();
   mDataAfter.clear();
 }
 
-void cpsapiDataCollector::addObjectBefore(const cpsapiObject & object)
+void cpsapiDataCollector::clearReferences()
 {
-  if (object)
-    mCNsBefore.push_back(object->getCN());
+  mCNsBefore.clear();
+  mCNsDuring.clear();
+  mCNsAfter.clear();
+  mValuesBefore.clear();
+  mValuesDuring.clear();
+  mValuesAfter.clear();
+  mObjects.clear();
 }
 
-void cpsapiDataCollector::addObjectDuring(const cpsapiObject & object)
+void cpsapiDataCollector::addDataReferenceBefore(const CCommonName & cn)
 {
-  if (object)
-    mCNsDuring.push_back(object->getCN());
+  if (!cn.empty())
+    mCNsBefore.push_back(cn);
 }
 
-void cpsapiDataCollector::addObjectAfter(const cpsapiObject & object)
+void cpsapiDataCollector::addDataReferenceDuring(const CCommonName & cn)
 {
-  if (object)
-    mCNsAfter.push_back(object->getCN());
+  if (!cn.empty())
+    mCNsDuring.push_back(cn);
 }
 
-const std::vector< CRegisteredCommonName > & cpsapiDataCollector::getObjectsBefore() const
+void cpsapiDataCollector::addDataRefenceAfter(const CCommonName & cn)
+{
+  if (!cn.empty())
+    mCNsAfter.push_back(cn);
+}
+
+const std::vector< CRegisteredCommonName > & cpsapiDataCollector::getDataReferencesBefore() const
 {
   return mCNsBefore;
 }
 
-const std::vector< CRegisteredCommonName > & cpsapiDataCollector::getObjectsDuring() const
+const std::vector< CRegisteredCommonName > & cpsapiDataCollector::getDataReferencesDuring() const
 {
   return mCNsDuring;
 }
 
-const std::vector< CRegisteredCommonName > & cpsapiDataCollector::getObjectsAfter() const
+const std::vector< CRegisteredCommonName > & cpsapiDataCollector::getDataReferencesAfter() const
 {
   return mCNsAfter;
 }
@@ -205,4 +219,46 @@ const cpsapiDataVector & cpsapiDataCollector::getDataDuring() const
 const cpsapiDataVector & cpsapiDataCollector::getDataAfter() const
 {
   return mDataAfter;
+}
+
+std::vector< cpsapiData::Type > cpsapiDataCollector::getDataTypesBefore() const
+{
+  std::vector< cpsapiData::Type > DataTypes(mValuesBefore.size());
+  std::vector< cpsapiData::Type >::iterator it = DataTypes.begin();
+
+  for (const std::pair< cpsapiData::Type, void * > & Value : mValuesBefore)
+    {
+      *it = Value.first;
+      ++it;
+    }
+
+  return DataTypes;
+}
+
+std::vector< cpsapiData::Type > cpsapiDataCollector::getDataTypesDuring() const
+{
+  std::vector< cpsapiData::Type > DataTypes;
+  std::vector< cpsapiData::Type >::iterator it = DataTypes.begin();
+
+  for (const std::pair< cpsapiData::Type, void * > & Value: mValuesDuring)
+    {
+      *it = Value.first;
+      ++it;
+    }
+
+  return DataTypes;
+}
+
+std::vector< cpsapiData::Type > cpsapiDataCollector::getDataTypesAfter() const
+{
+  std::vector< cpsapiData::Type > DataTypes;
+  std::vector< cpsapiData::Type >::iterator it = DataTypes.begin();
+
+  for (const std::pair< cpsapiData::Type, void * > & Value: mValuesAfter)
+    {
+      *it = Value.first;
+      ++it;
+    }
+
+  return DataTypes;
 }

@@ -1,5 +1,5 @@
 // BEGIN: Copyright 
-// Copyright (C) 2021 - 2022 by Pedro Mendes, Rector and Visitors of the 
+// Copyright (C) 2022 by Pedro Mendes, Rector and Visitors of the 
 // University of Virginia, University of Heidelberg, and University 
 // of Connecticut School of Medicine. 
 // All rights reserved 
@@ -14,18 +14,18 @@
 
 #pragma once
 
-#include "cpsapi/core/cpsapiParameter.h"
+#include "cpsapi/core/cpsapiContainer.h"
 
-#include <copasi/utilities/CCopasiParameterGroup.h>
+class copasiClass;
 
 CPSAPI_NAMESPACE_BEGIN
 
-class cpsapiGroup : public cpsapiParameter
+class cpsapiTemplate : public cpsapiContainer
 {
 public:
   /**
    * Enumeration of the exposed properties
-   */ 
+   */
   enum class Property
   {
     PARAMETER_VALUE = cpsapiProperty::Type::PARAMETER_VALUE,
@@ -49,8 +49,9 @@ public:
    */
   enum class Reference
   {
-    NAME = cpsapiReference::Type::OBJECT_NAME,
-    DISPLAY_NAME = cpsapiReference::Type::DISPLAY_NAME,
+    PARAMETER_VALUE = cpsapiProperty::Type::PARAMETER_VALUE,
+    OBJECT_NAME = cpsapiReference::Type::OBJECT_NAME,
+    DISPLAY_NAME = cpsapiReference::Type::DISPLAY_NAME
   };
 
   /**
@@ -66,89 +67,36 @@ public:
   /**
    * The base class
    */
-  typedef cpsapiParameter base;
+  typedef cpsapiContainer base;
 
   /**
    * The wrapped COPASI class
    */
-  typedef CCopasiParameterGroup wrapped;
-
-  class Data : public base::Data
-  {
-  public:
-    Data(const base::Data & data)
-      : base::Data(data)
-      , mDefaultParameter()
-    {}
-
-    virtual ~Data() {}
-
-    cpsapiParameter mDefaultParameter;
-  };
+  typedef copasiClass wrapped;
 
   /**
    * Specific constructor
-   * @param wrapped * pGroup
+   * @param wrapped * pWrapped (default: nullptr)
+   * @param const Type & type (default: Type::cpsapiTemplate)
    */
-  cpsapiGroup(wrapped * pGroup, const Type & type = Type::Group);
+  cpsapiTemplate(wrapped * pWrapped = nullptr, const Type & type = Type::Parameter);
 
   /**
    * Copy constructor
-   * @param const cpsapiGroup & src
+   * @param const cpsapiContainer & src
    */
-  cpsapiGroup(const cpsapiGroup & src);
+  cpsapiTemplate(const cpsapiTemplate & src);
 
   /**
    * Destructor
    */
-  virtual ~cpsapiGroup();
+  virtual ~cpsapiTemplate();
 
   /**
    * Accept a visitor
    * @param cpsapiVisitor & visitor
    */
   virtual void accept(cpsapiVisitor & visitor) override;
-
-  /**
-   * Add parameter
-   * 
-   * @param const std::string & name 
-   * @param const CDataValue & value 
-   * @param CCopasiParameter::Type type (default: CCopasiParameter::Type::__SIZE)
-   * @return cpsapiParameter parameter
-   */
-  cpsapiParameter addParameter(const std::string & name, const CDataValue & value, CCopasiParameter::Type type = CCopasiParameter::Type::__SIZE);
-
-  /**
-   * Add a group 
-   * 
-   * @param const std::string & name 
-   * @return cpsapiGroup group
-   */
-  cpsapiGroup addGroup(const std::string & name);
-
-  /**
-   * Delete a parameter 
-   * 
-   * @param const std::string & name (default: name of current parameter) 
-   * @return bool success 
-   */
-  bool deleteParameter(const std::string & name = "");
-
-  /**
-   * Retrieve a parameter 
-   * 
-   * @param const std::string & name (default: name of current parameter) 
-   * @return cpsapiParameter parameter
-   */
-  cpsapiParameter parameter(const std::string & name = "");
-
-  /**
-   * Retrieve all parameters
-   * 
-   * @return std::vector< cpsapiParameter > parameters
-   */
-  std::vector< cpsapiParameter > getParameters() const;
 
   /**
    * Set a property of the object to the provided value under the given framework.
@@ -181,10 +129,6 @@ public:
   CCommonName getDataCN(const Reference & reference, const CCore::Framework & framework = CCore::Framework::__SIZE) const;
 
 protected:
-  cpsapiParameter __parameter(const std::string & name) const;
-
-  void updateDefaultParameter(const cpsapiParameter & parameter);
-
   /**
    * Set the property
    * 

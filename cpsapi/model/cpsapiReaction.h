@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include "cpsapi/model/cpsapiReactionParameter.h"
+#include "cpsapi/model/cpsapiKineticLawVariable.h"
 #include "cpsapi/core/cpsapiContainer.h"
 #include "cpsapi/core/cpsapiVector.h"
 
@@ -57,8 +57,8 @@ public:
    */
   typedef CReaction wrapped;
 
-  typedef std::map< std::string, cpsapiReactionParameter::FakeData * > ParameterManager;
-  typedef CDataVector< cpsapiReactionParameter::FakeData > ParameterVector;
+  typedef std::map< std::string, cpsapiKineticLawVariable > VariableManager;
+  typedef CDataVector< cpsapiKineticLawVariable::KineticLawVariable > VariableVector;
   class Data : public base::Data
   {
   public:
@@ -71,17 +71,6 @@ public:
 
     virtual ~Data() 
     {
-      ParameterManager::iterator it = mManager.begin();
-      ParameterManager::iterator end = mManager.end();
-      
-      for (; it != end; ++it)
-        {
-          deleted(it->second);
-          delete it->second;
-        }
-
-      mManager.clear();
-
       if (mpVector != nullptr)
         {
           deleted(mpVector);
@@ -90,9 +79,9 @@ public:
         }
     }
 
-    ParameterManager mManager;
-    ParameterVector  * mpVector;
-    cpsapiReactionParameter mDefaultParameter;
+    VariableManager mManager;
+    VariableVector  * mpVector;
+    cpsapiKineticLawVariable mDefaultParameter;
   };
 
   /**
@@ -111,9 +100,9 @@ public:
 
   virtual void accept(cpsapiVisitor & visitor) override;
 
-  cpsapiReactionParameter parameter(const std::string & name = "");
+  cpsapiKineticLawVariable variable(const std::string & name = "");
 
-  cpsapiVector< cpsapiReactionParameter > parameters();
+  cpsapiVector< cpsapiKineticLawVariable > variables();
 
   bool setProperty(const Property & property, const cpsapiData & value, const CCore::Framework & framework = CCore::Framework::__SIZE);
 
@@ -125,7 +114,7 @@ protected:
   virtual cpsapiData getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const override;
 
 private:
-  cpsapiReactionParameter::FakeData * assertParameter(const std::string & name);
+  cpsapiKineticLawVariable::KineticLawVariable * assertVariable(const std::string & name);
 };
 
 CPSAPI_NAMESPACE_END

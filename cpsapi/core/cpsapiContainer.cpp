@@ -1,5 +1,5 @@
 // BEGIN: Copyright 
-// Copyright (C) 2021 by Pedro Mendes, Rector and Visitors of the 
+// Copyright (C) 2021 - 2022 by Pedro Mendes, Rector and Visitors of the 
 // University of Virginia, University of Heidelberg, and University 
 // of Connecticut School of Medicine. 
 // All rights reserved 
@@ -22,9 +22,6 @@
 #include <typeindex>
 
 CPSAPI_NAMESPACE_USE
-
-// static
-const cpsapiContainer::Properties cpsapiContainer::SupportedProperties = {};
 
 cpsapiContainer::cpsapiContainer(wrapped * pWrapped, const cpsapiObject::Type & type)
   : base(pWrapped, type)

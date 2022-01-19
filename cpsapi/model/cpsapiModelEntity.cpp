@@ -68,7 +68,7 @@ bool cpsapiModelEntity::setProperty(const cpsapiProperty::Type & property, const
   if (!operator bool())
     return false;
 
-  if (!isValidProperty<cpsapiModelEntity>(property))
+  if (!isImplementedProperty<cpsapiModelEntity>(property))
     return base::setProperty(property, value, framework);
 
   CModelEntity * pEntity = static_cast< CModelEntity * >(getObject());
@@ -133,7 +133,7 @@ cpsapiData cpsapiModelEntity::getProperty(const cpsapiProperty::Type & property,
   if (!operator bool())
     return cpsapiData();
 
-  if (!isValidProperty<cpsapiModelEntity>(property))
+  if (!isImplementedProperty<cpsapiModelEntity>(property))
     return base::getProperty(property, framework);
 
   CModelEntity * pEntity = static_cast< CModelEntity * >(getObject());

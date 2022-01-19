@@ -1,5 +1,5 @@
 // BEGIN: Copyright 
-// Copyright (C) 2021 by Pedro Mendes, Rector and Visitors of the 
+// Copyright (C) 2022 by Pedro Mendes, Rector and Visitors of the 
 // University of Virginia, University of Heidelberg, and University 
 // of Connecticut School of Medicine. 
 // All rights reserved 
@@ -31,9 +31,11 @@ CPSAPI_NAMESPACE_USE
 
 TEST_CASE("edit reaction", "[cpsapi]")
 {
-  REQUIRE(cpsapiObject::AllSupportedProperties< cpsapiReaction >().size() == 10);
-  REQUIRE(cpsapiObject::AllSupportedProperties< cpsapiReactionParameter >().size() == 4);
-  
+  REQUIRE(cpsapiObject::supportedProperties< cpsapiReaction >().size() == 10);
+  REQUIRE(cpsapiObject::supportedProperties< cpsapiKineticLawVariable >().size() == 6);
+  REQUIRE(cpsapiObject::supportedReferences< cpsapiReaction >().size() == 2);
+  REQUIRE(cpsapiObject::supportedReferences< cpsapiKineticLawVariable >().size() == 3);
+    
   cpsapiModel Model = cpsapi::addDataModel("test_model").model();
   REQUIRE(Model);
 
@@ -43,20 +45,34 @@ TEST_CASE("edit reaction", "[cpsapi]")
   REQUIRE(Reaction.setProperty(cpsapiReaction::Property::CHEMICAL_EQUATION, "2 * H2 + O2 = 2 * H2O"));
   REQUIRE(Reaction.getProperty(cpsapiReaction::Property::CHEMICAL_EQUATION).toString() == "2 * H2 + O2 = 2 * H2O");
   
-  cpsapiVector< cpsapiReactionParameter > Parameters = Reaction.parameters();
+  cpsapiVector< cpsapiKineticLawVariable > Parameters = Reaction.variables();
   REQUIRE(Parameters.size() == 4);
 
-  REQUIRE(Parameters[string("k1")].setProperty(cpsapiReactionParameter::Property::VALUE, 2.0));
+  REQUIRE(Parameters[string("k1")].setProperty(cpsapiKineticLawVariable::Property::VALUE, 2.0));
+
+  for (const cpsapiKineticLawVariable & parameter : Parameters)
+    {
+      cout << parameter.getProperty(cpsapiKineticLawVariable::Property::NAME).toString() << ",";
+      cout << parameter.getProperty(cpsapiKineticLawVariable::Property::ROLE).toString() << ",";
+      cout << parameter.getProperty(cpsapiKineticLawVariable::Property::VALUE).toDouble() << ",";
+      cout << parameter.getProperty(cpsapiKineticLawVariable::Property::MAPPING).toObject< cpsapiObject >() << endl;
+    }
+
   REQUIRE(Reaction.setProperty(cpsapiReaction::Property::KINETIC_LAW_EXPRESSION, "k1*H2^2*O2-k2*H2O^2"));
   REQUIRE(Parameters.size() == 5);
-  REQUIRE(Reaction.parameter("k1").getProperty(cpsapiReactionParameter::Property::VALUE).toDouble() == 2.0);
+  REQUIRE(Reaction.variable("k1").getProperty(cpsapiKineticLawVariable::Property::VALUE).toDouble() == 2.0);
 
-  for (const cpsapiReactionParameter & parameter : Parameters)
+  cpsapiGlobalQuantity GlobalQuantity = Model.addGlobalQuantity("kf");
+  REQUIRE(GlobalQuantity);
+  REQUIRE(Reaction.variable("k1").setProperty(cpsapiKineticLawVariable::Property::MAPPING, GlobalQuantity));
+  REQUIRE(Reaction.variable("k1").setProperty(cpsapiKineticLawVariable::Property::MAPPING, false));
+
+  for (const cpsapiKineticLawVariable & parameter : Parameters)
     {
-      cout << parameter.getProperty(cpsapiReactionParameter::Property::NAME).toString() << ",";
-      cout << parameter.getProperty(cpsapiReactionParameter::Property::ROLE).toString() << ",";
-      cout << parameter.getProperty(cpsapiReactionParameter::Property::VALUE).toDouble() << ",";
-      cout << parameter.getProperty(cpsapiReactionParameter::Property::MAPPING).toObject< cpsapiObject >() << endl;
+      cout << parameter.getProperty(cpsapiKineticLawVariable::Property::NAME).toString() << ",";
+      cout << parameter.getProperty(cpsapiKineticLawVariable::Property::ROLE).toString() << ",";
+      cout << parameter.getProperty(cpsapiKineticLawVariable::Property::VALUE).toDouble() << ",";
+      cout << parameter.getProperty(cpsapiKineticLawVariable::Property::MAPPING).toObject< cpsapiObject >() << endl;
     }
 
   REQUIRE(cpsapi::deleteDataModel("test_model"));

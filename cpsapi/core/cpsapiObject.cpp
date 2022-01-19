@@ -13,6 +13,7 @@
 // END: License 
 
 #include "cpsapi/core/cpsapiObject.h"
+#include "cpsapi/core/cpsapiValue.h"
 
 #include <copasi/core/CDataObject.h>
 
@@ -20,6 +21,9 @@ CPSAPI_NAMESPACE_USE
 
 // static 
 cpsapiObject::Map cpsapiObject::Manager;
+
+// static
+const CCommonName cpsapiObject::Invalid;
 
 // static
 void cpsapiObject::release()
@@ -92,6 +96,16 @@ const cpsapiObject::Properties cpsapiObject::SupportedProperties =
 // static
 const cpsapiObject::Properties cpsapiObject::HiddenProperties = {};
 
+// static
+const cpsapiObject::References cpsapiObject::SupportedReferences =
+{
+  cpsapiReference::Type::OBJECT_NAME,
+  cpsapiProperty::Type::DISPLAY_NAME
+};
+
+// static
+const cpsapiObject::References cpsapiObject::HiddenReferences = {};
+
 std::ostream & operator << (std::ostream &os, const cpsapiObject & object)
 {
   os << cpsapiObject::TypeName[object.getType()] << ": " << object.getProperty(cpsapiObject::Property::OBJECT_NAME).toString();
@@ -106,8 +120,20 @@ cpsapiObject::cpsapiObject(CDataObject * pObject, const cpsapiObject::Type & typ
 
   data.mpObject = pObject;
   data.mType = type;
-  
-  assertData(data);
+
+  if (pObject == nullptr)
+    {
+      mpData = std::make_shared< Data >(data);
+    }
+  else
+    {
+      Map::iterator found = Manager.insert(std::make_pair(data.mpObject, nullptr)).first;
+
+      if (!std::dynamic_pointer_cast< Data >(found->second))
+        found->second = std::make_shared< Data >(data);
+
+      mpData = found->second;
+    }
 }
 
 cpsapiObject::cpsapiObject(const cpsapiObject & src)
@@ -128,27 +154,37 @@ cpsapiObject & cpsapiObject::operator= (const cpsapiObject & rhs)
 
 CDataObject * cpsapiObject::operator->() const
 {
-  return std::static_pointer_cast< Data >(mpData)->mpObject;
+  return DATA->mpObject;
 }
 
 CDataObject * cpsapiObject::operator*() const
 {
-  return std::static_pointer_cast< Data >(mpData)->mpObject;
+  return DATA->mpObject;
+}
+
+bool cpsapiObject::operator==(const cpsapiObject & rhs) const
+{
+  return DATA == std::static_pointer_cast< Data >(rhs.mpData);
+}
+
+bool cpsapiObject::operator!=(const cpsapiObject & rhs) const
+{
+  return DATA != std::static_pointer_cast< Data >(rhs.mpData);
 }
 
 cpsapiObject::Type cpsapiObject::getType() const
 {
-  return std::static_pointer_cast< Data >(mpData)->mType;
+  return DATA->mType;
 }
 
 cpsapiObject::operator bool() const
 {
-  return std::static_pointer_cast< Data >(mpData)->mpObject != nullptr;
+  return DATA->mpObject != nullptr;
 }
 
 CDataObject * cpsapiObject::getObject() const
 {
-  return std::static_pointer_cast< Data >(mpData)->mpObject;
+  return DATA->mpObject;
 }
 
 // virtual 
@@ -170,7 +206,7 @@ bool cpsapiObject::setProperty(const std::string & property, const cpsapiData & 
   return setProperty(cpsapiProperty::Name.toEnum(property), value, CCore::FrameworkNames.toEnum(framework));
 }
 
-cpsapiData cpsapiObject::getProperty(const Property & property, const CCore::Framework & framework ) const
+cpsapiData cpsapiObject::getProperty(const cpsapiObject::Property & property, const CCore::Framework & framework ) const
 {
   return getProperty(static_cast< cpsapiProperty::Type >(property), framework);
 }
@@ -180,13 +216,22 @@ cpsapiData cpsapiObject::getProperty(const std::string & property, const std::st
   return getProperty(cpsapiProperty::Name.toEnum(property), CCore::FrameworkNames.toEnum(framework));
 }
 
+CCommonName cpsapiObject::getDataCN (const cpsapiObject::Reference & reference, const CCore::Framework & framework ) const
+{
+  return getDataCN (static_cast< cpsapiReference::Type >(reference), framework);
+}
+
+CCommonName cpsapiObject::getDataCN (const std::string & reference, const std::string & framework) const
+{
+  return getDataCN (cpsapiReference::Name.toEnum(reference), CCore::FrameworkNames.toEnum(framework));
+}
+
 // virtual
 bool cpsapiObject::setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & framework)
 {
-  if (!isValidProperty<cpsapiObject>(property))
-    return false;
-
-  if (!operator bool())
+  if (!operator bool()
+      || isHiddenProperty< cpsapiObject >(property)
+      || !isImplementedProperty< cpsapiObject >(property))
     return false;
 
   bool success = false;
@@ -210,7 +255,8 @@ bool cpsapiObject::setProperty(const cpsapiProperty::Type & property, const cpsa
 cpsapiData cpsapiObject::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
 {
   if (!operator bool()
-      || !isValidProperty<cpsapiObject>(property))
+      || isHiddenProperty< cpsapiObject >(property)
+      || !isImplementedProperty< cpsapiObject >(property))
     return cpsapiData();
 
   switch (property)
@@ -223,11 +269,35 @@ cpsapiData cpsapiObject::getProperty(const cpsapiProperty::Type & property, cons
       return getObject()->getObjectDisplayName();
 
     case cpsapiProperty::Type::CN:
-      return CRegisteredCommonName(getObject()->getCN());
+      return CCommonName (getObject()->getCN());
 
     default:
       break;
     }
 
   return cpsapiData();
+}
+
+// virtual 
+CCommonName cpsapiObject::getDataCN (const cpsapiReference::Type & reference, const CCore::Framework & framework) const
+{
+  if (!operator bool()
+      || isHiddenReference< cpsapiObject >(reference)
+      || !isImplementedReference< cpsapiObject >(reference))
+    return Invalid;
+
+  switch (reference)
+    {
+    case cpsapiReference::Type::OBJECT_NAME:
+      return getObject()->getObject(std::string("Property=Name"))->getDataObject()->getCN();
+      break;
+
+    case cpsapiReference::Type::DISPLAY_NAME:
+      return getObject()->getObject(std::string("Property=DisplayName"))->getDataObject()->getCN();
+
+    default:
+      break;
+    }
+
+  return Invalid;
 }

@@ -65,7 +65,7 @@ bool cpsapiGlobalQuantity::setProperty(const cpsapiProperty::Type & property, co
   if (!operator bool())
     return false;
 
-  if (!isValidProperty<cpsapiGlobalQuantity>(property))
+  if (!isImplementedProperty<cpsapiGlobalQuantity>(property))
     return base::setProperty(property, value, CCore::Framework::__SIZE);
 
   CCore::Framework Framework(framework);
@@ -95,7 +95,7 @@ cpsapiData cpsapiGlobalQuantity::getProperty(const cpsapiProperty::Type & proper
   if (!operator bool())
     return cpsapiData();
 
-  if (!isValidProperty<cpsapiGlobalQuantity>(property))
+  if (!isImplementedProperty<cpsapiGlobalQuantity>(property))
     return base::getProperty(property, CCore::Framework::__SIZE);
 
   wrapped * pWrapped = WRAPPED;

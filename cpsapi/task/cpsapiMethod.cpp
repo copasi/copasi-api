@@ -60,7 +60,7 @@ bool cpsapiMethod::setProperty(const cpsapiProperty::Type & property, const cpsa
   if (!operator bool())
     return false;
 
-  if (!isValidProperty< cpsapiMethod >(property))
+  if (!isImplementedProperty< cpsapiMethod >(property))
     return base::setProperty(property, value, CCore::Framework::__SIZE);
 
 
@@ -73,7 +73,7 @@ cpsapiData cpsapiMethod::getProperty(const cpsapiProperty::Type & property, cons
   if (!operator bool())
     return cpsapiData();
 
-  if (!isValidProperty< cpsapiMethod >(property))
+  if (!isImplementedProperty< cpsapiMethod >(property))
     return base::getProperty(property, CCore::Framework::__SIZE);
 
   switch (property)

@@ -1,16 +1,16 @@
-// BEGIN: Copyright
-// Copyright (C) 2021 by Pedro Mendes, Rector and Visitors of the
-// University of Virginia, University of Heidelberg, and University
-// of Connecticut School of Medicine.
-// All rights reserved
-// END: Copyright
+// BEGIN: Copyright 
+// Copyright (C) 2021 - 2022 by Pedro Mendes, Rector and Visitors of the 
+// University of Virginia, University of Heidelberg, and University 
+// of Connecticut School of Medicine. 
+// All rights reserved 
+// END: Copyright 
 
-// BEGIN: License
-// Licensed under the Artistic License 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//   https://opensource.org/licenses/Artistic-2.0
-// END: License
+// BEGIN: License 
+// Licensed under the Artistic License 2.0 (the "License"); 
+// you may not use this file except in compliance with the License. 
+// You may obtain a copy of the License at 
+//   https://opensource.org/licenses/Artistic-2.0 
+// END: License 
 
 #include "cpsapi/core/cpsapiGroup.h"
 
@@ -19,10 +19,25 @@ CPSAPI_NAMESPACE_USE
 // static
 const cpsapiGroup::Properties cpsapiGroup::SupportedProperties = {};
 
-cpsapiGroup::cpsapiGroup(wrapped * pObject, const Type & type)
-  : base(pObject, type)
+// static
+const cpsapiGroup::Properties cpsapiGroup::HiddenProperties = 
 {
-  assertData(Data(*std::static_pointer_cast< base::Data >(mpData)));
+  cpsapiProperty::Type::PARAMETER_VALUE
+};
+
+// static
+const cpsapiGroup::References cpsapiGroup::SupportedReferences = {};
+
+// static
+const cpsapiGroup::References cpsapiGroup::HiddenReferences = 
+{
+  cpsapiProperty::Type::PARAMETER_VALUE
+};
+
+cpsapiGroup::cpsapiGroup(wrapped * pWrapped, const Type & type)
+  : base(pWrapped, type)
+{
+  assertData< cpsapiGroup >(pWrapped);
 }
 
 cpsapiGroup::cpsapiGroup(const cpsapiGroup & src)
@@ -201,6 +216,60 @@ std::vector< cpsapiParameter > cpsapiGroup::getParameters() const
     }
 
   return Parameters;
+}
+
+bool cpsapiGroup::setProperty(const cpsapiGroup::Property & property, const cpsapiData & value, const CCore::Framework & framework)
+{
+  return setProperty(static_cast<const cpsapiProperty::Type >(property), value, framework);
+}
+
+cpsapiData cpsapiGroup::getProperty(const Property & property, const CCore::Framework & framework) const
+{
+  return getProperty(static_cast<const cpsapiProperty::Type >(property), framework);
+}
+
+// virtual
+bool cpsapiGroup::setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & framework)
+{
+  if (!operator bool()
+      || isHiddenProperty< cpsapiGroup >(property))
+    return false;
+
+  if (!isImplementedProperty< cpsapiGroup >(property))
+    return base::setProperty(property, value, framework);
+
+  return false;
+}
+
+// virtual 
+cpsapiData cpsapiGroup::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
+{
+  if (!operator bool()
+      || isHiddenProperty< cpsapiGroup >(property))
+    return cpsapiData();
+
+  if (!isImplementedProperty< cpsapiGroup >(property))
+    return base::getProperty(property, framework);
+
+  return cpsapiData();
+}
+
+CCommonName cpsapiGroup::getDataCN (const cpsapiGroup::Reference & reference, const CCore::Framework & framework) const
+{
+  getDataCN (static_cast< cpsapiReference::Type >(reference), framework);
+}
+
+// virtual
+CCommonName cpsapiGroup::getDataCN (const cpsapiReference::Type & reference, const CCore::Framework & framework) const
+{
+  if (!operator bool()
+      || isHiddenReference< cpsapiGroup >(reference))
+    return Invalid;
+
+  if (!isImplementedReference< cpsapiGroup >(reference))
+    return base::getDataCN(reference, framework);
+
+  return Invalid;
 }
 
 cpsapiParameter cpsapiGroup::__parameter(const std::string & name) const

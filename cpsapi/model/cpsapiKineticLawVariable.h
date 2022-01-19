@@ -1,5 +1,5 @@
 // BEGIN: Copyright 
-// Copyright (C) 2021 - 2022 by Pedro Mendes, Rector and Visitors of the 
+// Copyright (C) 2022 by Pedro Mendes, Rector and Visitors of the 
 // University of Virginia, University of Heidelberg, and University 
 // of Connecticut School of Medicine. 
 // All rights reserved 
@@ -14,24 +14,89 @@
 
 #pragma once
 
-#include "cpsapi/core/cpsapiParameter.h"
+#include "cpsapi/core/cpsapiContainer.h"
+#include "cpsapi/core/cpsapiVector.h"
+#include "copasi/model/CReaction.h"
 
-#include <copasi/utilities/CCopasiParameterGroup.h>
+class CReaction;
 
 CPSAPI_NAMESPACE_BEGIN
 
-class cpsapiGroup : public cpsapiParameter
+/**
+ * @brief 
+ * 
+ */
+class cpsapiKineticLawVariable : public cpsapiObject
 {
 public:
+  /**
+   * A fake CDataObject representing the the variables of the kinetic law  
+   */
+  class KineticLawVariable : public CDataObject
+  {
+    /**
+     * Only the class cpsapiReaction is allowed to create KineticLawVariable 
+     */
+    friend class cpsapiReaction;
+
+  public:
+    /**
+     * Required for objects to be insterted into CDataVector 
+     * 
+     * @param const CData & data 
+     * @param CUndoObjectInterface * pParent 
+     * @return KineticLawVariable * pData 
+     */
+    static KineticLawVariable * fromData(const CData & data, CUndoObjectInterface * pParent);
+
+  private:
+    /**
+     * Default constructor (not implemented)
+     */
+    KineticLawVariable();
+
+    /**
+     * Construct a new Fake Data object
+     * 
+     * @param CReaction * pReaction 
+     * @param const std::string & name 
+     */
+    KineticLawVariable(CReaction * pReaction, const std::string & name = "");
+
+  public:
+    /**
+     * Copy constructor
+     * 
+     * @param const KineticLawVariable & src, 
+     * @param CDataContainer * pParent (default: nullptr)
+     */
+    KineticLawVariable(const KineticLawVariable & src, CDataContainer * pParent = nullptr);
+
+    /**
+     * Destructor
+     */
+    virtual ~KineticLawVariable(); 
+
+    /**
+     * @brief 
+     * 
+     */
+    void updateMappedObject();
+
+    cpsapiObject * mpMappedObject;
+  };
+
   /**
    * Enumeration of the exposed properties
    */ 
   enum class Property
   {
-    PARAMETER_VALUE = cpsapiProperty::Type::PARAMETER_VALUE,
-    OBJECT_NAME = cpsapiProperty::Type::OBJECT_NAME,
+    NAME = cpsapiProperty::Type::OBJECT_NAME,
     DISPLAY_NAME = cpsapiProperty::Type::DISPLAY_NAME,
-    CN = cpsapiProperty::Type::CN
+    CN = cpsapiProperty::Type::CN,
+    ROLE = cpsapiProperty::Type::PARAMETER_ROLE,
+    VALUE = cpsapiProperty::Type::PARAMETER_VALUE,
+    MAPPING = cpsapiProperty::Type::PARAMETER_MAPPING
   };
 
   /**
@@ -51,6 +116,7 @@ public:
   {
     NAME = cpsapiReference::Type::OBJECT_NAME,
     DISPLAY_NAME = cpsapiReference::Type::DISPLAY_NAME,
+    VALUE = cpsapiReference::Type::PARAMETER_VALUE
   };
 
   /**
@@ -66,89 +132,35 @@ public:
   /**
    * The base class
    */
-  typedef cpsapiParameter base;
+  typedef cpsapiObject base;
 
   /**
    * The wrapped COPASI class
    */
-  typedef CCopasiParameterGroup wrapped;
-
-  class Data : public base::Data
-  {
-  public:
-    Data(const base::Data & data)
-      : base::Data(data)
-      , mDefaultParameter()
-    {}
-
-    virtual ~Data() {}
-
-    cpsapiParameter mDefaultParameter;
-  };
+  typedef KineticLawVariable wrapped;
 
   /**
    * Specific constructor
-   * @param wrapped * pGroup
+   * @param wrapped * pWrapped
    */
-  cpsapiGroup(wrapped * pGroup, const Type & type = Type::Group);
+  cpsapiKineticLawVariable(wrapped * pWrapped = nullptr);
 
   /**
    * Copy constructor
-   * @param const cpsapiGroup & src
+   * @param const cpsapiKineticLawVariable & src
    */
-  cpsapiGroup(const cpsapiGroup & src);
+  cpsapiKineticLawVariable(const cpsapiKineticLawVariable & src);
 
   /**
    * Destructor
    */
-  virtual ~cpsapiGroup();
+  virtual ~cpsapiKineticLawVariable();
 
   /**
    * Accept a visitor
    * @param cpsapiVisitor & visitor
    */
   virtual void accept(cpsapiVisitor & visitor) override;
-
-  /**
-   * Add parameter
-   * 
-   * @param const std::string & name 
-   * @param const CDataValue & value 
-   * @param CCopasiParameter::Type type (default: CCopasiParameter::Type::__SIZE)
-   * @return cpsapiParameter parameter
-   */
-  cpsapiParameter addParameter(const std::string & name, const CDataValue & value, CCopasiParameter::Type type = CCopasiParameter::Type::__SIZE);
-
-  /**
-   * Add a group 
-   * 
-   * @param const std::string & name 
-   * @return cpsapiGroup group
-   */
-  cpsapiGroup addGroup(const std::string & name);
-
-  /**
-   * Delete a parameter 
-   * 
-   * @param const std::string & name (default: name of current parameter) 
-   * @return bool success 
-   */
-  bool deleteParameter(const std::string & name = "");
-
-  /**
-   * Retrieve a parameter 
-   * 
-   * @param const std::string & name (default: name of current parameter) 
-   * @return cpsapiParameter parameter
-   */
-  cpsapiParameter parameter(const std::string & name = "");
-
-  /**
-   * Retrieve all parameters
-   * 
-   * @return std::vector< cpsapiParameter > parameters
-   */
-  std::vector< cpsapiParameter > getParameters() const;
 
   /**
    * Set a property of the object to the provided value under the given framework.
@@ -178,13 +190,9 @@ public:
    * @param const CCore::Framework & framework (default: CCore::Framework::__SIZE)
    * @return CCommonName
    */
-  CCommonName getDataCN(const Reference & reference, const CCore::Framework & framework = CCore::Framework::__SIZE) const;
+CCommonName getDataCN(const Reference & reference, const CCore::Framework & framework = CCore::Framework::__SIZE) const;
 
 protected:
-  cpsapiParameter __parameter(const std::string & name) const;
-
-  void updateDefaultParameter(const cpsapiParameter & parameter);
-
   /**
    * Set the property
    * 
@@ -200,7 +208,7 @@ protected:
    * 
    * @param const cpsapiProperty::Type & property 
    * @param const CCore::Framework &framework 
-   * @return cpsapiData property
+   * @return cspapiData
    */
   virtual cpsapiData getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const override;
 
@@ -214,4 +222,25 @@ protected:
   virtual CCommonName getDataCN(const cpsapiReference::Type & reference, const CCore::Framework & framework) const;
 };
 
+template <>
+inline size_t cpsapiVector< cpsapiKineticLawVariable >::index(const std::string & name) const
+{
+  if (operator bool())
+    {
+      wrapped * pWrapped = WRAPPED;
+      wrapped::const_iterator itParameter = pWrapped->begin();
+      wrapped::const_iterator endParameter = pWrapped->end();
+      
+      for (size_t Index = 0; itParameter != endParameter; ++itParameter, ++Index)
+        {
+          if (itParameter->getObjectName() == name)
+            return Index;
+        }
+    }
+
+  return C_INVALID_INDEX;
+};
+
 CPSAPI_NAMESPACE_END
+
+

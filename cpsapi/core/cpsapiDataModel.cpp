@@ -1,5 +1,5 @@
 // BEGIN: Copyright 
-// Copyright (C) 2021 by Pedro Mendes, Rector and Visitors of the 
+// Copyright (C) 2021 - 2022 by Pedro Mendes, Rector and Visitors of the 
 // University of Virginia, University of Heidelberg, and University 
 // of Connecticut School of Medicine. 
 // All rights reserved 
@@ -28,7 +28,7 @@ CPSAPI_NAMESPACE_USE
 cpsapiDataModel::cpsapiDataModel(wrapped * pWrapped)
   : base(pWrapped, Type::DataModel)
 {
-  assertData(Data(*std::static_pointer_cast< base::Data >(mpData)));
+  assertData< cpsapiDataModel >(pWrapped);
 }
 
 cpsapiDataModel::cpsapiDataModel(const cpsapiDataModel & src)
@@ -142,7 +142,7 @@ void cpsapiDataModel::endTransaction()
   model().endTransaction();
 }
 
-bool cpsapiDataModel::addCompartment(const std::string & name)
+cpsapiCompartment cpsapiDataModel::addCompartment(const std::string & name)
 {
   return model().addCompartment(name);
 }
@@ -162,7 +162,7 @@ cpsapiVector< cpsapiCompartment > cpsapiDataModel::getCompartments()
   return model().getCompartments();
 }
 
-bool cpsapiDataModel::addSpecies(const std::string & name, const std::string & compartmentName)
+cpsapiSpecies cpsapiDataModel::addSpecies(const std::string & name, const std::string & compartmentName)
 {
   return model().addSpecies(name, compartmentName);
 }
@@ -182,7 +182,27 @@ cpsapiVector< cpsapiSpecies > cpsapiDataModel::getSpecies()
   return model().getSpecies();
 }
 
-bool cpsapiDataModel::addGlobalQuantity(const std::string & name)
+cpsapiReaction cpsapiDataModel::addReaction(const std::string & name)
+{
+  return model().addReaction(name);
+}
+
+bool cpsapiDataModel::deleteReaction(const std::string & name)
+{
+  return model().deleteReaction(name);
+}
+
+cpsapiReaction cpsapiDataModel::reaction(const std::string & name)
+{
+  model().reaction(name);
+}
+
+cpsapiVector< cpsapiReaction > cpsapiDataModel::getReactions()
+{
+  return model().getReactions();
+}
+
+cpsapiGlobalQuantity cpsapiDataModel::addGlobalQuantity(const std::string & name)
 {
   return model().addGlobalQuantity(name);
 }

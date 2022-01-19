@@ -1,5 +1,5 @@
 // BEGIN: Copyright 
-// Copyright (C) 2021 by Pedro Mendes, Rector and Visitors of the 
+// Copyright (C) 2021 - 2022 by Pedro Mendes, Rector and Visitors of the 
 // University of Virginia, University of Heidelberg, and University 
 // of Connecticut School of Medicine. 
 // All rights reserved 
@@ -30,17 +30,17 @@ CPSAPI_NAMESPACE_USE
 
 TEST_CASE("Edit model", "[cpsapi]")
 {
-  REQUIRE(cpsapiObject::AllSupportedProperties< cpsapiObject >().size() == 3);
-  REQUIRE(cpsapiObject::AllSupportedProperties< cpsapiContainer >().size() == 3);
-  REQUIRE(cpsapiObject::AllSupportedProperties< cpsapiValue >().size() == 4);
-  REQUIRE(cpsapiObject::AllSupportedProperties< cpsapiDataModel >().size() == 3);
-  REQUIRE(cpsapiObject::AllSupportedProperties< cpsapiModelEntity >().size() == 9);
-  REQUIRE(cpsapiObject::AllSupportedProperties< cpsapiCompartment >().size() == 11);
-  REQUIRE(cpsapiObject::AllSupportedProperties< cpsapiValue >().size() == 4);
-  REQUIRE(cpsapiObject::AllSupportedProperties< cpsapiSpecies >().size() == 10);
-  REQUIRE(cpsapiObject::AllSupportedProperties< cpsapiModel >().size() == 12);
-  REQUIRE(cpsapiObject::AllSupportedProperties< cpsapiParameter >().size() == 4);
-  REQUIRE(cpsapiObject::AllSupportedProperties< cpsapiGroup >().size() == 4);
+  REQUIRE(cpsapiObject::supportedProperties< cpsapiObject >().size() == 3);
+  REQUIRE(cpsapiObject::supportedProperties< cpsapiContainer >().size() == 3);
+  REQUIRE(cpsapiObject::supportedProperties< cpsapiValue >().size() == 4);
+  REQUIRE(cpsapiObject::supportedProperties< cpsapiDataModel >().size() == 3);
+  REQUIRE(cpsapiObject::supportedProperties< cpsapiModelEntity >().size() == 9);
+  REQUIRE(cpsapiObject::supportedProperties< cpsapiCompartment >().size() == 11);
+  REQUIRE(cpsapiObject::supportedProperties< cpsapiValue >().size() == 4);
+  REQUIRE(cpsapiObject::supportedProperties< cpsapiSpecies >().size() == 10);
+  REQUIRE(cpsapiObject::supportedProperties< cpsapiModel >().size() == 12);
+  REQUIRE(cpsapiObject::supportedProperties< cpsapiParameter >().size() == 4);
+  REQUIRE(cpsapiObject::supportedProperties< cpsapiGroup >().size() == 3);
 
   cpsapiModel Model = cpsapi::addDataModel("test_model").model();
   REQUIRE(Model);

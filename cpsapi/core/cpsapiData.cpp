@@ -58,7 +58,7 @@ cpsapiData::cpsapiData(const char * value)
   , mpData(new std::string(value), &cpsapiFactory::free_unique< std::string >)
 {}
 
-cpsapiData::cpsapiData(const CRegisteredCommonName & value)
+cpsapiData::cpsapiData(const CCommonName & value)
   : mType(Type::CommonName)
   , mpData(new CRegisteredCommonName(value), &cpsapiFactory::free_unique< CRegisteredCommonName >)
 {}
@@ -120,6 +120,17 @@ cpsapiData::cpsapiData(const cpsapiData & src)
   , mpData(src.copyData())
 {}
 
+cpsapiData & cpsapiData::operator = (const cpsapiData & rhs)
+{
+  if (this != &rhs)
+    {
+      mType = rhs.mType;
+      mpData = rhs.copyData();
+    }
+
+  return *this;
+}
+  
 cpsapiData::~cpsapiData()
 {}
 
@@ -296,7 +307,7 @@ std::string cpsapiData::toString() const
   return std::string();
 }
 
-CRegisteredCommonName cpsapiData::toCommonName() const
+CCommonName cpsapiData::toCommonName() const
 {
   switch (mType)
   {
@@ -305,7 +316,7 @@ CRegisteredCommonName cpsapiData::toCommonName() const
       break;
 
     case Type::CommonName:
-      return *static_cast< const CCommonName * >(mpData.get());
+      return *static_cast< const CRegisteredCommonName * >(mpData.get());
       break;
       
     default:
@@ -366,7 +377,7 @@ cpsapiData::DataPointer cpsapiData::copyData() const
       break;
 
     case Type::CommonName:
-      return DataPointer(new CRegisteredCommonName(*static_cast< CRegisteredCommonName * >(mpData.get())), &cpsapiFactory::free_unique< CRegisteredCommonName >);
+      return DataPointer(new CRegisteredCommonName (*static_cast< CRegisteredCommonName * >(mpData.get())), &cpsapiFactory::free_unique< CRegisteredCommonName >);
       break;
 
     case Type::Data:

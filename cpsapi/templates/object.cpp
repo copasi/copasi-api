@@ -1,5 +1,5 @@
 // BEGIN: Copyright 
-// Copyright (C) 2021 - 2022 by Pedro Mendes, Rector and Visitors of the 
+// Copyright (C) 2022 by Pedro Mendes, Rector and Visitors of the 
 // University of Virginia, University of Heidelberg, and University 
 // of Connecticut School of Medicine. 
 // All rights reserved 
@@ -12,44 +12,44 @@
 //   https://opensource.org/licenses/Artistic-2.0 
 // END: License 
 
-#include "cpsapi/core/cpsapiParameter.h"
+#include "cpsapi/templates/object.h"
 
 #include <copasi/utilities/CCopasiParameter.h>
 
 CPSAPI_NAMESPACE_USE
 
 // static
-const cpsapiParameter::Properties cpsapiParameter::SupportedProperties =
+const cpsapiTemplate::Properties cpsapiTemplate::SupportedProperties =
 {
   cpsapiProperty::Type::PARAMETER_VALUE
 };
 
 // static
-const cpsapiParameter::Properties cpsapiParameter::HiddenProperties = {};
+const cpsapiTemplate::Properties cpsapiTemplate::HiddenProperties = {};
 
 // static
-const cpsapiParameter::References cpsapiParameter::SupportedReferences =
+const cpsapiTemplate::References cpsapiTemplate::SupportedReferences =
 {
   cpsapiProperty::Type::PARAMETER_VALUE
 };
 
 // static
-const cpsapiParameter::References cpsapiParameter::HiddenReferences = {};
+const cpsapiTemplate::References cpsapiTemplate::HiddenReferences = {};
 
-cpsapiParameter::cpsapiParameter(wrapped * pWrapped, const cpsapiObject::Type & type)
+cpsapiTemplate::cpsapiTemplate(wrapped * pWrapped, const cpsapiObject::Type & type)
   : base(pWrapped, type)
 {}
 
-cpsapiParameter::cpsapiParameter(const cpsapiParameter & src)
+cpsapiTemplate::cpsapiTemplate(const cpsapiTemplate & src)
   : base(src)
 {}
 
 // virtual
-cpsapiParameter::~cpsapiParameter()
+cpsapiTemplate::~cpsapiTemplate()
 {}
 
 // virtual 
-void cpsapiParameter::accept(cpsapiVisitor & visitor)
+void cpsapiTemplate::accept(cpsapiVisitor & visitor)
 {
   if (!operator bool())
     return;
@@ -58,24 +58,24 @@ void cpsapiParameter::accept(cpsapiVisitor & visitor)
   base::accept(visitor);
 }
 
-bool cpsapiParameter::setProperty(const cpsapiParameter::Property & property, const cpsapiData & value, const CCore::Framework & framework)
+bool cpsapiTemplate::setProperty(const cpsapiTemplate::Property & property, const cpsapiData & value, const CCore::Framework & framework)
 {
   return setProperty(static_cast<const cpsapiProperty::Type >(property), value, framework);
 }
 
-cpsapiData cpsapiParameter::getProperty(const Property & property, const CCore::Framework & framework) const
+cpsapiData cpsapiTemplate::getProperty(const Property & property, const CCore::Framework & framework) const
 {
   return getProperty(static_cast<const cpsapiProperty::Type >(property), framework);
 }
 
 // virtual
-bool cpsapiParameter::setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & framework)
+bool cpsapiTemplate::setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & framework)
 {
   if (!operator bool()
-      && isHiddenProperty< cpsapiParameter >(property))
+      && isHiddenProperty< cpsapiTemplate >(property))
     return false;
 
-  if (!isImplementedProperty< cpsapiParameter >(property))
+  if (!isImplementedProperty< cpsapiTemplate >(property))
     return base::setProperty(property, value, framework);
 
   wrapped * pParameter = WRAPPED;
@@ -134,13 +134,13 @@ bool cpsapiParameter::setProperty(const cpsapiProperty::Type & property, const c
 }
 
 // virtual 
-cpsapiData cpsapiParameter::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
+cpsapiData cpsapiTemplate::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
 {
   if (!operator bool()
-      && isHiddenProperty< cpsapiParameter >(property))
+      && isHiddenProperty< cpsapiTemplate >(property))
     return cpsapiData();
 
-  if (!isImplementedProperty<cpsapiParameter>(property))
+  if (!isImplementedProperty<cpsapiTemplate>(property))
     return base::getProperty(property, framework);
 
   wrapped * pParameter = WRAPPED;
@@ -189,19 +189,19 @@ cpsapiData cpsapiParameter::getProperty(const cpsapiProperty::Type & property, c
   return cpsapiData();
 }
 
-CCommonName cpsapiParameter::getDataCN (const cpsapiParameter::Reference & reference, const CCore::Framework & framework) const
+CCommonName cpsapiTemplate::getDataCN (const cpsapiTemplate::Reference & reference, const CCore::Framework & framework) const
 {
   getDataCN (static_cast< cpsapiReference::Type >(reference), framework);
 }
 
 // virtual
-CCommonName cpsapiParameter::getDataCN (const cpsapiReference::Type & reference, const CCore::Framework & framework) const
+CCommonName cpsapiTemplate::getDataCN (const cpsapiReference::Type & reference, const CCore::Framework & framework) const
 {
   if (!operator bool()
-      || isHiddenReference< cpsapiParameter >(reference))
+      || isHiddenReference< cpsapiTemplate >(reference))
     return Invalid;
 
-  if (!isImplementedReference< cpsapiParameter >(reference))
+  if (!isImplementedReference< cpsapiTemplate >(reference))
     return base::getDataCN(reference, framework);
 
   switch (reference)

@@ -62,7 +62,7 @@ public:
 
   cpsapiData(const char * value);
 
-  cpsapiData(const CRegisteredCommonName & value);
+  cpsapiData(const CCommonName & value);
 
   cpsapiData(const cpsapiDataVector & value);
 
@@ -72,6 +72,8 @@ public:
 
   cpsapiData(const cpsapiData & src);
 
+  cpsapiData & operator = (const cpsapiData & rhs);
+  
   ~cpsapiData();
 
   C_FLOAT64 toDouble() const;
@@ -86,7 +88,7 @@ public:
 
   std::string toString() const;;
 
-  CRegisteredCommonName toCommonName() const;
+  CCommonName toCommonName() const;
 
   const cpsapiDataVector & toData() const;
 

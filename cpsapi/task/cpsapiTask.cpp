@@ -27,7 +27,7 @@ const cpsapiTask::Properties cpsapiTask::SupportedProperties =
 cpsapiTask::cpsapiTask(wrapped * pWrapped)
   : base(pWrapped, Type::Task)
 {
-  assertData(Data(*std::static_pointer_cast< base::Data >(mpData)));
+  assertData< cpsapiTask >(pWrapped);
 
   if (operator bool())
     {
@@ -113,7 +113,7 @@ bool cpsapiTask::setProperty(const cpsapiProperty::Type & property, const cpsapi
   if (!operator bool())
     return false;
 
-  if (!isValidProperty< cpsapiTask >(property))
+  if (!isImplementedProperty< cpsapiTask >(property))
     return base::setProperty(property, value, CCore::Framework::__SIZE);
 
   return false;
@@ -125,7 +125,7 @@ cpsapiData cpsapiTask::getProperty(const cpsapiProperty::Type & property, const 
   if (!operator bool())
     return cpsapiData();
 
-  if (!isValidProperty< cpsapiTask >(property))
+  if (!isImplementedProperty< cpsapiTask >(property))
     return base::getProperty(property, CCore::Framework::__SIZE);
 
   switch (property)

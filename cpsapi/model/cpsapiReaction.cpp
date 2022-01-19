@@ -36,7 +36,7 @@ const cpsapiReaction::Properties cpsapiReaction::SupportedProperties =
 cpsapiReaction::cpsapiReaction(cpsapiReaction::wrapped * pWrapped)
   : base(pWrapped, Type::Reaction)
 {
-  assertData(Data(*std::static_pointer_cast< base::Data >(mpData)));
+  assertData< cpsapiReaction >(pWrapped);
 }
 
 cpsapiReaction::cpsapiReaction(const cpsapiReaction & src)
@@ -57,32 +57,32 @@ void cpsapiReaction::accept(cpsapiVisitor & visitor)
   base::accept(visitor);
 }
 
-cpsapiReactionParameter::FakeData * cpsapiReaction::assertParameter(const std::string & name)
+cpsapiKineticLawVariable::KineticLawVariable * cpsapiReaction::assertVariable(const std::string & name)
 {
-  ParameterManager::iterator found = DATA->mManager.find(name);
+  VariableManager::iterator found = DATA->mManager.find(name);
 
   if (found == DATA->mManager.end())
-    found = DATA->mManager.insert(std::make_pair(name, new cpsapiReactionParameter::FakeData(static_cast< CReaction * >(getObject()), name))).first;
+    found = DATA->mManager.insert(std::make_pair(name, cpsapiKineticLawVariable(new cpsapiKineticLawVariable::KineticLawVariable(WRAPPED, name)))).first;
 
-  return found->second;
+  return static_cast< cpsapiKineticLawVariable::KineticLawVariable * >(*found->second);
 }
 
-cpsapiReactionParameter cpsapiReaction::parameter(const std::string & name)
+cpsapiKineticLawVariable cpsapiReaction::variable(const std::string & name)
 {
   if (!operator bool())
     return nullptr;
 
   if (!name.empty() &&
-      name != DATA->mDefaultParameter.getProperty(cpsapiReactionParameter::Property::NAME).toString())
-    DATA->mDefaultParameter = cpsapiReactionParameter(assertParameter(name));
+      name != DATA->mDefaultParameter.getProperty(cpsapiKineticLawVariable::Property::NAME).toString())
+    DATA->mDefaultParameter = cpsapiKineticLawVariable(assertVariable(name));
     
   return DATA->mDefaultParameter;
 }
 
-cpsapiVector< cpsapiReactionParameter > cpsapiReaction::parameters()
+cpsapiVector< cpsapiKineticLawVariable > cpsapiReaction::variables()
 {
   if (DATA->mpVector == nullptr)
-    DATA->mpVector = new ParameterVector();
+    DATA->mpVector = new VariableVector();
   else
     DATA->mpVector->clear();
 
@@ -91,10 +91,10 @@ cpsapiVector< cpsapiReactionParameter > cpsapiReaction::parameters()
       wrapped * pWrapped = WRAPPED;
 
       for (const CFunctionParameter & Parameter : pWrapped->getFunctionParameters())
-        DATA->mpVector->add(assertParameter(Parameter.getObjectName()), false);
+        DATA->mpVector->add(assertVariable(Parameter.getObjectName()), false);
     }
 
-  return cpsapiVector< cpsapiReactionParameter >(DATA->mpVector);
+  return cpsapiVector< cpsapiKineticLawVariable >(DATA->mpVector);
 }
 
 bool cpsapiReaction::setProperty(const cpsapiReaction::Property & property, const cpsapiData & value, const CCore::Framework & framework)
@@ -113,7 +113,7 @@ bool cpsapiReaction::setProperty(const cpsapiProperty::Type & property, const cp
   if (!operator bool())
     return false;
 
-  if (!isValidProperty< cpsapiReaction >(property))
+  if (!isImplementedProperty< cpsapiReaction >(property))
     return base::setProperty(property, value, CCore::Framework::__SIZE);
 
   CCore::Framework Framework(framework);
@@ -172,7 +172,7 @@ bool cpsapiReaction::setProperty(const cpsapiProperty::Type & property, const cp
   Reaction.writeBackToReaction();
 
   if (DATA->mpVector != nullptr)
-    parameters();
+    variables();
     
   return success && isValid && cpsapiTransaction::synchronize(pChangedObject, Framework);
 }
@@ -183,7 +183,7 @@ cpsapiData cpsapiReaction::getProperty(const cpsapiProperty::Type & property, co
   if (!operator bool())
     return cpsapiData();
 
-  if (!isValidProperty<cpsapiReaction>(property))
+  if (!isImplementedProperty<cpsapiReaction>(property))
     return base::getProperty(property, CCore::Framework::__SIZE);
 
   wrapped * pWrapped = WRAPPED;

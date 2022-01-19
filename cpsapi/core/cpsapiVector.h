@@ -1,3 +1,17 @@
+// BEGIN: Copyright 
+// Copyright (C) 2021 - 2022 by Pedro Mendes, Rector and Visitors of the 
+// University of Virginia, University of Heidelberg, and University 
+// of Connecticut School of Medicine. 
+// All rights reserved 
+// END: Copyright 
+
+// BEGIN: License 
+// Licensed under the Artistic License 2.0 (the "License"); 
+// you may not use this file except in compliance with the License. 
+// You may obtain a copy of the License at 
+//   https://opensource.org/licenses/Artistic-2.0 
+// END: License 
+
 #pragma once
 
 #include "cpsapi/core/cpsapiContainer.h"
@@ -133,7 +147,7 @@ public:
 
     iterator operator+(const typename wrapped::iterator::difference_type & n) const
     {
-      return iterator(wrapped::iterator::operator+(n));
+      return iterator(wrapped::iterator::operator+(n), mMap);
     }
 
     iterator & operator-=(const typename wrapped::iterator::difference_type & n)
@@ -144,7 +158,7 @@ public:
 
     iterator operator-(const typename wrapped::iterator::difference_type & n) const
     {
-      return iterator(wrapped::iterator::operator-(n));
+      return iterator(wrapped::iterator::operator-(n), mMap);
     }
 
   protected:
@@ -195,7 +209,7 @@ template < class Object >
 cpsapiVector< Object >::cpsapiVector(wrapped * pWrapped, const cpsapiObject::Type & type)
   : base(pWrapped, type)
 {
-  assertData(Data(*std::static_pointer_cast< base::Data >(mpData)));
+  assertData< cpsapiVector< Object > >(pWrapped);
 }
 
 template < class Object > 

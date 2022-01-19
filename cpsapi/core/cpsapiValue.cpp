@@ -22,6 +22,18 @@ const cpsapiValue::Properties cpsapiValue::SupportedProperties =
     cpsapiProperty::Type::VALUE
   };
 
+// static
+const cpsapiValue::Properties cpsapiValue::HiddenProperties = {};
+
+// static
+const cpsapiValue::References cpsapiValue::SupportedReferences =
+  {
+    cpsapiReference::Type::VALUE
+  };
+
+// static
+const cpsapiValue::References cpsapiValue::HiddenReferences = {};
+
 cpsapiValue::cpsapiValue(wrapped * pWrapped)
   : base(pWrapped, Type::Value)
 {
@@ -59,10 +71,11 @@ cpsapiData cpsapiValue::getProperty(const cpsapiValue::Property & property, cons
 // virtual
 bool cpsapiValue::setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & framework)
 {
-  if (!operator bool())
+  if (!operator bool()
+      || isHiddenProperty< cpsapiValue >(property))
     return false;
 
-  if (!isValidProperty<cpsapiValue>(property))
+  if (!isImplementedProperty< cpsapiValue >(property))
     return base::setProperty(property, value, CCore::Framework::__SIZE);
 
   switch (cpsapiFactory::getDataType(getObject()))
@@ -117,10 +130,11 @@ bool cpsapiValue::setProperty(const cpsapiProperty::Type & property, const cpsap
 // virtual
 cpsapiData cpsapiValue::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
 {
-  if (!operator bool())
+  if (!operator bool()
+      || isHiddenProperty< cpsapiValue >(property))
     return cpsapiData();
 
-  if (!isValidProperty<cpsapiValue>(property))
+  if (!isImplementedProperty<cpsapiValue>(property))
     return base::getProperty(property, framework);
 
   switch (cpsapiFactory::getDataType(getObject()))
@@ -150,6 +164,34 @@ cpsapiData cpsapiValue::getProperty(const cpsapiProperty::Type & property, const
   }
 
   return cpsapiData();
+}
+
+CCommonName cpsapiValue::getDataCN (const cpsapiValue::Reference & reference, const CCore::Framework & framework) const
+{
+  getDataCN (static_cast< cpsapiReference::Type >(reference), framework);
+}
+
+// virtual
+CCommonName cpsapiValue::getDataCN (const cpsapiReference::Type & reference, const CCore::Framework & framework) const
+{
+  if (!operator bool()
+      || isHiddenReference< cpsapiValue >(reference))
+    return Invalid;
+
+  if (!isImplementedReference< cpsapiValue >(reference))
+    return base::getDataCN(reference, framework);
+
+  switch (reference)
+    {
+    case cpsapiReference::Type::VALUE:
+      return getObject()->getCN();
+      break;
+
+    default:
+      break;
+    }
+
+  return Invalid;
 }
 
 cpsapiValue::operator cpsapiData() const

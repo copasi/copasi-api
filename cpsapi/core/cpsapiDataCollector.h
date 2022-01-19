@@ -53,19 +53,25 @@ public:
    */
   virtual void finish() override;
 
-  void clear();
+  void addDataReferenceBefore(const CCommonName & cn);
+  void addDataReferenceDuring(const CCommonName & cn);
+  void addDataRefenceAfter(const CCommonName & cn);
 
-  void addObjectBefore(const cpsapiObject & object);
-  void addObjectDuring(const cpsapiObject & object);
-  void addObjectAfter(const cpsapiObject & object);
+  const std::vector< CRegisteredCommonName > & getDataReferencesBefore() const;
+  const std::vector< CRegisteredCommonName > & getDataReferencesDuring() const;
+  const std::vector< CRegisteredCommonName > & getDataReferencesAfter() const;
 
-  const std::vector< CRegisteredCommonName > & getObjectsBefore() const;
-  const std::vector< CRegisteredCommonName > & getObjectsDuring() const;
-  const std::vector< CRegisteredCommonName > & getObjectsAfter() const;
+  void clearReferences();
 
   const cpsapiDataVector & getDataBefore() const;
   const cpsapiDataVector & getDataDuring() const;
   const cpsapiDataVector & getDataAfter() const;
+
+  std::vector< cpsapiData::Type > getDataTypesBefore() const;
+  std::vector< cpsapiData::Type > getDataTypesDuring() const;
+  std::vector< cpsapiData::Type > getDataTypesAfter() const;
+
+  void clearData();
 
 private:
   static void collect(cpsapiDataVector & data, const std::vector< std::pair< cpsapiData::Type, void * > > & values);

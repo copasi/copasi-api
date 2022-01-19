@@ -64,7 +64,7 @@ bool cpsapiSpecies::setProperty(const cpsapiProperty::Type & property, const cps
   if (operator=(nullptr))
     return false;
 
-  if (!isValidProperty<cpsapiSpecies>(property))
+  if (!isImplementedProperty<cpsapiSpecies>(property))
     return base::setProperty(property, value, CCore::Framework::__SIZE);
 
   CCore::Framework Framework(framework);
@@ -118,7 +118,7 @@ cpsapiData cpsapiSpecies::getProperty(const cpsapiProperty::Type & property, con
   if (!operator bool())
     return cpsapiData();
 
-  if (!isValidProperty<cpsapiSpecies>(property))
+  if (!isImplementedProperty<cpsapiSpecies>(property))
     return base::getProperty(property, CCore::Framework::__SIZE);
 
   wrapped * pWrapped = WRAPPED;
