@@ -1,5 +1,5 @@
 # BEGIN: Copyright 
-# Copyright (C) 2021 by Pedro Mendes, Rector and Visitors of the 
+# Copyright (C) 2021 - 2022 by Pedro Mendes, Rector and Visitors of the 
 # University of Virginia, University of Heidelberg, and University 
 # of Connecticut School of Medicine. 
 # All rights reserved 
@@ -107,6 +107,11 @@ set_target_properties(cpsapi PROPERTIES
     CXX_STANDARD_REQUIRED YES
     CXX_EXTENSIONS NO
 )
+
+if(NOT MSVC)
+  target_compile_options(cpsapi PRIVATE -Wall -Wextra -Wpedantic -Werror -Wno-overloaded-virtual)
+endif()
+
 target_link_libraries(cpsapi ${LIBCOPASISE_LIBRARY_NAME})
 
 # set include directory, so that binary dir will be included during build

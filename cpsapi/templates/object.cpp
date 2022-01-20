@@ -14,7 +14,9 @@
 
 #include "cpsapi/templates/object.h"
 
+#pragma GCC diagnostic push
 #include <copasi/utilities/CCopasiParameter.h>
+#pragma GCC diagnostic pop
 
 CPSAPI_NAMESPACE_USE
 

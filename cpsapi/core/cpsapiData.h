@@ -17,9 +17,11 @@
 #include <string>
 #include <memory>
 
+#pragma GCC diagnostic push
 #include <copasi/core/CCore.h>
 #include <copasi/core/CEnumAnnotation.h>
 #include <copasi/core/CRegisteredCommonName.h>
+#pragma GCC diagnostic pop
 
 CPSAPI_NAMESPACE_BEGIN
 
@@ -86,7 +88,7 @@ public:
 
   bool toBool() const;
 
-  std::string toString() const;;
+  std::string toString() const;
 
   CCommonName toCommonName() const;
 

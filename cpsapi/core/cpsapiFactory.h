@@ -1,3 +1,17 @@
+// BEGIN: Copyright 
+// Copyright (C) 2021 - 2022 by Pedro Mendes, Rector and Visitors of the 
+// University of Virginia, University of Heidelberg, and University 
+// of Connecticut School of Medicine. 
+// All rights reserved 
+// END: Copyright 
+
+// BEGIN: License 
+// Licensed under the Artistic License 2.0 (the "License"); 
+// you may not use this file except in compliance with the License. 
+// You may obtain a copy of the License at 
+//   https://opensource.org/licenses/Artistic-2.0 
+// END: License 
+
 #pragma once
 
 #include <map>
@@ -91,8 +105,6 @@ public:
              std::shared_ptr< copyInterface > cpsapiCopy = nullptr,
              const std::type_index & copasiClass = std::type_index(typeid(CDataObject)),
              const std::string copasiString = "unknown");
-
-    TypeInfo & operator=(const TypeInfo & rhs);
   };
 
 private:
@@ -182,7 +194,7 @@ std::unique_ptr< CType, cpsapiFactory::free_unique_t > cpsapiFactory::make_uniqu
 }
 
 template <>
-inline void cpsapiFactory::free_unique< void >(void * pointer)
+inline void cpsapiFactory::free_unique< void >(void * /* pointer */)
 {}
 
 template < class Type >

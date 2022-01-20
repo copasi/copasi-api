@@ -55,7 +55,7 @@ cpsapiData cpsapiMethod::getProperty(const cpsapiMethod::Property & property, co
 }
 
 // virtual
-bool cpsapiMethod::setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & framework)
+bool cpsapiMethod::setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & /* framework */)
 {
   if (!operator bool())
     return false;
@@ -68,7 +68,7 @@ bool cpsapiMethod::setProperty(const cpsapiProperty::Type & property, const cpsa
 }
 
 // virtual
-cpsapiData cpsapiMethod::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
+cpsapiData cpsapiMethod::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & /* framework */) const
 {
   if (!operator bool())
     return cpsapiData();

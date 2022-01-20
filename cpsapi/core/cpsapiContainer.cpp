@@ -14,9 +14,11 @@
 
 #include "cpsapi/core/cpsapiContainer.h"
 
+#pragma GCC diagnostic push
 #include <copasi/core/CDataContainer.h>
 #include <copasi/core/CDataObjectReference.h>
 #include <copasi/model/CModel.h>
+#pragma GCC diagnostic pop
 
 #include <algorithm>
 #include <typeindex>

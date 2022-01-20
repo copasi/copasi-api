@@ -192,7 +192,7 @@ bool cpsapiCompartment::setProperty(const cpsapiProperty::Type & property, const
 }
 
 // virtual
-cpsapiData cpsapiCompartment::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
+cpsapiData cpsapiCompartment::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & /* framework */) const
 {
   if (!operator bool())
     return cpsapiData();

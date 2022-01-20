@@ -15,7 +15,10 @@
 #pragma once
 
 #include <string>
+
+#pragma GCC diagnostic push
 #include <copasi/core/CEnumAnnotation.h>
+#pragma GCC diagnostic pop
 
 #include "cpsapi/cpsapiConfig.h"
 

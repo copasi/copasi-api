@@ -20,9 +20,9 @@
 #include "cpsapi/model/cpsapiGlobalQuantity.h"
 #include "cpsapi/model/cpsapiReaction.h"
 
-#include <memory>
-
+#pragma GCC diagnostic push
 #include <copasi/model/CModel.h> 
+#pragma GCC diagnostic pop
 
 class CCompartment;
 class CMetab;

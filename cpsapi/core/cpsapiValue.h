@@ -16,7 +16,9 @@
 
 #include "cpsapi/core/cpsapiObject.h"
 
+#pragma GCC diagnostic push
 #include <copasi/core/CDataObjectReference.h>
+#pragma GCC diagnostic pop
 
 #include <limits>
 
@@ -171,7 +173,7 @@ protected:
    * @param const CCore::Framework &framework 
    * @return CCommonName
    */
-  virtual CCommonName getDataCN(const cpsapiReference::Type & reference, const CCore::Framework & framework) const;
+  virtual CCommonName getDataCN(const cpsapiReference::Type & reference, const CCore::Framework & framework) const override;
 };
 
 CPSAPI_NAMESPACE_END

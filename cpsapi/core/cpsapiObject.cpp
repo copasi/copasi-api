@@ -15,7 +15,9 @@
 #include "cpsapi/core/cpsapiObject.h"
 #include "cpsapi/core/cpsapiValue.h"
 
+#pragma GCC diagnostic push
 #include <copasi/core/CDataObject.h>
+#pragma GCC diagnostic pop
 
 CPSAPI_NAMESPACE_USE
 
@@ -227,7 +229,7 @@ CCommonName cpsapiObject::getDataCN(const std::string & reference, const std::st
 }
 
 // virtual
-bool cpsapiObject::setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & framework)
+bool cpsapiObject::setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & /* framework */)
 {
   if (!operator bool()
       || isHiddenProperty< cpsapiObject >(property)
@@ -252,7 +254,7 @@ bool cpsapiObject::setProperty(const cpsapiProperty::Type & property, const cpsa
 }
 
 // virtual 
-cpsapiData cpsapiObject::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
+cpsapiData cpsapiObject::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & /* framework */) const
 {
   if (!operator bool()
       || isHiddenProperty< cpsapiObject >(property)
@@ -279,7 +281,7 @@ cpsapiData cpsapiObject::getProperty(const cpsapiProperty::Type & property, cons
 }
 
 // virtual 
-CCommonName cpsapiObject::getDataCN(const cpsapiReference::Type & reference, const CCore::Framework & framework) const
+CCommonName cpsapiObject::getDataCN(const cpsapiReference::Type & reference, const CCore::Framework & /* framework */) const
 {
   if (!operator bool()
       || isHiddenReference< cpsapiObject >(reference)

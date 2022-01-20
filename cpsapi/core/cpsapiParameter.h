@@ -157,7 +157,7 @@ protected:
    * @param const CCore::Framework &framework 
    * @return CCommonName
    */
-virtual CCommonName getDataCN(const cpsapiReference::Type & reference, const CCore::Framework & framework) const;
+virtual CCommonName getDataCN(const cpsapiReference::Type & reference, const CCore::Framework & framework) const override;
 };
 
 CPSAPI_NAMESPACE_END

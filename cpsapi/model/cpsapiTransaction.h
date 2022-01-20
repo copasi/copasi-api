@@ -19,7 +19,9 @@
 
 #include "cpsapi/cpsapiConfig.h"
 
+#pragma GCC diagnostic push
 #include <copasi/core/CCore.h>
+#pragma GCC diagnostic pop
 
 class CModel;
 class CDataObject;

@@ -15,7 +15,9 @@
 #include "cpsapi/model/cpsapiSpecies.h"
 #include "cpsapi/model/cpsapiTransaction.h"
 
-#include "copasi/model/CMetab.h"
+#pragma GCC diagnostic push
+#include <copasi/model/CMetab.h>
+#pragma GCC diagnostic pop
 
 CPSAPI_NAMESPACE_USE
 

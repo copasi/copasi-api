@@ -18,7 +18,9 @@
 #include <algorithm>
 #include <memory>
 
+#pragma GCC diagnostic push
 #include <copasi/core/CDataVector.h>
+#pragma GCC diagnostic pop
 
 #include "cpsapi/core/cpsapiProperty.h"
 

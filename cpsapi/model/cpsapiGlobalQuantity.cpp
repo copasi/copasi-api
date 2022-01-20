@@ -17,7 +17,9 @@
 #include "cpsapi/model/cpsapiModel.h"
 #include "cpsapi/model/cpsapiTransaction.h"
 
-#include "copasi/model/CModelValue.h"
+#pragma GCC diagnostic push
+#include <copasi/model/CModelValue.h>
+#pragma GCC diagnostic pop
 
 CPSAPI_NAMESPACE_USE
 
@@ -90,7 +92,7 @@ bool cpsapiGlobalQuantity::setProperty(const cpsapiProperty::Type & property, co
 }
 
 // virtual
-cpsapiData cpsapiGlobalQuantity::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
+cpsapiData cpsapiGlobalQuantity::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & /* framework */) const
 {
   if (!operator bool())
     return cpsapiData();

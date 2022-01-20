@@ -16,7 +16,9 @@
 
 #include "cpsapi/core/cpsapiObject.h"
 
+#pragma GCC diagnostic push
 #include <copasi/core/CDataContainer.h>
+#pragma GCC diagnostic pop
 
 CPSAPI_NAMESPACE_BEGIN
 

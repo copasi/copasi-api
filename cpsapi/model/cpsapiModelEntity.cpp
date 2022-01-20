@@ -15,7 +15,9 @@
 #include "cpsapi/model/cpsapiModelEntity.h"
 #include "cpsapi/model/cpsapiTransaction.h"
 
+#pragma GCC diagnostic push
 #include <copasi/model/CModelValue.h>
+#pragma GCC diagnostic pop
 
 CPSAPI_NAMESPACE_USE
 
@@ -137,9 +139,6 @@ cpsapiData cpsapiModelEntity::getProperty(const cpsapiProperty::Type & property,
     return base::getProperty(property, framework);
 
   CModelEntity * pEntity = static_cast< CModelEntity * >(getObject());
-  bool success = false;
-
-  CDataObject * pChangedObject = pEntity;
 
   switch (property)
     {

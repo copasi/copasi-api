@@ -16,7 +16,9 @@
 
 #include "cpsapi/core/cpsapiParameter.h"
 
+#pragma GCC diagnostic push
 #include <copasi/utilities/CCopasiParameterGroup.h>
+#pragma GCC diagnostic pop
 
 CPSAPI_NAMESPACE_BEGIN
 
@@ -211,7 +213,7 @@ protected:
    * @param const CCore::Framework &framework 
    * @return CCommonName
    */
-  virtual CCommonName getDataCN(const cpsapiReference::Type & reference, const CCore::Framework & framework) const;
+  virtual CCommonName getDataCN(const cpsapiReference::Type & reference, const CCore::Framework & framework) const override;
 };
 
 CPSAPI_NAMESPACE_END

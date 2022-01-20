@@ -16,7 +16,9 @@
 
 #include "cpsapi/core/cpsapiGroup.h"
 
+#pragma GCC diagnostic push
 #include <copasi/utilities/CCopasiMethod.h>
+#pragma GCC diagnostic pop
 
 CPSAPI_NAMESPACE_BEGIN
 

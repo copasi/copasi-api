@@ -15,7 +15,9 @@
 #include "cpsapi/model/cpsapiModel.h"
 #include "cpsapi/model/cpsapiTransaction.h"
 
+#pragma GCC diagnostic push
 #include <copasi/utilities/CValidatedUnit.h>
+#pragma GCC diagnostic pop
 
 CPSAPI_NAMESPACE_USE
 
@@ -548,7 +550,7 @@ bool cpsapiModel::setProperty(const cpsapiProperty::Type & property, const cpsap
 }
 
 // virtual
-cpsapiData cpsapiModel::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
+cpsapiData cpsapiModel::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & /* framework */) const
 {
   if (!operator bool())
     return cpsapiData();
@@ -556,44 +558,38 @@ cpsapiData cpsapiModel::getProperty(const cpsapiProperty::Type & property, const
   if (!isImplementedProperty< cpsapiModel >(property))
     return base::getProperty(property, CCore::Framework::__SIZE);
 
-  CCore::Framework Framework(framework);
-  bool success = false;
-
-  wrapped * pWrapped = WRAPPED;
-  CDataObject * pChangedObject = pWrapped;
-
   switch (property)
     {
     case cpsapiProperty::Type::UNIT:
-      return pWrapped->getUnits();
+      return WRAPPED->getUnits();
       break;
 
     case cpsapiProperty::Type::VOLUME_UNIT:
-      return pWrapped->getVolumeUnit();
+      return WRAPPED->getVolumeUnit();
       break;
 
     case cpsapiProperty::Type::AREA_UNIT:
-      return pWrapped->getAreaUnit();
+      return WRAPPED->getAreaUnit();
       break;
 
     case cpsapiProperty::Type::LENGTH_UNIT:
-      return pWrapped->getLengthUnit();
+      return WRAPPED->getLengthUnit();
       break;
 
     case cpsapiProperty::Type::TIME_UNIT:
-      return pWrapped->getTimeUnit();
+      return WRAPPED->getTimeUnit();
       break;
 
     case cpsapiProperty::Type::QUANTITY_UNIT:
-      return pWrapped->getQuantityUnit();
+      return WRAPPED->getQuantityUnit();
       break;
 
     case cpsapiProperty::Type::MODEL_TYPE:
-      return pWrapped->wrapped::ModelTypeNames[pWrapped->getModelType()];
+      return WRAPPED->wrapped::ModelTypeNames[WRAPPED->getModelType()];
       break;
 
     case cpsapiProperty::Type::AVOGADRO_NUMBER:
-      return pWrapped->getAvogadro();
+      return WRAPPED->getAvogadro();
       break;
 
     default:

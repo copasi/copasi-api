@@ -14,7 +14,9 @@
 
 #pragma once
 
+#pragma GCC diagnostic push
 #include <copasi/output/COutputHandler.h>
+#pragma GCC diagnostic pop
 
 #include "cpsapi/core/cpsapiObject.h"
 
@@ -34,8 +36,7 @@ public:
    * @return bool success
    */
   virtual bool compile(CObjectInterface::ContainerList listOfContainer) override;
-  ;
-
+  
   /**
    * Perform an output event for the current activity
    * @param const Activity & activity

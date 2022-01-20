@@ -1,5 +1,5 @@
 // BEGIN: Copyright 
-// Copyright (C) 2021 by Pedro Mendes, Rector and Visitors of the 
+// Copyright (C) 2021 - 2022 by Pedro Mendes, Rector and Visitors of the 
 // University of Virginia, University of Heidelberg, and University 
 // of Connecticut School of Medicine. 
 // All rights reserved 
@@ -14,9 +14,11 @@
 
 #define COPASI_MAIN
 
+#pragma GCC diagnostic push
 #include <copasi/core/CRootContainer.h>
 #include <copasi/CopasiDataModel/CDataModel.h>
 #include <copasi/core/CDataVector.h>
+#pragma GCC diagnostic pop
 
 #include "cpsapi/core/cpsapiRoot.h"
 #include "cpsapi/core/cpsapiDataModel.h"
@@ -121,7 +123,7 @@ const std::set< std::string > cpsapi::listModelNames()
 {
   std::set< std::string > Set;
 
-  for (const std::pair< std::string, CDataModel * > & mapIterator : DataModels)
+  for (std::pair< std::string, CDataModel * > mapIterator : DataModels)
     {
       Set.insert(mapIterator.first);
     }

@@ -69,7 +69,7 @@ cpsapiData cpsapiValue::getProperty(const cpsapiValue::Property & property, cons
 }
 
 // virtual
-bool cpsapiValue::setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & framework)
+bool cpsapiValue::setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & /* framework */)
 {
   if (!operator bool()
       || isHiddenProperty< cpsapiValue >(property))

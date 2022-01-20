@@ -12,12 +12,14 @@
 //   https://opensource.org/licenses/Artistic-2.0 
 // END: License 
 
+#pragma GCC diagnostic push
 #include <copasi/CopasiDataModel/CDataModel.h>
 #include <copasi/core/CDataVector.h>
 #include <copasi/utilities/CCopasiTask.h>
 #include <copasi/report/CReportDefinitionVector.h>
 #include <copasi/plot/COutputDefinitionVector.h>
 #include <copasi/layout/CListOfLayouts.h>
+#pragma GCC diagnostic pop
 
 #include "cpsapi/core/cpsapiDataModel.h"
 #include "cpsapi/model/cpsapiCompartment.h"

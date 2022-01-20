@@ -25,7 +25,9 @@
 #include <cpsapi/model/cpsapiModel.h>
 #include <cpsapi/model/cpsapiSpecies.h>
 
+#pragma GCC diagnostic push
 #include <copasi/CopasiTypes.h>
+#pragma GCC diagnostic pop
 
 extern std::string getTestFile(const std::string & fileName);
 

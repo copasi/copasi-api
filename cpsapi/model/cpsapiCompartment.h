@@ -20,7 +20,9 @@
 
 #include <memory>
 
+#pragma GCC diagnostic push
 #include <copasi/model/CCompartment.h>
+#pragma GCC diagnostic pop
 
 class CMetab;
 

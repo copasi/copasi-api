@@ -24,11 +24,13 @@
 #include "cpsapi/task/cpsapiProblem.h"
 #include "cpsapi/task/cpsapiTask.h"
 
+#pragma GCC diagnostic push
 #include <copasi/CopasiDataModel/CDataModel.h>
 #include <copasi/core/CDataObjectReference.h>
 #include <copasi/utilities/CCopasiMethod.h>
 #include <copasi/utilities/CCopasiProblem.h>
 #include <copasi/utilities/CCopasiTask.h>
+#pragma GCC diagnostic pop
 
 CPSAPI_NAMESPACE_USE
 
@@ -90,20 +92,6 @@ cpsapiFactory::TypeInfo::TypeInfo(const std::type_index & cpsapiClass,
 {
   this->cpsapiCreate = cpsapiCreate;
   this->cpsapiCopy = cpsapiCopy;
-}
-
-cpsapiFactory::TypeInfo & cpsapiFactory::TypeInfo::operator=(const cpsapiFactory::TypeInfo & rhs)
-{
-  if (this != &rhs)
-    {
-      cpsapiClass = rhs.cpsapiClass;
-      cpsapiCreate = rhs.cpsapiCreate;
-      cpsapiCopy = rhs.cpsapiCopy;
-      copasiClass = rhs.copasiClass;
-      copasiString = rhs.copasiString;
-    }
-
-  return *this;
 }
 
 // static

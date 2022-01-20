@@ -14,7 +14,9 @@
 
 #include "cpsapi/core/cpsapiParameter.h"
 
+#pragma GCC diagnostic push
 #include <copasi/utilities/CCopasiParameter.h>
+#pragma GCC diagnostic pop
 
 CPSAPI_NAMESPACE_USE
 
@@ -144,7 +146,6 @@ cpsapiData cpsapiParameter::getProperty(const cpsapiProperty::Type & property, c
     return base::getProperty(property, framework);
 
   wrapped * pParameter = WRAPPED;
-  bool success = false;
 
   switch (property)
     {
@@ -178,6 +179,7 @@ cpsapiData cpsapiParameter::getProperty(const cpsapiProperty::Type & property, c
 
         case wrapped::Type::GROUP:
         case wrapped::Type::INVALID:
+        case wrapped::Type::__SIZE:
           break;
         }
       break;

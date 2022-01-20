@@ -80,6 +80,9 @@ cpsapiParameter cpsapiGroup::addParameter(const std::string & name, const CDataV
         case CCopasiParameter::Type::UDOUBLE:
           pParameter = new CCopasiParameter(name, CCopasiParameter::Type::UDOUBLE, value.toVoidPointer());
           break;
+
+        default:
+          break;
         }
       break;
 
@@ -89,6 +92,9 @@ cpsapiParameter cpsapiGroup::addParameter(const std::string & name, const CDataV
         case CCopasiParameter::Type::INT:
         case CCopasiParameter::Type::__SIZE:
           pParameter = new CCopasiParameter(name, CCopasiParameter::Type::INT, value.toVoidPointer());
+          break;
+
+        default:
           break;
         }
       break;
@@ -100,6 +106,9 @@ cpsapiParameter cpsapiGroup::addParameter(const std::string & name, const CDataV
         case CCopasiParameter::Type::__SIZE:
           pParameter = new CCopasiParameter(name, CCopasiParameter::Type::UINT, value.toVoidPointer());
           break;
+
+        default:
+          break;
         }
       break;
 
@@ -109,6 +118,9 @@ cpsapiParameter cpsapiGroup::addParameter(const std::string & name, const CDataV
         case CCopasiParameter::Type::BOOL:
         case CCopasiParameter::Type::__SIZE:
           pParameter = new CCopasiParameter(name, CCopasiParameter::Type::BOOL, value.toVoidPointer());
+          break;
+
+        default:
           break;
         }
       break;
@@ -127,11 +139,14 @@ cpsapiParameter cpsapiGroup::addParameter(const std::string & name, const CDataV
         case CCopasiParameter::Type::CN:
           pParameter = new CCopasiParameter(name, type, value.toVoidPointer());
           break;
+
+        default:
+          break;
         }
       break;
 
-    default:
-      break;
+      default:
+        break;
     }
 
   if (pParameter != nullptr)
@@ -200,9 +215,6 @@ std::vector< cpsapiParameter > cpsapiGroup::getParameters() const
 
   if (operator bool())
     {
-      wrapped::elements::iterator it = static_cast< wrapped::elements * >(WRAPPED->getValuePointer())->begin();
-      wrapped::elements::iterator end = static_cast< wrapped::elements * >(WRAPPED->getValuePointer())->end();
-
       for (CCopasiParameter * pParameter : *static_cast< wrapped::elements * >(WRAPPED->getValuePointer()))
         {
           if (pParameter == nullptr)

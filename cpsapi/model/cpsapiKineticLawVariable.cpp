@@ -16,8 +16,10 @@
 #include "cpsapi/model/cpsapiTransaction.h"
 #include "cpsapi/model/cpsapiModel.h"
 
+#pragma GCC diagnostic push
 #include <copasi/model/CModel.h>
 #include <copasi/model/CReaction.h>
+#pragma GCC diagnostic pop
 
 CPSAPI_NAMESPACE_USE
 
@@ -165,6 +167,10 @@ bool cpsapiKineticLawVariable::setProperty(const cpsapiProperty::Type & property
           break;
         }
       break;
+
+      default:
+        success = false;
+        break;
     }
 
   if (success
@@ -175,7 +181,7 @@ bool cpsapiKineticLawVariable::setProperty(const cpsapiProperty::Type & property
 }
 
 // virtual
-cpsapiData cpsapiKineticLawVariable::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
+cpsapiData cpsapiKineticLawVariable::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & /* framework */) const
 {
   if (!operator bool()
       || dynamic_cast< CReaction * >(WRAPPED->getObjectParent()) == nullptr
@@ -225,6 +231,9 @@ cpsapiData cpsapiKineticLawVariable::getProperty(const cpsapiProperty::Type & pr
             break;
           }
       break;
+
+    default:
+      break;
     }
 
   return cpsapiData();
@@ -262,7 +271,7 @@ CCommonName cpsapiKineticLawVariable::getDataCN(const cpsapiReference::Type & re
 }
 
 // static
-cpsapiKineticLawVariable::KineticLawVariable * cpsapiKineticLawVariable::KineticLawVariable::fromData(const CData & data, CUndoObjectInterface * pParent)
+cpsapiKineticLawVariable::KineticLawVariable * cpsapiKineticLawVariable::KineticLawVariable::fromData(const CData & /* data */, CUndoObjectInterface * /* pParent */)
 {
   return nullptr;
 }
@@ -276,7 +285,7 @@ cpsapiKineticLawVariable::KineticLawVariable::KineticLawVariable(CReaction * pRe
 
 cpsapiKineticLawVariable::KineticLawVariable::KineticLawVariable(const KineticLawVariable & src, CDataContainer * pParent)
   : CDataObject(src, pParent)
-  , mpMappedObject(mpMappedObject != nullptr ? cpsapiFactory::copy(*src.mpMappedObject) : nullptr)
+  , mpMappedObject(src.mpMappedObject != nullptr ? cpsapiFactory::copy(*src.mpMappedObject) : nullptr)
 {}
 
 // virtual

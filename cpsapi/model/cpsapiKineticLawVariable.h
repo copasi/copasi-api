@@ -16,7 +16,11 @@
 
 #include "cpsapi/core/cpsapiContainer.h"
 #include "cpsapi/core/cpsapiVector.h"
-#include "copasi/model/CReaction.h"
+
+
+#pragma GCC diagnostic push
+#include <copasi/model/CReaction.h>
+#pragma GCC diagnostic pop
 
 class CReaction;
 
@@ -219,7 +223,7 @@ protected:
    * @param const CCore::Framework &framework 
    * @return CCommonName
    */
-  virtual CCommonName getDataCN(const cpsapiReference::Type & reference, const CCore::Framework & framework) const;
+  virtual CCommonName getDataCN(const cpsapiReference::Type & reference, const CCore::Framework & framework) const override;
 };
 
 template <>
@@ -239,7 +243,7 @@ inline size_t cpsapiVector< cpsapiKineticLawVariable >::index(const std::string 
     }
 
   return C_INVALID_INDEX;
-};
+}
 
 CPSAPI_NAMESPACE_END
 

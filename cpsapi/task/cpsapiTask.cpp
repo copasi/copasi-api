@@ -14,7 +14,9 @@
 
 #include "cpsapi/task/cpsapiTask.h"
 
+#pragma GCC diagnostic push
 #include <copasi/utilities/CMethodFactory.h>
+#pragma GCC diagnostic pop
 
 CPSAPI_NAMESPACE_USE
 
@@ -108,7 +110,7 @@ cpsapiData cpsapiTask::getProperty(const cpsapiTask::Property & property, const 
 }
 
 // virtual
-bool cpsapiTask::setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & framework)
+bool cpsapiTask::setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & /* framework */)
 {
   if (!operator bool())
     return false;
@@ -120,7 +122,7 @@ bool cpsapiTask::setProperty(const cpsapiProperty::Type & property, const cpsapi
 }
 
 // virtual
-cpsapiData cpsapiTask::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
+cpsapiData cpsapiTask::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & /* framework */) const
 {
   if (!operator bool())
     return cpsapiData();

@@ -16,7 +16,9 @@
 
 #include "cpsapi/core/cpsapiContainer.h"
 
+#pragma GCC diagnostic push
 #include <copasi/core/CDataVector.h>
+#pragma GCC diagnostic pop
 
 CPSAPI_NAMESPACE_BEGIN
 
@@ -278,7 +280,7 @@ Object & cpsapiVector< Object >::operator[](const std::string & name)
     return operator[](index(name));
 
   return NotFound;
-};
+}
 
 template < class Object > 
 size_t cpsapiVector< Object >::index(const std::string & name) const

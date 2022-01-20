@@ -15,9 +15,11 @@
 #include "cpsapi/model/cpsapiReaction.h"
 #include "cpsapi/model/cpsapiTransaction.h"
 
+#pragma GCC diagnostic push
 #include <copasi/model/CReaction.h>
 #include <copasi/model/CReactionInterface.h>
 #include <copasi/model/CModel.h>
+#pragma GCC diagnostic pop
 
 CPSAPI_NAMESPACE_USE
 
@@ -178,7 +180,7 @@ bool cpsapiReaction::setProperty(const cpsapiProperty::Type & property, const cp
 }
 
 // virtual
-cpsapiData cpsapiReaction::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
+cpsapiData cpsapiReaction::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & /* framework */) const
 {
   if (!operator bool())
     return cpsapiData();
