@@ -256,7 +256,7 @@ cpsapiData cpsapiGroup::getProperty(const cpsapiProperty::Type & property, const
 
 CCommonName cpsapiGroup::getDataCN(const cpsapiGroup::Reference & reference, const CCore::Framework & framework) const
 {
-  getDataCN(static_cast< cpsapiReference::Type >(reference), framework);
+  return getDataCN(static_cast< cpsapiReference::Type >(reference), framework);
 }
 
 // virtual

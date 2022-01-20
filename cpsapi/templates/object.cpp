@@ -191,7 +191,7 @@ cpsapiData cpsapiTemplate::getProperty(const cpsapiProperty::Type & property, co
 
 CCommonName cpsapiTemplate::getDataCN(const cpsapiTemplate::Reference & reference, const CCore::Framework & framework) const
 {
-  getDataCN(static_cast< cpsapiReference::Type >(reference), framework);
+  return getDataCN(static_cast< cpsapiReference::Type >(reference), framework);
 }
 
 // virtual

@@ -194,7 +194,7 @@ bool cpsapiDataModel::deleteReaction(const std::string & name)
 
 cpsapiReaction cpsapiDataModel::reaction(const std::string & name)
 {
-  model().reaction(name);
+  return model().reaction(name);
 }
 
 cpsapiVector< cpsapiReaction > cpsapiDataModel::getReactions()

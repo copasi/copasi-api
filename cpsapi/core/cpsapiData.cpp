@@ -392,4 +392,5 @@ cpsapiData::DataPointer cpsapiData::copyData() const
       break;
     }
 
+  return DataPointer(nullptr, &cpsapiFactory::free_unique< void >);
 }
