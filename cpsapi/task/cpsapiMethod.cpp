@@ -26,10 +26,6 @@ cpsapiMethod::cpsapiMethod(wrapped * pWrapped)
   : base(pWrapped, Type::Method)
 {}
 
-cpsapiMethod::cpsapiMethod(const cpsapiMethod & src)
-  : base(src)
-{}
-
 // virtual
 cpsapiMethod::~cpsapiMethod()
 {}

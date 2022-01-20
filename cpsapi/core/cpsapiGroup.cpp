@@ -40,10 +40,6 @@ cpsapiGroup::cpsapiGroup(wrapped * pWrapped, const Type & type)
   assertData< cpsapiGroup >(pWrapped);
 }
 
-cpsapiGroup::cpsapiGroup(const cpsapiGroup & src)
-  : base(src)
-{}
-
 // virtual
 cpsapiGroup::~cpsapiGroup()
 {}

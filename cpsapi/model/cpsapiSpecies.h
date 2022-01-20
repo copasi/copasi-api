@@ -66,12 +66,6 @@ public:
    */
   cpsapiSpecies(wrapped * pWrapped = nullptr);
 
-  /**
-   * Copy constructor
-   * @param const cpsapiSpecies & src
-   */
-  cpsapiSpecies(const cpsapiSpecies & src);
-
   virtual ~cpsapiSpecies();
 
   virtual void accept(cpsapiVisitor & visitor) override;

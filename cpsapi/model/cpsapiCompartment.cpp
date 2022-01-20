@@ -33,10 +33,6 @@ cpsapiCompartment::cpsapiCompartment(cpsapiCompartment::wrapped * pWrapped)
   assertData< cpsapiCompartment >(pWrapped);
 }
 
-cpsapiCompartment::cpsapiCompartment(const cpsapiCompartment & src)
-  : base(src)
-{}
-
 // virtual
 cpsapiCompartment::~cpsapiCompartment()
 {}

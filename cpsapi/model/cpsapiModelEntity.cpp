@@ -36,10 +36,6 @@ cpsapiModelEntity::cpsapiModelEntity(CModelEntity * pObject, const cpsapiObject:
   : base(pObject, type)
 {}
 
-cpsapiModelEntity::cpsapiModelEntity(const cpsapiModelEntity & src)
-  : base(src)
-{}
-
 // virtual
 cpsapiModelEntity::~cpsapiModelEntity()
 {}

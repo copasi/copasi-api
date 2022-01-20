@@ -150,12 +150,6 @@ public:
   cpsapiKineticLawVariable(wrapped * pWrapped = nullptr);
 
   /**
-   * Copy constructor
-   * @param const cpsapiKineticLawVariable & src
-   */
-  cpsapiKineticLawVariable(const cpsapiKineticLawVariable & src);
-
-  /**
    * Destructor
    */
   virtual ~cpsapiKineticLawVariable();

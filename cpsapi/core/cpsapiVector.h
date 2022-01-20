@@ -175,12 +175,6 @@ public:
   cpsapiVector(wrapped * pWrapped = nullptr, const Type & type = Type::Vector);
 
   /**
-   * Copy constructor
-   * @param const cpsapiContainer & src
-   */
-  cpsapiVector(const cpsapiVector & src);
-
-  /**
    * Destructor
    */
   virtual ~cpsapiVector();
@@ -213,11 +207,6 @@ cpsapiVector< Object >::cpsapiVector(wrapped * pWrapped, const cpsapiObject::Typ
 {
   assertData< cpsapiVector< Object > >(pWrapped);
 }
-
-template < class Object > 
-cpsapiVector< Object >::cpsapiVector(const cpsapiVector & src)
-  : base(src)
-{}
 
 template < class Object > 
 cpsapiVector< Object >::~cpsapiVector()

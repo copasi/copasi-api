@@ -73,12 +73,6 @@ public:
   cpsapiTask(wrapped * pWrapped = nullptr);
 
   /**
-   * Copy constructor
-   * @param const cpsapiTask & src
-   */
-  cpsapiTask(const cpsapiTask & src);
-
-  /**
    * Destructor
    */
   virtual ~cpsapiTask();

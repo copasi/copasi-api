@@ -84,12 +84,6 @@ public:
   cpsapiParameter(wrapped * pWrapped = nullptr, const Type & type = Type::Parameter);
 
   /**
-   * Copy constructor
-   * @param const cpsapiContainer & src
-   */
-  cpsapiParameter(const cpsapiParameter & src);
-
-  /**
    * Destructor
    */
   virtual ~cpsapiParameter();

@@ -82,12 +82,6 @@ public:
   cpsapiTemplate(wrapped * pWrapped = nullptr, const Type & type = Type::Parameter);
 
   /**
-   * Copy constructor
-   * @param const cpsapiContainer & src
-   */
-  cpsapiTemplate(const cpsapiTemplate & src);
-
-  /**
    * Destructor
    */
   virtual ~cpsapiTemplate();

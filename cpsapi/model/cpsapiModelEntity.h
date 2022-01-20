@@ -52,12 +52,6 @@ protected:
    */
   cpsapiModelEntity(CModelEntity * pModelEntity, const Type & type);
 
-  /**
-   * Copy constructor
-   * @param const cpsapiModelEntity & src
-   */
-  cpsapiModelEntity(const cpsapiModelEntity & src);
-
 public:
   virtual ~cpsapiModelEntity();
 

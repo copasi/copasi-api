@@ -84,12 +84,6 @@ public:
    */
   cpsapiCompartment(wrapped * pWrapped = nullptr);
 
-  /**
-   * Copy constructor
-   * @param const cpsapiCompartment & src
-   */
-  cpsapiCompartment(const cpsapiCompartment & src);
-
   virtual ~cpsapiCompartment();
 
   virtual void accept(cpsapiVisitor & visitor) override;

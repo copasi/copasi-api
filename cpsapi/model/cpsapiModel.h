@@ -100,12 +100,6 @@ public:
    */
   cpsapiModel(wrapped * pWrapped = nullptr);
 
-  /**
-   * Copy constructor
-   * @param const cpsapiModel & src
-   */
-  cpsapiModel(const cpsapiModel & src);
-
   virtual ~cpsapiModel();
 
   virtual void accept(cpsapiVisitor & visitor) override;

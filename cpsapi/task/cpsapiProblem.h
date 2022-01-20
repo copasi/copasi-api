@@ -57,12 +57,6 @@ public:
   cpsapiProblem(wrapped * pWrapped = nullptr);
 
   /**
-   * Copy constructor
-   * @param const cpsapiProblem & src
-   */
-  cpsapiProblem(const cpsapiProblem & src);
-
-  /**
    * Destructor
    */
   virtual ~cpsapiProblem();

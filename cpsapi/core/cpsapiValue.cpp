@@ -41,10 +41,6 @@ cpsapiValue::cpsapiValue(wrapped * pWrapped)
     operator=(nullptr);
 }
 
-cpsapiValue::cpsapiValue(const cpsapiValue & src)
-  : base(src)
-{}
-
 cpsapiValue::~cpsapiValue()
 {}
 

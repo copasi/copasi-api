@@ -85,12 +85,6 @@ public:
   cpsapiValue(wrapped * pWrapped = nullptr);
 
   /**
-   * Copy constructor
-   * @param const cpsapiValue & src
-   */
-  cpsapiValue(const cpsapiValue & src);
-
-  /**
    * Destructor
    */
   virtual ~cpsapiValue();

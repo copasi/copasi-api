@@ -33,10 +33,6 @@ cpsapiGlobalQuantity::cpsapiGlobalQuantity(wrapped * pWrapped)
   : base(pWrapped, Type::GlobalQuantity)
 {}
 
-cpsapiGlobalQuantity::cpsapiGlobalQuantity(const cpsapiGlobalQuantity & src)
-  : base(src)
-{}
-
 // virtual
 cpsapiGlobalQuantity::~cpsapiGlobalQuantity()
 {}

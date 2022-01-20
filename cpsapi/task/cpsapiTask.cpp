@@ -38,10 +38,6 @@ cpsapiTask::cpsapiTask(wrapped * pWrapped)
     }
 }
 
-cpsapiTask::cpsapiTask(const cpsapiTask & src)
-  : base(src)
-{}
-
 // virtual
 cpsapiTask::~cpsapiTask()
 {}

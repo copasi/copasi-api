@@ -90,12 +90,6 @@ public:
    */
   cpsapiReaction(wrapped * pWrapped = nullptr);
 
-  /**
-   * Copy constructor
-   * @param const cpsapiReaction & src
-   */
-  cpsapiReaction(const cpsapiReaction & src);
-
   virtual ~cpsapiReaction();
 
   virtual void accept(cpsapiVisitor & visitor) override;

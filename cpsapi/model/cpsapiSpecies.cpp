@@ -32,10 +32,6 @@ cpsapiSpecies::cpsapiSpecies(wrapped * pWrapped)
   : base(pWrapped, Type::Species)
 {}
 
-cpsapiSpecies::cpsapiSpecies(const cpsapiSpecies & src)
-  : base(src)
-{}
-
 // virtual
 cpsapiSpecies::~cpsapiSpecies()
 {}

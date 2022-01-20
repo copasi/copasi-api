@@ -74,12 +74,6 @@ public:
   cpsapiDataModel(wrapped * pDataModel = nullptr);
 
   /**
-   * Copy constructor
-   * @param const cpsapiContainer & src
-   */
-  cpsapiDataModel(const cpsapiDataModel & src);
-
-  /**
    * Destructor
    */
   virtual ~cpsapiDataModel();

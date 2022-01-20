@@ -42,10 +42,6 @@ cpsapiParameter::cpsapiParameter(wrapped * pWrapped, const cpsapiObject::Type & 
   : base(pWrapped, type)
 {}
 
-cpsapiParameter::cpsapiParameter(const cpsapiParameter & src)
-  : base(src)
-{}
-
 // virtual
 cpsapiParameter::~cpsapiParameter()
 {}

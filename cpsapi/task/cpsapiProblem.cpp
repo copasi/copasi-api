@@ -26,10 +26,6 @@ cpsapiProblem::cpsapiProblem(wrapped * pWrapped)
   : base(pWrapped, Type::Problem)
 {}
 
-cpsapiProblem::cpsapiProblem(const cpsapiProblem & src)
-  : base(src)
-{}
-
 // virtual
 cpsapiProblem::~cpsapiProblem()
 {}

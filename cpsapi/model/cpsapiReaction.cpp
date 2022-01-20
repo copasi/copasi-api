@@ -41,10 +41,6 @@ cpsapiReaction::cpsapiReaction(cpsapiReaction::wrapped * pWrapped)
   assertData< cpsapiReaction >(pWrapped);
 }
 
-cpsapiReaction::cpsapiReaction(const cpsapiReaction & src)
-  : base(src)
-{}
-
 // virtual
 cpsapiReaction::~cpsapiReaction()
 {}

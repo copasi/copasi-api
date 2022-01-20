@@ -45,12 +45,6 @@ protected:
 
 public:
   /**
-   * Copy constructor
-   * @param const cpsapiContainer & src
-   */
-  cpsapiContainer(const cpsapiContainer & src);
-
-  /**
    * Destructor
    */
   virtual ~cpsapiContainer();

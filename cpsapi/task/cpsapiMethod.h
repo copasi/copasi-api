@@ -59,12 +59,6 @@ public:
   cpsapiMethod(wrapped * pWrapped = nullptr);
 
   /**
-   * Copy constructor
-   * @param const cpsapiMethod & src
-   */
-  cpsapiMethod(const cpsapiMethod & src);
-
-  /**
    * Destructor
    */
   virtual ~cpsapiMethod();

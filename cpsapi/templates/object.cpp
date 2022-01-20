@@ -42,10 +42,6 @@ cpsapiTemplate::cpsapiTemplate(wrapped * pWrapped, const cpsapiObject::Type & ty
   : base(pWrapped, type)
 {}
 
-cpsapiTemplate::cpsapiTemplate(const cpsapiTemplate & src)
-  : base(src)
-{}
-
 // virtual
 cpsapiTemplate::~cpsapiTemplate()
 {}

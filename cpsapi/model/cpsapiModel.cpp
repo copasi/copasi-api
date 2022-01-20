@@ -48,10 +48,6 @@ cpsapiModel::cpsapiModel(wrapped * pWrapped)
   assertData< cpsapiModel >(pWrapped);
 }
 
-cpsapiModel::cpsapiModel(const cpsapiModel & src)
-  : base(src)
-{}
-
 // virtual
 cpsapiModel::~cpsapiModel()
 {}

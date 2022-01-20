@@ -95,12 +95,6 @@ public:
   cpsapiGroup(wrapped * pGroup, const Type & type = Type::Group);
 
   /**
-   * Copy constructor
-   * @param const cpsapiGroup & src
-   */
-  cpsapiGroup(const cpsapiGroup & src);
-
-  /**
    * Destructor
    */
   virtual ~cpsapiGroup();

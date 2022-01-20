@@ -60,12 +60,6 @@ public:
    */
   cpsapiGlobalQuantity(wrapped * pWrapped = nullptr);
 
-  /**
-   * Copy constructor
-   * @param const cpsapiGlobalQuantity & src
-   */
-  cpsapiGlobalQuantity(const cpsapiGlobalQuantity & src);
-
   virtual ~cpsapiGlobalQuantity();
 
   virtual void accept(cpsapiVisitor & visitor) override;

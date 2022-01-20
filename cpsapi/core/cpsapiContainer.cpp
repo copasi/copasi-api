@@ -29,10 +29,6 @@ cpsapiContainer::cpsapiContainer(wrapped * pWrapped, const cpsapiObject::Type & 
   : base(pWrapped, type)
 {}
 
-cpsapiContainer::cpsapiContainer(const cpsapiContainer & src)
-  : base(src)
-{}
-
 // virtual
 cpsapiContainer::~cpsapiContainer()
 {}

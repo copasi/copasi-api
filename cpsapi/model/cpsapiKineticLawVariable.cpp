@@ -52,10 +52,6 @@ cpsapiKineticLawVariable::cpsapiKineticLawVariable(wrapped * pWrapped)
   assertData< cpsapiKineticLawVariable >(pWrapped);
 }
 
-cpsapiKineticLawVariable::cpsapiKineticLawVariable(const cpsapiKineticLawVariable & src)
-  : base(src)
-{}
-
 // virtual
 cpsapiKineticLawVariable::~cpsapiKineticLawVariable()
 {}
