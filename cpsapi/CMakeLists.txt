@@ -84,7 +84,6 @@ endif()
 # 	CMAKE_CURRENT_BINARY_DIR: ${CMAKE_CURRENT_SOURCE_DIR}
 # ")
 
-
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/git-commit.h ${GIT_COMMIT_OUT})
 
 copy_if_different_and_remove(
@@ -108,31 +107,29 @@ set_target_properties(cpsapi PROPERTIES
     CXX_EXTENSIONS NO
 )
 
-if(NOT MSVC)
-  target_compile_options(cpsapi PRIVATE -Wall -Wextra -Wpedantic -Werror -Wno-overloaded-virtual)
+if(CMAKE_BUILD_TYPE STREQUAL "Debug"  AND NOT MSVC)
+    target_compile_options(cpsapi PRIVATE -Wall -Wextra -Wpedantic -Werror -Wno-overloaded-virtual)
 endif()
 
 target_link_libraries(cpsapi ${LIBCOPASISE_LIBRARY_NAME})
 
 # set include directory, so that binary dir will be included during build
 target_include_directories(cpsapi PUBLIC
- 
-   $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
-   $<INSTALL_INTERFACE:cpsapi> 
+    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
+    $<INSTALL_INTERFACE:cpsapi> 
 )
 
 if (OPENMP_ENABLED)
 	target_compile_options(cpsapi PUBLIC ${OpenMP_CXX_FLAGS})
 endif (OPENMP_ENABLED)
 
-
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/git-commit.h DESTINATION include/cpsapi)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cpsapiConfig.h DESTINATION include/cpsapi)
 
 foreach (file ${CPSAPI_HEADERS})
-  get_filename_component(dir ${file} DIRECTORY)
-  string(REPLACE ${CMAKE_CURRENT_SOURCE_DIR} include/cpsapi destination ${dir})
-  install(FILES ${file} DESTINATION ${destination})
+    get_filename_component(dir ${file} DIRECTORY)
+    string(REPLACE ${CMAKE_CURRENT_SOURCE_DIR} include/cpsapi destination ${dir})
+    install(FILES ${file} DESTINATION ${destination})
 endforeach()
 
 install(TARGETS cpsapi EXPORT cpsapi-config
@@ -140,19 +137,20 @@ install(TARGETS cpsapi EXPORT cpsapi-config
     LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
     INCLUDES DESTINATION include
-    )
+)
 
 install (EXPORT cpsapi-config
     DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake
-    )
+)
 
 WRITE_BASIC_PACKAGE_VERSION_FILE(
     ${CMAKE_CURRENT_BINARY_DIR}/cpsapi-config-version.cmake
     VERSION ${CMAKE_PROJECT_VERSION_MAJOR}.${CMAKE_PROJECT_VERSION_MINOR}.${CMAKE_PROJECT_VERSION_PATCH}
     COMPATIBILITY AnyNewerVersion
-    )
+)
 
 install (FILES
     ${CMAKE_CURRENT_BINARY_DIR}/cpsapi-config-version.cmake
-    DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake)
+    DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake
+)
 
