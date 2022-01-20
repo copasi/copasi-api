@@ -216,14 +216,14 @@ cpsapiData cpsapiObject::getProperty(const std::string & property, const std::st
   return getProperty(cpsapiProperty::Name.toEnum(property), CCore::FrameworkNames.toEnum(framework));
 }
 
-CCommonName cpsapiObject::getDataCN (const cpsapiObject::Reference & reference, const CCore::Framework & framework ) const
+CCommonName cpsapiObject::getDataCN(const cpsapiObject::Reference & reference, const CCore::Framework & framework ) const
 {
-  return getDataCN (static_cast< cpsapiReference::Type >(reference), framework);
+  return getDataCN(static_cast< cpsapiReference::Type >(reference), framework);
 }
 
-CCommonName cpsapiObject::getDataCN (const std::string & reference, const std::string & framework) const
+CCommonName cpsapiObject::getDataCN(const std::string & reference, const std::string & framework) const
 {
-  return getDataCN (cpsapiReference::Name.toEnum(reference), CCore::FrameworkNames.toEnum(framework));
+  return getDataCN(cpsapiReference::Name.toEnum(reference), CCore::FrameworkNames.toEnum(framework));
 }
 
 // virtual
@@ -279,7 +279,7 @@ cpsapiData cpsapiObject::getProperty(const cpsapiProperty::Type & property, cons
 }
 
 // virtual 
-CCommonName cpsapiObject::getDataCN (const cpsapiReference::Type & reference, const CCore::Framework & framework) const
+CCommonName cpsapiObject::getDataCN(const cpsapiReference::Type & reference, const CCore::Framework & framework) const
 {
   if (!operator bool()
       || isHiddenReference< cpsapiObject >(reference)

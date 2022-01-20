@@ -166,13 +166,13 @@ cpsapiData cpsapiValue::getProperty(const cpsapiProperty::Type & property, const
   return cpsapiData();
 }
 
-CCommonName cpsapiValue::getDataCN (const cpsapiValue::Reference & reference, const CCore::Framework & framework) const
+CCommonName cpsapiValue::getDataCN(const cpsapiValue::Reference & reference, const CCore::Framework & framework) const
 {
-  getDataCN (static_cast< cpsapiReference::Type >(reference), framework);
+  getDataCN(static_cast< cpsapiReference::Type >(reference), framework);
 }
 
 // virtual
-CCommonName cpsapiValue::getDataCN (const cpsapiReference::Type & reference, const CCore::Framework & framework) const
+CCommonName cpsapiValue::getDataCN(const cpsapiReference::Type & reference, const CCore::Framework & framework) const
 {
   if (!operator bool()
       || isHiddenReference< cpsapiValue >(reference))
