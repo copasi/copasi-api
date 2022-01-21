@@ -47,7 +47,7 @@ cpsapiGroup::~cpsapiGroup()
 // virtual
 void cpsapiGroup::accept(cpsapiVisitor & visitor)
 {
-  if (!operator bool())
+  if (!isValid())
     return;
 
   visitor.visit(this, Type::Group);
@@ -58,7 +58,7 @@ cpsapiParameter cpsapiGroup::addParameter(const std::string & name, const CDataV
 {
   cpsapiParameter Parameter(nullptr, Type::Parameter);
 
-  if (!operator bool())
+  if (!isValid())
     return Parameter;
 
   CCopasiParameter * pParameter = nullptr;
@@ -160,7 +160,7 @@ cpsapiGroup cpsapiGroup::addGroup(const std::string & name)
 {
   cpsapiGroup Group(nullptr);
 
-  if (!operator bool())
+  if (!isValid())
     return Group;
 
   wrapped * pWrapped = new wrapped(name);
@@ -239,7 +239,7 @@ cpsapiData cpsapiGroup::getProperty(const Property & property, const CCore::Fram
 // virtual
 bool cpsapiGroup::setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & framework)
 {
-  if (!operator bool()
+  if (!isValid()
       || isHiddenProperty< cpsapiGroup >(property))
     return false;
 
@@ -252,7 +252,7 @@ bool cpsapiGroup::setProperty(const cpsapiProperty::Type & property, const cpsap
 // virtual 
 cpsapiData cpsapiGroup::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
 {
-  if (!operator bool()
+  if (!isValid()
       || isHiddenProperty< cpsapiGroup >(property))
     return cpsapiData();
 
@@ -270,7 +270,7 @@ CCommonName cpsapiGroup::getDataCN(const cpsapiGroup::Reference & reference, con
 // virtual
 CCommonName cpsapiGroup::getDataCN(const cpsapiReference::Type & reference, const CCore::Framework & framework) const
 {
-  if (!operator bool()
+  if (!isValid()
       || isHiddenReference< cpsapiGroup >(reference))
     return Invalid;
 
@@ -282,7 +282,7 @@ CCommonName cpsapiGroup::getDataCN(const cpsapiReference::Type & reference, cons
 
 cpsapiParameter cpsapiGroup::__parameter(const std::string & name) const
 {
-  if (!operator bool())
+  if (!isValid())
     return cpsapiParameter(nullptr, Type::Parameter);
 
   if (name.empty())

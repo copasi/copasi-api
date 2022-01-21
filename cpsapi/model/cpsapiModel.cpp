@@ -55,7 +55,7 @@ cpsapiModel::~cpsapiModel()
 // virtual
 void cpsapiModel::accept(cpsapiVisitor & visitor)
 {
-  if (!operator bool())
+  if (!isValid())
     return;
 
   visitor.visit(this, Type::Model);
@@ -76,7 +76,7 @@ void cpsapiModel::endTransaction() const
 
 bool cpsapiModel::synchronize(std::set< const CDataObject * > & /* changedObjects */, const CCore::Framework & framework)
 {
-  if (!operator bool())
+  if (!isValid())
     return false;
 
   WRAPPED->updateInitialValues(framework != CCore::Framework::__SIZE ? framework : CCore::Framework::Concentration);
@@ -86,7 +86,7 @@ bool cpsapiModel::synchronize(std::set< const CDataObject * > & /* changedObject
 
 bool cpsapiModel::compile()
 {
-  if (!operator bool())
+  if (!isValid())
     return false;
 
   return WRAPPED->compileIfNecessary(nullptr);
@@ -94,7 +94,7 @@ bool cpsapiModel::compile()
 
 cpsapiCompartment cpsapiModel::addCompartment(const std::string & name)
 {
-  if (!operator bool())
+  if (!isValid())
     return nullptr;
 
   cpsapiTransaction::beginStructureChange(WRAPPED);
@@ -143,7 +143,7 @@ cpsapiCompartment cpsapiModel::compartment(const std::string & name)
 
 cpsapiVector< cpsapiCompartment > cpsapiModel::getCompartments() const
 {
-  if (!operator bool())
+  if (!isValid())
     return cpsapiVector< cpsapiCompartment >();
 
   return cpsapiVector< cpsapiCompartment >(&WRAPPED->getCompartments());
@@ -151,7 +151,7 @@ cpsapiVector< cpsapiCompartment > cpsapiModel::getCompartments() const
 
 cpsapiCompartment cpsapiModel::__compartment(const std::string & name) const
 {
-  if (!operator bool())
+  if (!isValid())
     return nullptr;
 
   if (name.empty())
@@ -172,7 +172,7 @@ void cpsapiModel::updateDefaultCompartment(const cpsapiCompartment & compartment
 
 cpsapiSpecies cpsapiModel::addSpecies(const std::string & name, const std::string & compartment)
 {
-  if (!operator bool())
+  if (!isValid())
     return nullptr;
 
   cpsapiCompartment Compartment(__compartment(compartment));
@@ -204,7 +204,7 @@ cpsapiSpecies cpsapiModel::species(const std::string & name, const std::string &
 
 cpsapiVector< cpsapiSpecies > cpsapiModel::getSpecies() const
 {
-  if (!operator bool())
+  if (!isValid())
     return cpsapiVector< cpsapiSpecies >();
 
   return cpsapiVector< cpsapiSpecies >(&WRAPPED->getMetabolites());
@@ -217,7 +217,7 @@ cpsapiSpecies cpsapiModel::__species(const std::string & name, const std::string
 
 cpsapiGlobalQuantity cpsapiModel::addGlobalQuantity(const std::string & name)
 {
-  if (!operator bool())
+  if (!isValid())
     return nullptr;
 
   cpsapiTransaction::beginStructureChange(WRAPPED);
@@ -264,7 +264,7 @@ cpsapiGlobalQuantity cpsapiModel::globalQuantity(const std::string & name)
 
 cpsapiVector< cpsapiGlobalQuantity > cpsapiModel::getGlobalQuantities() const
 {
-  if (!operator bool())
+  if (!isValid())
     return cpsapiVector< cpsapiGlobalQuantity >();
 
   return cpsapiVector< cpsapiGlobalQuantity >(&WRAPPED->getModelValues());
@@ -272,7 +272,7 @@ cpsapiVector< cpsapiGlobalQuantity > cpsapiModel::getGlobalQuantities() const
 
 cpsapiGlobalQuantity cpsapiModel::__globalQuantity(const std::string & name) const
 {
-  if (!operator bool())
+  if (!isValid())
     return nullptr;
 
   if (name.empty())
@@ -293,7 +293,7 @@ void cpsapiModel::updateDefaultGlobalQuantity(const cpsapiGlobalQuantity & globa
 
 cpsapiReaction cpsapiModel::addReaction(const std::string & name)
 {
-  if (!operator bool())
+  if (!isValid())
     return nullptr;
 
   cpsapiTransaction::beginStructureChange(WRAPPED);
@@ -340,7 +340,7 @@ cpsapiReaction cpsapiModel::reaction(const std::string & name)
 
 cpsapiVector< cpsapiReaction > cpsapiModel::getReactions() const
 {
-  if (!operator bool())
+  if (!isValid())
     return cpsapiVector< cpsapiReaction >();
 
   return cpsapiVector< cpsapiReaction >(&WRAPPED->getReactions());
@@ -348,7 +348,7 @@ cpsapiVector< cpsapiReaction > cpsapiModel::getReactions() const
 
 cpsapiReaction cpsapiModel::__reaction(const std::string & name) const
 {
-  if (!operator bool())
+  if (!isValid())
     return nullptr;
 
   if (name.empty())
@@ -378,7 +378,7 @@ void cpsapiModel::deleteDependents(const CDataObject::DataObjectSet & set)
 
 void cpsapiModel::deleteAllDependents(CDataContainer * pContainer)
 {
-  if (!operator bool())
+  if (!isValid())
     return;
 
   WRAPPED->compileIfNecessary(nullptr);
@@ -420,7 +420,7 @@ cpsapiData cpsapiModel::getProperty(const cpsapiModel::Property & property, cons
 // virtual
 bool cpsapiModel::setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & framework)
 {
-  if (!operator bool())
+  if (!isValid())
     return false;
 
   if (!isImplementedProperty< cpsapiModel >(property))
@@ -548,7 +548,7 @@ bool cpsapiModel::setProperty(const cpsapiProperty::Type & property, const cpsap
 // virtual
 cpsapiData cpsapiModel::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & /* framework */) const
 {
-  if (!operator bool())
+  if (!isValid())
     return cpsapiData();
 
   if (!isImplementedProperty< cpsapiModel >(property))

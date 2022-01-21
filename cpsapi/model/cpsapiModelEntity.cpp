@@ -43,7 +43,7 @@ cpsapiModelEntity::~cpsapiModelEntity()
 // virtual 
 void cpsapiModelEntity::accept(cpsapiVisitor & visitor)
 {
-  if (!operator bool())
+  if (!isValid())
     return;
 
   visitor.visit(this, Type::ModelEntity);
@@ -63,7 +63,7 @@ cpsapiData cpsapiModelEntity::getProperty(const Property & property, const CCore
 // virtual
 bool cpsapiModelEntity::setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & framework)
 {
-  if (!operator bool())
+  if (!isValid())
     return false;
 
   if (!isImplementedProperty<cpsapiModelEntity>(property))
@@ -128,7 +128,7 @@ bool cpsapiModelEntity::setProperty(const cpsapiProperty::Type & property, const
 // virtual 
 cpsapiData cpsapiModelEntity::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
 {
-  if (!operator bool())
+  if (!isValid())
     return cpsapiData();
 
   if (!isImplementedProperty<cpsapiModelEntity>(property))

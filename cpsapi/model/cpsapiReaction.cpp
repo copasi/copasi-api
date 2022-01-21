@@ -48,7 +48,7 @@ cpsapiReaction::~cpsapiReaction()
 // virtual 
 void cpsapiReaction::accept(cpsapiVisitor & visitor)
 {
-  if (!operator bool())
+  if (!isValid())
     return;
 
   visitor.visit(this, Type::Reaction);
@@ -67,7 +67,7 @@ cpsapiKineticLawVariable::KineticLawVariable * cpsapiReaction::assertVariable(co
 
 cpsapiKineticLawVariable cpsapiReaction::variable(const std::string & name)
 {
-  if (!operator bool())
+  if (!isValid())
     return nullptr;
 
   if (!name.empty() &&
@@ -108,7 +108,7 @@ cpsapiData cpsapiReaction::getProperty(const cpsapiReaction::Property & property
 // virtual
 bool cpsapiReaction::setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & framework)
 {
-  if (!operator bool())
+  if (!isValid())
     return false;
 
   if (!isImplementedProperty< cpsapiReaction >(property))
@@ -178,7 +178,7 @@ bool cpsapiReaction::setProperty(const cpsapiProperty::Type & property, const cp
 // virtual
 cpsapiData cpsapiReaction::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & /* framework */) const
 {
-  if (!operator bool())
+  if (!isValid())
     return cpsapiData();
 
   if (!isImplementedProperty<cpsapiReaction>(property))

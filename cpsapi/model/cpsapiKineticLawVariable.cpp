@@ -56,12 +56,18 @@ cpsapiKineticLawVariable::cpsapiKineticLawVariable(wrapped * pWrapped)
 cpsapiKineticLawVariable::~cpsapiKineticLawVariable()
 {}
 
+// virtual 
+bool cpsapiKineticLawVariable::isValid() const
+{
+  return (base::isValid()
+          && dynamic_cast< CReaction * >(WRAPPED->getObjectParent()) != nullptr
+          && WRAPPED->getObjectName() != "@");
+}
+
 // virtual
 void cpsapiKineticLawVariable::accept(cpsapiVisitor & visitor)
 {
-  if (!operator bool()
-      || WRAPPED->getObjectParent() == nullptr
-      || WRAPPED->getObjectName() == "@")
+  if (!isValid())
     return;
 
   visitor.visit(this, Type::ReactionParameter);
@@ -81,9 +87,7 @@ cpsapiData cpsapiKineticLawVariable::getProperty(const cpsapiKineticLawVariable:
 // virtual
 bool cpsapiKineticLawVariable::setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & framework)
 {
-  if (!operator bool()
-      || dynamic_cast< CReaction * >(WRAPPED->getObjectParent()) == nullptr
-      || WRAPPED->getObjectName() == "@"
+  if (!isValid()
       || isHiddenProperty< cpsapiKineticLawVariable >(property))
     return false;
 
@@ -179,9 +183,7 @@ bool cpsapiKineticLawVariable::setProperty(const cpsapiProperty::Type & property
 // virtual
 cpsapiData cpsapiKineticLawVariable::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & /* framework */) const
 {
-  if (!operator bool()
-      || dynamic_cast< CReaction * >(WRAPPED->getObjectParent()) == nullptr
-      || WRAPPED->getObjectName() == "@"
+  if (!isValid()
       || isHiddenProperty< cpsapiKineticLawVariable >(property))
     return cpsapiData();
 
@@ -243,7 +245,7 @@ CCommonName cpsapiKineticLawVariable::getDataCN(const cpsapiKineticLawVariable::
 // virtual 
 CCommonName cpsapiKineticLawVariable::getDataCN(const cpsapiReference::Type & reference, const CCore::Framework & framework) const
 {
-  if (!operator bool()
+  if (!isValid()
       || isHiddenReference< cpsapiKineticLawVariable >(reference))
     return Invalid;
 

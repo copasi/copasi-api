@@ -49,7 +49,7 @@ cpsapiParameter::~cpsapiParameter()
 // virtual 
 void cpsapiParameter::accept(cpsapiVisitor & visitor)
 {
-  if (!operator bool())
+  if (!isValid())
     return;
 
   visitor.visit(this, Type::Parameter);
@@ -69,7 +69,7 @@ cpsapiData cpsapiParameter::getProperty(const Property & property, const CCore::
 // virtual
 bool cpsapiParameter::setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & framework)
 {
-  if (!operator bool()
+  if (!isValid()
       && isHiddenProperty< cpsapiParameter >(property))
     return false;
 
@@ -134,7 +134,7 @@ bool cpsapiParameter::setProperty(const cpsapiProperty::Type & property, const c
 // virtual 
 cpsapiData cpsapiParameter::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
 {
-  if (!operator bool()
+  if (!isValid()
       && isHiddenProperty< cpsapiParameter >(property))
     return cpsapiData();
 
@@ -195,7 +195,7 @@ CCommonName cpsapiParameter::getDataCN(const cpsapiParameter::Reference & refere
 // virtual
 CCommonName cpsapiParameter::getDataCN(const cpsapiReference::Type & reference, const CCore::Framework & framework) const
 {
-  if (!operator bool()
+  if (!isValid()
       || isHiddenReference< cpsapiParameter >(reference))
     return Invalid;
 

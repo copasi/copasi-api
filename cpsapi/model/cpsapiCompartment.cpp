@@ -40,7 +40,7 @@ cpsapiCompartment::~cpsapiCompartment()
 // virtual 
 void cpsapiCompartment::accept(cpsapiVisitor & visitor)
 {
-  if (!operator bool())
+  if (!isValid())
     return;
 
   visitor.visit(this, Type::Compartment);
@@ -49,7 +49,7 @@ void cpsapiCompartment::accept(cpsapiVisitor & visitor)
 
 cpsapiSpecies cpsapiCompartment::addSpecies(const std::string & name)
 {
-  if (!operator bool())
+  if (!isValid())
     return nullptr;
   
   cpsapiSpecies Species = cpsapiModel(WRAPPED->getModel()).addSpecies(name, getObject()->getObjectName());
@@ -97,7 +97,7 @@ cpsapiSpecies cpsapiCompartment::species(const std::string & name)
 
 cpsapiVector< cpsapiSpecies > cpsapiCompartment::getSpecies() const
 {
-  if (!operator bool())
+  if (!isValid())
     return cpsapiVector< cpsapiSpecies >();
 
   return cpsapiVector< cpsapiSpecies >(&WRAPPED->getMetabolites());
@@ -105,7 +105,7 @@ cpsapiVector< cpsapiSpecies > cpsapiCompartment::getSpecies() const
 
 cpsapiSpecies cpsapiCompartment::__species(const std::string & name) const
 { 
-  if (!operator bool())
+  if (!isValid())
     return nullptr;
     
   if (name.empty())
@@ -137,7 +137,7 @@ cpsapiData cpsapiCompartment::getProperty(const cpsapiCompartment::Property & pr
 // virtual
 bool cpsapiCompartment::setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & framework)
 {
-  if (!operator bool())
+  if (!isValid())
     return false;
 
   if (!isImplementedProperty<cpsapiCompartment>(property))
@@ -190,7 +190,7 @@ bool cpsapiCompartment::setProperty(const cpsapiProperty::Type & property, const
 // virtual
 cpsapiData cpsapiCompartment::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & /* framework */) const
 {
-  if (!operator bool())
+  if (!isValid())
     return cpsapiData();
 
   if (!isImplementedProperty<cpsapiCompartment>(property))

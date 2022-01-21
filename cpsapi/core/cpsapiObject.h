@@ -217,6 +217,12 @@ public:
   operator bool() const;
 
   /**
+   * Check whether the object is valid 
+   * @return bool valid
+   */
+  virtual bool isValid() const;
+
+  /**
    * A a virtual accept method implementing a visitor pattern.
    * Valid cpsapiObjects will call:  visitor.visit(*this)
    * Visitors have read and write access to the object.

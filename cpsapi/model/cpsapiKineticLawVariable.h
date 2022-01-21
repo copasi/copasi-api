@@ -155,6 +155,12 @@ public:
   virtual ~cpsapiKineticLawVariable();
 
   /**
+   * Check whether the object is valid 
+   * @return bool valid
+   */
+  virtual bool isValid() const override;
+
+  /**
    * Accept a visitor
    * @param cpsapiVisitor & visitor
    */

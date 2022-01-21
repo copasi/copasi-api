@@ -181,6 +181,12 @@ cpsapiObject::Type cpsapiObject::getType() const
 
 cpsapiObject::operator bool() const
 {
+  return isValid();
+}
+
+// virtual 
+bool cpsapiObject::isValid() const
+{
   return DATA->mpObject != nullptr;
 }
 
@@ -192,7 +198,7 @@ CDataObject * cpsapiObject::getObject() const
 // virtual 
 void cpsapiObject::accept(cpsapiVisitor & visitor)
 {
-  if (!operator bool())
+  if (!isValid())
     return;
 
   visitor.visit(this, Type::Object);
@@ -231,7 +237,7 @@ CCommonName cpsapiObject::getDataCN(const std::string & reference, const std::st
 // virtual
 bool cpsapiObject::setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & /* framework */)
 {
-  if (!operator bool()
+  if (!isValid()
       || isHiddenProperty< cpsapiObject >(property)
       || !isImplementedProperty< cpsapiObject >(property))
     return false;
@@ -256,7 +262,7 @@ bool cpsapiObject::setProperty(const cpsapiProperty::Type & property, const cpsa
 // virtual 
 cpsapiData cpsapiObject::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & /* framework */) const
 {
-  if (!operator bool()
+  if (!isValid()
       || isHiddenProperty< cpsapiObject >(property)
       || !isImplementedProperty< cpsapiObject >(property))
     return cpsapiData();
@@ -283,7 +289,7 @@ cpsapiData cpsapiObject::getProperty(const cpsapiProperty::Type & property, cons
 // virtual 
 CCommonName cpsapiObject::getDataCN(const cpsapiReference::Type & reference, const CCore::Framework & /* framework */) const
 {
-  if (!operator bool()
+  if (!isValid()
       || isHiddenReference< cpsapiObject >(reference)
       || !isImplementedReference< cpsapiObject >(reference))
     return Invalid;

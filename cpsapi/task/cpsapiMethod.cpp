@@ -33,7 +33,7 @@ cpsapiMethod::~cpsapiMethod()
 // virtual
 void cpsapiMethod::accept(cpsapiVisitor & visitor)
 {
-  if (!operator bool())
+  if (!isValid())
     return;
 
   visitor.visit(this, Type::Method);
@@ -53,7 +53,7 @@ cpsapiData cpsapiMethod::getProperty(const cpsapiMethod::Property & property, co
 // virtual
 bool cpsapiMethod::setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & /* framework */)
 {
-  if (!operator bool())
+  if (!isValid())
     return false;
 
   if (!isImplementedProperty< cpsapiMethod >(property))
@@ -66,7 +66,7 @@ bool cpsapiMethod::setProperty(const cpsapiProperty::Type & property, const cpsa
 // virtual
 cpsapiData cpsapiMethod::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & /* framework */) const
 {
-  if (!operator bool())
+  if (!isValid())
     return cpsapiData();
 
   if (!isImplementedProperty< cpsapiMethod >(property))

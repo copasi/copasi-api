@@ -215,7 +215,7 @@ cpsapiVector< Object >::~cpsapiVector()
 template < class Object > 
 void cpsapiVector< Object >::accept(cpsapiVisitor & visitor)
 {
-  if (!operator bool())
+  if (!isValid())
     return;
 
   visitor.visit(this, Type::Vector);
@@ -225,7 +225,7 @@ void cpsapiVector< Object >::accept(cpsapiVisitor & visitor)
 template < class Object > 
 size_t cpsapiVector< Object >::size() const
 {
-  if (!operator bool())
+  if (!isValid())
     return 0;
 
   return WRAPPED->size();
@@ -234,7 +234,7 @@ size_t cpsapiVector< Object >::size() const
 template < class Object > 
 typename cpsapiVector< Object >::iterator cpsapiVector< Object >::begin()
 {
-  if (!operator bool())
+  if (!isValid())
     return iterator(DATA->mMap);
 
   return iterator(WRAPPED->begin(), DATA->mMap);
@@ -243,7 +243,7 @@ typename cpsapiVector< Object >::iterator cpsapiVector< Object >::begin()
 template < class Object > 
 typename cpsapiVector< Object >::iterator cpsapiVector< Object >::end()
 {
-  if (!operator bool())
+  if (!isValid())
     return iterator(DATA->mMap);
 
   return iterator(WRAPPED->end(), DATA->mMap);

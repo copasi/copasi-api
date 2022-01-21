@@ -45,7 +45,7 @@ cpsapiTask::~cpsapiTask()
 // virtual
 void cpsapiTask::accept(cpsapiVisitor & visitor)
 {
-  if (!operator bool())
+  if (!isValid())
     return;
 
   visitor.visit(this, Type::Task);
@@ -54,7 +54,7 @@ void cpsapiTask::accept(cpsapiVisitor & visitor)
 
 cpsapiMethod cpsapiTask::createMethod(const CTaskEnum::Method & type) const
 {
-  if (!operator bool())
+  if (!isValid())
     return nullptr;
 
   return CMethodFactory::create(WRAPPED->getType(), type, WRAPPED);
@@ -62,7 +62,7 @@ cpsapiMethod cpsapiTask::createMethod(const CTaskEnum::Method & type) const
 
 bool cpsapiTask::setMethod(const cpsapiMethod & newMethod)
 {
-  if (!operator bool())
+  if (!isValid())
     return false;
 
   CTaskEnum::Method NewType = newMethod ? static_cast< CCopasiMethod * >(*newMethod)->getSubType() : CTaskEnum::Method::UnsetMethod;
@@ -108,7 +108,7 @@ cpsapiData cpsapiTask::getProperty(const cpsapiTask::Property & property, const 
 // virtual
 bool cpsapiTask::setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & /* framework */)
 {
-  if (!operator bool())
+  if (!isValid())
     return false;
 
   if (!isImplementedProperty< cpsapiTask >(property))
@@ -120,7 +120,7 @@ bool cpsapiTask::setProperty(const cpsapiProperty::Type & property, const cpsapi
 // virtual
 cpsapiData cpsapiTask::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & /* framework */) const
 {
-  if (!operator bool())
+  if (!isValid())
     return cpsapiData();
 
   if (!isImplementedProperty< cpsapiTask >(property))

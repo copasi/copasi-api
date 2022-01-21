@@ -39,7 +39,7 @@ cpsapiSpecies::~cpsapiSpecies()
 // virtual 
 void cpsapiSpecies::accept(cpsapiVisitor & visitor)
 {
-  if (!operator bool())
+  if (!isValid())
     return;
 
   visitor.visit(this, Type::Species);
@@ -113,7 +113,7 @@ bool cpsapiSpecies::setProperty(const cpsapiProperty::Type & property, const cps
 // virtual 
 cpsapiData cpsapiSpecies::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
 {
-  if (!operator bool())
+  if (!isValid())
     return cpsapiData();
 
   if (!isImplementedProperty<cpsapiSpecies>(property))

@@ -33,7 +33,7 @@ cpsapiProblem::~cpsapiProblem()
 // virtual
 void cpsapiProblem::accept(cpsapiVisitor & visitor)
 {
-  if (!operator bool())
+  if (!isValid())
     return;
 
   visitor.visit(this, Type::Problem);
@@ -53,7 +53,7 @@ cpsapiData cpsapiProblem::getProperty(const cpsapiProblem::Property & property, 
 // virtual
 bool cpsapiProblem::setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & /* framework */)
 {
-  if (!operator bool())
+  if (!isValid())
     return false;
 
   if (!isImplementedProperty< cpsapiProblem >(property))
@@ -65,7 +65,7 @@ bool cpsapiProblem::setProperty(const cpsapiProperty::Type & property, const cps
 // virtual
 cpsapiData cpsapiProblem::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & /* framework */) const
 {
-  if (!operator bool())
+  if (!isValid())
     return cpsapiData();
 
   if (!isImplementedProperty< cpsapiProblem >(property))

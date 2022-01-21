@@ -40,7 +40,7 @@ cpsapiDataModel::~cpsapiDataModel()
 // virtual 
 void cpsapiDataModel::accept(cpsapiVisitor & visitor)
 {
-  if (!operator bool())
+  if (!isValid())
     return;
 
   visitor.visit(this, Type::DataModel);
@@ -222,7 +222,7 @@ cpsapiVector< cpsapiGlobalQuantity > cpsapiDataModel::getGlobalQuantities()
 
 cpsapiVector< cpsapiTask > cpsapiDataModel::getTasks()
 {
-  if (!operator bool())
+  if (!isValid())
     return cpsapiVector< cpsapiTask >();
 
   return cpsapiVector< cpsapiTask >(WRAPPED->getTaskList());
@@ -253,7 +253,7 @@ cpsapiProblem cpsapiDataModel::problem()
 
 cpsapiTask cpsapiDataModel::__task(const std::string & name) const
 {
-  if (!operator bool())
+  if (!isValid())
     return nullptr;
 
   if (name.empty())

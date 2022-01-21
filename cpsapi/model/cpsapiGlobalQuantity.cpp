@@ -40,7 +40,7 @@ cpsapiGlobalQuantity::~cpsapiGlobalQuantity()
 // virtual 
 void cpsapiGlobalQuantity::accept(cpsapiVisitor & visitor)
 {
-  if (!operator bool())
+  if (!isValid())
     return;
 
   visitor.visit(this, Type::GlobalQuantity);
@@ -60,7 +60,7 @@ cpsapiData cpsapiGlobalQuantity::getProperty(const cpsapiGlobalQuantity::Propert
 // virtual
 bool cpsapiGlobalQuantity::setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & framework)
 {
-  if (!operator bool())
+  if (!isValid())
     return false;
 
   if (!isImplementedProperty<cpsapiGlobalQuantity>(property))
@@ -90,7 +90,7 @@ bool cpsapiGlobalQuantity::setProperty(const cpsapiProperty::Type & property, co
 // virtual
 cpsapiData cpsapiGlobalQuantity::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & /* framework */) const
 {
-  if (!operator bool())
+  if (!isValid())
     return cpsapiData();
 
   if (!isImplementedProperty<cpsapiGlobalQuantity>(property))

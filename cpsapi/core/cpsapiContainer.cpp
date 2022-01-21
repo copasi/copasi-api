@@ -36,7 +36,7 @@ cpsapiContainer::~cpsapiContainer()
 // virtual 
 void cpsapiContainer::accept(cpsapiVisitor & visitor)
 {
-  if (!operator bool())
+  if (!isValid())
     return;
 
   visitor.visit(this, Type::Container);
