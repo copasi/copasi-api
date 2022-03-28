@@ -30,22 +30,12 @@ const cpsapiGlobalQuantity::Properties cpsapiGlobalQuantity::SupportedProperties
   };
 
 cpsapiGlobalQuantity::cpsapiGlobalQuantity(wrapped * pWrapped)
-  : base(pWrapped, Type::GlobalQuantity)
+  : base(pWrapped, cpsapiObjectData::Type::GlobalQuantity)
 {}
 
 // virtual
 cpsapiGlobalQuantity::~cpsapiGlobalQuantity()
 {}
-
-// virtual 
-void cpsapiGlobalQuantity::accept(cpsapiVisitor & visitor)
-{
-  if (!isValid())
-    return;
-
-  visitor.visit(this, Type::GlobalQuantity);
-  base::accept(visitor);
-}
 
 bool cpsapiGlobalQuantity::setProperty(const cpsapiGlobalQuantity::Property & property, const cpsapiData & value, const CCore::Framework & framework)
 {

@@ -25,31 +25,10 @@
 
 CPSAPI_NAMESPACE_USE
 
-cpsapiContainer::cpsapiContainer(wrapped * pWrapped, const cpsapiObject::Type & type)
+cpsapiContainer::cpsapiContainer(wrapped * pWrapped, const cpsapiObjectData::Type & type)
   : base(pWrapped, type)
 {}
 
 // virtual
 cpsapiContainer::~cpsapiContainer()
 {}
-
-// virtual 
-void cpsapiContainer::accept(cpsapiVisitor & visitor)
-{
-  if (!isValid())
-    return;
-
-  visitor.visit(this, Type::Container);
-
-  wrapped::objectMap & Objects = WRAPPED->getObjects();
-
-  for (CDataObject * pDataObject : Objects)
-    {
-      std::shared_ptr< cpsapiObject > pObject = cpsapiFactory::make_shared< cpsapiObject >(pDataObject);
-
-      if (pObject)
-        pObject->accept(visitor);
-    }
-
-  base::accept(visitor);
-}

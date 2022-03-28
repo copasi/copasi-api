@@ -33,8 +33,8 @@ public:
   enum class Property
   {
     VALUE = cpsapiProperty::Type::VALUE,
-    OBJECT_NAME = cpsapiProperty::Type::OBJECT_NAME,
-    DISPLAY_NAME = cpsapiProperty::Type::DISPLAY_NAME,
+    NAME = cpsapiProperty::Type::NAME,
+    UNIQUE_NAME = cpsapiProperty::Type::UNIQUE_NAME,
     CN = cpsapiProperty::Type::CN
   };
 
@@ -54,8 +54,8 @@ public:
   enum class Reference
   {
     VALUE = cpsapiProperty::Type::VALUE,
-    OBJECT_NAME = cpsapiReference::Type::OBJECT_NAME,
-    DISPLAY_NAME = cpsapiReference::Type::DISPLAY_NAME
+    NAME = cpsapiReference::Type::NAME,
+    UNIQUE_NAME = cpsapiReference::Type::UNIQUE_NAME
   };
 
   /**
@@ -67,6 +67,11 @@ public:
    * Static set of hidden references
    */
   static const References HiddenReferences;
+
+  /**
+   * The class
+   */
+  typedef cpsapiValue self;
 
   /**
    * The base class
@@ -90,10 +95,12 @@ public:
   virtual ~cpsapiValue();
 
   /**
-   * Accept a visitor
-   * @param cpsapiVisitor & visitor
+   * Accept the given visitor
+   * 
+   * @tparam Visitor 
+   * @param Visitor & visitor 
    */
-  virtual void accept(cpsapiVisitor & visitor) override;
+  template < typename Visitor > void accept(Visitor & visitor);
 
   /**
    * Set a property of the object to the provided value under the given framework.
@@ -123,7 +130,7 @@ public:
    * @param const CCore::Framework & framework (default: CCore::Framework::__SIZE)
    * @return CCommonName
    */
-CCommonName getDataCN(const Reference & reference, const CCore::Framework & framework = CCore::Framework::__SIZE) const;
+  CCommonName getDataCN(const Reference & reference, const CCore::Framework & framework = CCore::Framework::__SIZE) const;
 
   /**
    * Convert the contained value into cpsapiData
@@ -169,5 +176,15 @@ protected:
    */
   virtual CCommonName getDataCN(const cpsapiReference::Type & reference, const CCore::Framework & framework) const override;
 };
+
+template< class Visitor >
+void cpsapiValue::accept(Visitor & visitor)
+{
+  if (isValid())
+    {
+      cpsapiVisitor::acceptIfVisitable(visitor, this); 
+      base::accept(visitor);
+    }
+}
 
 CPSAPI_NAMESPACE_END

@@ -29,22 +29,12 @@ const cpsapiSpecies::Properties cpsapiSpecies::SupportedProperties =
   };
 
 cpsapiSpecies::cpsapiSpecies(wrapped * pWrapped)
-  : base(pWrapped, Type::Species)
+  : base(pWrapped, cpsapiObjectData::Type::Species)
 {}
 
 // virtual
 cpsapiSpecies::~cpsapiSpecies()
 {}
-
-// virtual 
-void cpsapiSpecies::accept(cpsapiVisitor & visitor)
-{
-  if (!isValid())
-    return;
-
-  visitor.visit(this, Type::Species);
-  base::accept(visitor);
-}
 
 bool cpsapiSpecies::setProperty(const cpsapiSpecies::Property & property, const cpsapiData & value, const CCore::Framework & framework)
 {

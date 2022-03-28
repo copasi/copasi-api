@@ -18,11 +18,11 @@
 CPSAPI_NAMESPACE_USE
 
 // static
-void cpsapiDataCollector::collect(cpsapiDataVector & data, const std::vector< std::pair< cpsapiData::Type, void * > > & values)
+void cpsapiDataCollector::collect(cpsapiData::Vector & data, const std::vector< std::pair< cpsapiData::Type, void * > > & values)
 {
-  data.push_back(cpsapiDataVector(values.size()));
+  data.push_back(cpsapiData::Vector(values.size()));
   
-  cpsapiDataVector::iterator it = const_cast< cpsapiDataVector *>(&data.back().toData())->begin();
+  cpsapiData::Vector::iterator it = const_cast< cpsapiData::Vector *>(&data.back().toData())->begin();
 
   for (const std::pair< cpsapiData::Type, void * > & value: values)
     {
@@ -206,17 +206,17 @@ const std::vector< CRegisteredCommonName > & cpsapiDataCollector::getDataReferen
   return mCNsAfter;
 }
 
-const cpsapiDataVector & cpsapiDataCollector::getDataBefore() const
+const cpsapiData::Vector & cpsapiDataCollector::getDataBefore() const
 {
   return mDataBefore;
 }
 
-const cpsapiDataVector & cpsapiDataCollector::getDataDuring() const
+const cpsapiData::Vector & cpsapiDataCollector::getDataDuring() const
 {
   return mDataDuring;
 }
 
-const cpsapiDataVector & cpsapiDataCollector::getDataAfter() const
+const cpsapiData::Vector & cpsapiDataCollector::getDataAfter() const
 {
   return mDataAfter;
 }

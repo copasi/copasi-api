@@ -34,29 +34,19 @@ const cpsapiGroup::References cpsapiGroup::HiddenReferences =
   cpsapiProperty::Type::PARAMETER_VALUE
 };
 
-cpsapiGroup::cpsapiGroup(wrapped * pWrapped, const Type & type)
+cpsapiGroup::cpsapiGroup(wrapped * pWrapped, const cpsapiObjectData::Type & type)
   : base(pWrapped, type)
 {
-  assertData< cpsapiGroup >(pWrapped);
+  cpsapiObjectData::assertDataType< cpsapiGroup >(mpData);
 }
 
 // virtual
 cpsapiGroup::~cpsapiGroup()
 {}
 
-// virtual
-void cpsapiGroup::accept(cpsapiVisitor & visitor)
-{
-  if (!isValid())
-    return;
-
-  visitor.visit(this, Type::Group);
-  base::accept(visitor);
-}
-
 cpsapiParameter cpsapiGroup::addParameter(const std::string & name, const CDataValue & value, CCopasiParameter::Type type)
 {
-  cpsapiParameter Parameter(nullptr, Type::Parameter);
+  cpsapiParameter Parameter(nullptr, cpsapiObjectData::Type::Parameter);
 
   if (!isValid())
     return Parameter;
@@ -148,7 +138,7 @@ cpsapiParameter cpsapiGroup::addParameter(const std::string & name, const CDataV
   if (pParameter != nullptr)
     {
       WRAPPED->addParameter(pParameter);
-      Parameter = cpsapiParameter(pParameter, Type::Parameter);
+      Parameter = cpsapiParameter(pParameter, cpsapiObjectData::Type::Parameter);
 
       updateDefaultParameter(Parameter);
     }
@@ -184,9 +174,9 @@ bool cpsapiGroup::deleteParameter(const std::string & name)
     return false;
 
   if (*DATA->mDefaultParameter == pParameter)
-    updateDefaultParameter(cpsapiParameter(nullptr, Type::Parameter));
+    updateDefaultParameter(cpsapiParameter(nullptr, cpsapiObjectData::Type::Parameter));
 
-  deleted(pParameter);
+  Data::deleted(pParameter);
   pdelete(pParameter);
 
   return true;
@@ -217,7 +207,7 @@ std::vector< cpsapiParameter > cpsapiGroup::getParameters() const
             continue;
 
           if (pParameter->getType() != CCopasiParameter::Type::GROUP)
-            Parameters.push_back(cpsapiParameter(pParameter, Type::Parameter));
+            Parameters.push_back(cpsapiParameter(pParameter, cpsapiObjectData::Type::Parameter));
           else
             Parameters.push_back(cpsapiGroup(static_cast< wrapped * >(pParameter)));
         }
@@ -283,7 +273,7 @@ CCommonName cpsapiGroup::getDataCN(const cpsapiReference::Type & reference, cons
 cpsapiParameter cpsapiGroup::__parameter(const std::string & name) const
 {
   if (!isValid())
-    return cpsapiParameter(nullptr, Type::Parameter);
+    return cpsapiParameter(nullptr, cpsapiObjectData::Type::Parameter);
 
   if (name.empty())
     return DATA->mDefaultParameter;
@@ -292,7 +282,7 @@ cpsapiParameter cpsapiGroup::__parameter(const std::string & name) const
 
   if (pParameter == nullptr
       || pParameter->getType() != CCopasiParameter::Type::GROUP)
-    return cpsapiParameter(pParameter, Type::Parameter);
+    return cpsapiParameter(pParameter, cpsapiObjectData::Type::Parameter);
   
   return cpsapiGroup(static_cast< wrapped * >(pParameter));
 }

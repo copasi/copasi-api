@@ -95,8 +95,8 @@ public:
    */ 
   enum class Property
   {
-    NAME = cpsapiProperty::Type::OBJECT_NAME,
-    DISPLAY_NAME = cpsapiProperty::Type::DISPLAY_NAME,
+    NAME = cpsapiProperty::Type::NAME,
+    UNIQUE_NAME = cpsapiProperty::Type::UNIQUE_NAME,
     CN = cpsapiProperty::Type::CN,
     ROLE = cpsapiProperty::Type::PARAMETER_ROLE,
     VALUE = cpsapiProperty::Type::PARAMETER_VALUE,
@@ -118,8 +118,8 @@ public:
    */
   enum class Reference
   {
-    NAME = cpsapiReference::Type::OBJECT_NAME,
-    DISPLAY_NAME = cpsapiReference::Type::DISPLAY_NAME,
+    NAME = cpsapiReference::Type::NAME,
+    UNIQUE_NAME = cpsapiReference::Type::UNIQUE_NAME,
     VALUE = cpsapiReference::Type::PARAMETER_VALUE
   };
 
@@ -132,6 +132,11 @@ public:
    * Static set of hidden references
    */
   static const References HiddenReferences;
+
+  /**
+   * The class
+   */
+  typedef cpsapiKineticLawVariable self;
 
   /**
    * The base class
@@ -161,10 +166,12 @@ public:
   virtual bool isValid() const override;
 
   /**
-   * Accept a visitor
-   * @param cpsapiVisitor & visitor
+   * Accept the given visitor
+   * 
+   * @tparam Visitor 
+   * @param Visitor & visitor 
    */
-  virtual void accept(cpsapiVisitor & visitor) override;
+  template < typename Visitor > void accept(Visitor & visitor);
 
   /**
    * Set a property of the object to the provided value under the given framework.
@@ -225,6 +232,16 @@ protected:
    */
   virtual CCommonName getDataCN(const cpsapiReference::Type & reference, const CCore::Framework & framework) const override;
 };
+
+template< class Visitor >
+void cpsapiKineticLawVariable::accept(Visitor & visitor)
+{
+  if (isValid())
+    {
+      cpsapiVisitor::acceptIfVisitable(visitor, this); 
+      base::accept(visitor);
+    }
+}
 
 template <>
 inline size_t cpsapiVector< cpsapiKineticLawVariable >::index(const std::string & name) const

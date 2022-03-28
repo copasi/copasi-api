@@ -24,93 +24,60 @@
 #include "cpsapi/task/cpsapiProblem.h"
 #include "cpsapi/task/cpsapiTask.h"
 
-#pragma GCC diagnostic push
-#include <copasi/CopasiDataModel/CDataModel.h>
-#include <copasi/core/CDataObjectReference.h>
-#include <copasi/utilities/CCopasiMethod.h>
-#include <copasi/utilities/CCopasiProblem.h>
-#include <copasi/utilities/CCopasiTask.h>
-#pragma GCC diagnostic pop
-
 CPSAPI_NAMESPACE_USE
 
 // static
 cpsapiFactory::CopasiMap cpsapiFactory::copasiMap;
 
 // static
-void cpsapiFactory::insert(const TypeInfo & typeInfo)
-{
-  copasiMap.insert(std::make_pair(typeInfo.copasiClass, typeInfo));
-  copasiMap.insert(std::make_pair(typeInfo.cpsapiClass, typeInfo));
-}
-
-// static
 void cpsapiFactory::init()
 {
   if (copasiMap.empty())
     {
-      TypeInfo::initProtected< cpsapiObject, CDataObject >();
-      TypeInfo::initProtected< cpsapiContainer, CDataContainer >();
-      TypeInfo::initProtected< cpsapiModelEntity, CModelEntity >();
-      TypeInfo::init< cpsapiVector< cpsapiCompartment >, CDataVectorNS< CCompartment > >();
-      TypeInfo::init< cpsapiVector< cpsapiSpecies >, CDataVector< CMetab > >();
-      TypeInfo::init< cpsapiVector< cpsapiSpecies >, CDataVectorNS< CMetab > >();
-      TypeInfo::init< cpsapiVector< cpsapiGlobalQuantity >, CDataVectorN< CModelValue > >();
-      TypeInfo::init< cpsapiVector< cpsapiReaction >, CDataVectorNS< CReaction > >();
-      TypeInfo::init< cpsapiVector< cpsapiDataModel >, CDataVector< CDataModel > >();
-      TypeInfo::init< cpsapiVector< cpsapiTask >, CDataVectorN< CCopasiTask > >();
-      TypeInfo::init< cpsapiValue, CDataObjectReference< C_FLOAT64 > >();
-      TypeInfo::init< cpsapiValue, CDataObjectReference< C_INT32 > >();
-      TypeInfo::init< cpsapiValue, CDataObjectReference< unsigned C_INT32 > >();
-      TypeInfo::init< cpsapiValue, CDataObjectReference< size_t > >();
-      TypeInfo::init< cpsapiValue, CDataObjectReference< std::string > >();
-      TypeInfo::init< cpsapiValue, CDataObjectReference< CCommonName > >();
-      TypeInfo::init< cpsapiModel, CModel >();
-      TypeInfo::init< cpsapiCompartment, CCompartment >();
-      TypeInfo::init< cpsapiSpecies, CMetab >();
-      TypeInfo::init< cpsapiGlobalQuantity, CModelValue >();
-      TypeInfo::init< cpsapiReaction, CReaction >();
-      TypeInfo::init< cpsapiDataModel, CDataModel >();
-      TypeInfo::init< cpsapiParameter, CCopasiParameter >();
-      TypeInfo::init< cpsapiGroup, CCopasiParameterGroup >();
-      TypeInfo::init< cpsapiMethod, CCopasiMethod >();
-      TypeInfo::init< cpsapiProblem, CCopasiProblem >();
-      TypeInfo::init< cpsapiTask, CCopasiTask >();
+      insert< cpsapiVector< cpsapiCompartment >, CDataVectorNS< CCompartment > >();
+      insert< cpsapiVector< cpsapiSpecies >, CDataVector< CMetab > >();
+      insert< cpsapiVector< cpsapiSpecies >, CDataVectorNS< CMetab > >();
+      insert< cpsapiVector< cpsapiGlobalQuantity >, CDataVectorN< CModelValue > >();
+      insert< cpsapiVector< cpsapiReaction >, CDataVectorNS< CReaction > >();
+      insert< cpsapiVector< cpsapiDataModel >, CDataVector< CDataModel > >();
+      insert< cpsapiVector< cpsapiTask >, CDataVectorN< CCopasiTask > >();
+      insert< cpsapiValue, CDataObjectReference< C_FLOAT64 > >();
+      insert< cpsapiValue, CDataObjectReference< C_INT32 > >();
+      insert< cpsapiValue, CDataObjectReference< unsigned C_INT32 > >();
+      insert< cpsapiValue, CDataObjectReference< size_t > >();
+      insert< cpsapiValue, CDataObjectReference< std::string > >();
+      insert< cpsapiValue, CDataObjectReference< CCommonName > >();
+      insert< cpsapiModel, CModel >();
+      insert< cpsapiCompartment, CCompartment >();
+      insert< cpsapiSpecies, CMetab >();
+      insert< cpsapiGlobalQuantity, CModelValue >();
+      insert< cpsapiReaction, CReaction >();
+      insert< cpsapiDataModel, CDataModel >();
+      insert< cpsapiParameter, CCopasiParameter >();
+      insert< cpsapiGroup, CCopasiParameterGroup >();
+      insert< cpsapiMethod, CCopasiMethod >();
+      insert< cpsapiProblem, CCopasiProblem >();
+      insert< cpsapiTask, CCopasiTask >();
     }
 }
 
-cpsapiFactory::TypeInfo::TypeInfo(const std::type_index & cpsapiClass,
-                                  std::shared_ptr< cpsapiFactory::createInterface > cpsapiCreate,
-                                  std::shared_ptr< cpsapiFactory::copyInterface > cpsapiCopy,
-                                  const std::type_index & copasiClass,
-                                  const std::string copasiString)
-  : cpsapiClass(cpsapiClass)
-  , cpsapiCreate()
-  , cpsapiCopy()
-  , copasiClass(copasiClass)
-  , copasiString(copasiString)
-{
-  this->cpsapiCreate = cpsapiCreate;
-  this->cpsapiCopy = cpsapiCopy;
-}
-
 // static
-const cpsapiFactory::TypeInfo & cpsapiFactory::info(const std::type_index & typeIndex)
+const cpsapiFactory::PartInterface & cpsapiFactory::info(const std::type_index & typeIndex)
 {
-  static const TypeInfo Unknown;
+  static const Part< void, void > Unknown;
 
   CopasiMap::const_iterator found = copasiMap.find(typeIndex);
 
   if (found != copasiMap.end())
-    return found->second;
+    return *found->second;
 
   return Unknown;
 }
 
 // static
-const cpsapiFactory::TypeInfo & cpsapiFactory::info(CDataObject * pFrom)
+const cpsapiFactory::PartInterface & cpsapiFactory::info(CDataObject * pFrom)
 {
-  static const TypeInfo Unknown;
+  static const Part< void, void > Unknown;
 
   if (pFrom != nullptr)
     return info(std::type_index(typeid(*pFrom)));
@@ -119,7 +86,7 @@ const cpsapiFactory::TypeInfo & cpsapiFactory::info(CDataObject * pFrom)
 }
 
 // static
-const cpsapiFactory::TypeInfo & cpsapiFactory::info(const cpsapiObject & from)
+const cpsapiFactory::PartInterface & cpsapiFactory::info(const cpsapiObject & from)
 {
   return info(std::type_index(typeid(from)));
 }
@@ -127,39 +94,24 @@ const cpsapiFactory::TypeInfo & cpsapiFactory::info(const cpsapiObject & from)
 // static 
 cpsapiObject * cpsapiFactory::copy(const cpsapiObject & object)
 {
-  const TypeInfo & Info = info(object);
-
-  if (Info.cpsapiCopy)
-    return (*Info.cpsapiCopy)(object);
-
-  return nullptr;
+  return info(object).copy(object);
 }
 
 // static 
 cpsapiObject * cpsapiFactory::create(CDataObject * pFrom)
 {
-  const TypeInfo & Info = info(pFrom);
-
-  if (Info.cpsapiCreate)
-    return (*Info.cpsapiCreate)(pFrom);
-
-  return nullptr;
+  return info(pFrom).create(pFrom);
 }
 
 // static
-cpsapiObject * cpsapiFactory::make(CDataObject * pDataObject, const TypeInfo * pTypeInfo)
+cpsapiObject * cpsapiFactory::make(CDataObject * pDataObject, const PartInterface * pTypeInfo)
 {
-  cpsapiObject * pObject = nullptr;
-
-  const TypeInfo * pInfo = pTypeInfo;
+  const PartInterface * pInfo = pTypeInfo;
 
   if (pTypeInfo == nullptr)
     pInfo = &info(pDataObject);
 
-  if (pInfo->cpsapiCreate != nullptr)
-    pObject = (*pInfo->cpsapiCreate)(pDataObject);
-
-  return pObject;
+  return pInfo->create(pDataObject);
 }
 
 // static 

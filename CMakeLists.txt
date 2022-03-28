@@ -1,5 +1,5 @@
 # BEGIN: Copyright 
-# Copyright (C) 2021 by Pedro Mendes, Rector and Visitors of the 
+# Copyright (C) 2021 - 2022 by Pedro Mendes, Rector and Visitors of the 
 # University of Virginia, University of Heidelberg, and University 
 # of Connecticut School of Medicine. 
 # All rights reserved 
@@ -16,7 +16,7 @@ cmake_minimum_required (VERSION 3.1.3)
 
 project(CPSAPI VERSION "0.0.1")
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 if(NOT CYGWIN)
   set(CMAKE_CXX_EXTENSIONS OFF)

@@ -25,6 +25,14 @@ CPSAPI_NAMESPACE_BEGIN
 class cpsapiModelEntity: public cpsapiContainer
 {
 public:
+  /**
+   * The class
+   */
+  typedef cpsapiModelEntity self;
+
+  /**
+   * The base class
+   */
   typedef cpsapiContainer base;
 
   enum class Property
@@ -35,8 +43,8 @@ public:
     SIMULATION_TYPE = cpsapiProperty::Type::SIMULATION_TYPE,
     ADD_NOISE = cpsapiProperty::Type::ADD_NOISE,
     NOISE_EXPRESSION = cpsapiProperty::Type::NOISE_EXPRESSION,
-    OBJECT_NAME = cpsapiProperty::Type::OBJECT_NAME,
-    DISPLAY_NAME = cpsapiProperty::Type::DISPLAY_NAME,
+    NAME = cpsapiProperty::Type::NAME,
+    UNIQUE_NAME = cpsapiProperty::Type::UNIQUE_NAME,
     CN = cpsapiProperty::Type::CN
   };
 
@@ -50,12 +58,18 @@ protected:
    * @param CModelEntity * pContainer
    * @param const Type & type
    */
-  cpsapiModelEntity(CModelEntity * pModelEntity, const Type & type);
+  cpsapiModelEntity(CModelEntity * pModelEntity, const cpsapiObjectData::Type & type);
 
 public:
   virtual ~cpsapiModelEntity();
 
-  virtual void accept(cpsapiVisitor & visitor) override;
+  /**
+   * Accept the given visitor
+   * 
+   * @tparam Visitor 
+   * @param Visitor & visitor 
+   */
+  template < typename Visitor > void accept(Visitor & visitor);
 
   bool setProperty(const Property & property, const cpsapiData & value, const CCore::Framework & framework = CCore::Framework::__SIZE);
 
@@ -66,5 +80,15 @@ protected:
 
   virtual cpsapiData getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const override;
 };
+
+template< class Visitor >
+void cpsapiModelEntity::accept(Visitor & visitor)
+{
+  if (isValid())
+    {
+      cpsapiVisitor::acceptIfVisitable(visitor, this); 
+      base::accept(visitor);
+    }
+}
 
 CPSAPI_NAMESPACE_END

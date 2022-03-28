@@ -39,6 +39,11 @@ public:
   // static const Properties SupportedProperties;
 
   /**
+   * The class
+   */
+  typedef cpsapiDataModel self;
+
+  /**
    * The base class
    */
   typedef cpsapiContainer base;
@@ -79,10 +84,12 @@ public:
   virtual ~cpsapiDataModel();
 
   /**
-   * Accept a visitor
-   * @param cpsapiVisitor & visitor
+   * Accept the given visitor
+   * 
+   * @tparam Visitor 
+   * @param Visitor & visitor 
    */
-  virtual void accept(cpsapiVisitor & visitor) override;
+  template < typename Visitor > void accept(Visitor & visitor);
 
   /**
    * Load a model from a file (any supported format)
@@ -147,5 +154,15 @@ public:
 private:
   cpsapiTask __task(const std::string & name) const;
 };
+
+template< class Visitor >
+void cpsapiDataModel::accept(Visitor & visitor)
+{
+  if (isValid())
+    {
+      cpsapiVisitor::acceptIfVisitable(visitor, this); 
+      base::accept(visitor);
+    }
+}
 
 CPSAPI_NAMESPACE_END

@@ -1,5 +1,5 @@
 // BEGIN: Copyright 
-// Copyright (C) 2021 by Pedro Mendes, Rector and Visitors of the 
+// Copyright (C) 2021 - 2022 by Pedro Mendes, Rector and Visitors of the 
 // University of Virginia, University of Heidelberg, and University 
 // of Connecticut School of Medicine. 
 // All rights reserved 
@@ -16,67 +16,25 @@
 
 #include <cpsapi/core/cpsapiRoot.h>
 #include <cpsapi/core/cpsapiFactory.h>
+#include <cpsapi/crtp/interface.h>
 
 CPSAPI_NAMESPACE_USE
 
 int main(int argc, char *argv[])
 {
-
   cpsapi::init();
 
   cpsapi::addDataModel();
 
-  cpsapi::model().setProperty(cpsapiModel::Property::OBJECT_NAME, "model");
+  cpsapi::model().setProperty(cpsapiModel::Property::NAME, "model");
   cpsapi::addCompartment("compartment");
   cpsapi::model().addSpecies("species");
-  Visitor V;
-
-  cpsapi::model().accept(V);
+  
+  Visitor visitor;
+  cpsapi::model().accept(visitor);
 
   cpsapi::release();
-  
+
   return 0;
 }
 
-// virtual
-void Visitor::visit(cpsapiObject * pObject, const cpsapiObject::Type & type)
-{
-  // Sanity check
-  if (pObject == nullptr || !*pObject)
-    return;
-
-  switch (type)
-    {
-    case cpsapiObject::Type::Model:
-      std::cout << "visit cpsapiModel: " << (*static_cast< cpsapiModel * >(pObject))->getCN() << std::endl;
-      break;
-
-    case cpsapiObject::Type::Compartment:
-      std::cout << "visit cpsapiCompartment: " << (*static_cast< cpsapiCompartment * >(pObject))->getCN() << std::endl;
-      break;
-
-    case cpsapiObject::Type::Species:
-      std::cout << "visit cpsapiSpecies: " << (*static_cast< cpsapiSpecies * >(pObject))->getCN() << std::endl;
-      break;
-
-    case cpsapiObject::Type::Object:
-      std::cout << "visit cpsapiObject: " << (*static_cast< cpsapiObject * >(pObject))->getCN() << std::endl;
-      break;
-
-    case cpsapiObject::Type::Container:
-      std::cout << "visit cpsapiContainer: " << (*static_cast< cpsapiContainer * >(pObject))->getCN() << std::endl;
-      break;
-
-    case cpsapiObject::Type::Value:
-      std::cout << "visit cpsapiValue: " << (*static_cast< cpsapiValue * >(pObject))->getCN() << std::endl;
-      break;
-
-    case cpsapiObject::Type::Reaction:
-      std::cout << "visit cpsapiReaction: " << (*static_cast< cpsapiReaction * >(pObject))->getCN() << std::endl;
-      break;
-
-    default:
-      std::cout << "visit unhandled (" << cpsapiObject::TypeName[type] << "): " << (*static_cast< cpsapiObject * >(pObject))->getCN() << std::endl;
-      break;
-    }
-}

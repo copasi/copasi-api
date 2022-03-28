@@ -38,7 +38,7 @@ const cpsapiTemplate::References cpsapiTemplate::SupportedReferences =
 // static
 const cpsapiTemplate::References cpsapiTemplate::HiddenReferences = {};
 
-cpsapiTemplate::cpsapiTemplate(wrapped * pWrapped, const cpsapiObject::Type & type)
+cpsapiTemplate::cpsapiTemplate(wrapped * pWrapped, const cpsapiObjectData::Type & type)
   : base(pWrapped, type)
 {}
 
@@ -91,12 +91,12 @@ bool cpsapiTemplate::setProperty(const cpsapiProperty::Type & property, const cp
           break;
 
         case wrapped::Type::INT:
-          if (value.getType() == cpsapiData::Type::Int32)
+          if (value.getType() == cpsapiObjectData::Type::Int32)
             success = pParameter->setValue(value.toInt32());
           break;
 
         case wrapped::Type::UINT:
-          if (value.getType() == cpsapiData::Type::UnsignedInt32)
+          if (value.getType() == cpsapiObjectData::Type::UnsignedInt32)
             success = pParameter->setValue(value.toUnsignedInt32());
           break;
 

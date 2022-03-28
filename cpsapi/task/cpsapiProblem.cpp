@@ -23,22 +23,12 @@ const cpsapiProblem::Properties cpsapiProblem::SupportedProperties =
   };
 
 cpsapiProblem::cpsapiProblem(wrapped * pWrapped)
-  : base(pWrapped, Type::Problem)
+  : base(pWrapped, cpsapiObjectData::Type::Problem)
 {}
 
 // virtual
 cpsapiProblem::~cpsapiProblem()
 {}
-
-// virtual
-void cpsapiProblem::accept(cpsapiVisitor & visitor)
-{
-  if (!isValid())
-    return;
-
-  visitor.visit(this, Type::Problem);
-  base::accept(visitor);
-}
 
 bool cpsapiProblem::setProperty(const cpsapiProblem::Property & property, const cpsapiData & value, const CCore::Framework & framework)
 {

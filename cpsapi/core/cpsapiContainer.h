@@ -26,6 +26,11 @@ class cpsapiContainer : public cpsapiObject
 {
 public:
   /**
+   * The class
+   */
+  typedef cpsapiContainer self;
+
+  /**
    * The base class
    */
   typedef cpsapiObject base;
@@ -39,9 +44,9 @@ protected:
   /**
    * Specific constructor
    * @param wrapped * pWrapped (default: nullptr)
-   * @param const Type & type (default: Type::cpsapiContainer)
+   * @param const Type & type (default: Type::Container)
   */
-  cpsapiContainer(wrapped * pWrapped = nullptr, const Type & type = Type::Container);
+  cpsapiContainer(wrapped * pWrapped = nullptr, const cpsapiObjectData::Type & type = cpsapiObjectData::Type::Container);
 
 public:
   /**
@@ -50,10 +55,35 @@ public:
   virtual ~cpsapiContainer();
 
   /**
-   * Accept a visitor
-   * @param cpsapiVisitor & visitor
+   * Accept the given visitor
+   * 
+   * @tparam Visitor 
+   * @param Visitor & visitor 
    */
-  virtual void accept(cpsapiVisitor & visitor) override;
+  template < typename Visitor > void accept(Visitor & visitor);
 };
+
+template< class Visitor >
+void cpsapiContainer::accept(Visitor & visitor)
+{
+  if (isValid())
+    {
+      cpsapiVisitor::acceptIfVisitable(visitor, this); 
+      base::accept(visitor);
+
+      wrapped::objectMap & Objects = WRAPPED->getObjects();
+
+      for (CDataObject * pDataObject : Objects)
+        {
+          std::unique_ptr< cpsapiObject > Object(cpsapiFactory::create(pDataObject));
+
+          if (Object)
+            {
+              std::cout << pDataObject->getObjectType() << " -> " << cpsapiObjectData::TypeName[Object->getType()] << std::endl;
+              static_cast< ObjectType >(Object)->accept(visitor);
+            }
+        }
+    }
+}
 
 CPSAPI_NAMESPACE_END

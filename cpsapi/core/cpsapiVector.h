@@ -36,6 +36,11 @@ public:
   static const Properties SupportedProperties;
 
   /**
+   * The class
+   */
+  typedef cpsapiVector< Object > self;
+
+  /**
    * The base class
    */
   typedef cpsapiContainer base;
@@ -172,7 +177,7 @@ public:
    * @param wrapped * pWrapped (default: nullptr)
    * @param const Type & type (default: Type::cpsapiVector)
   */
-  cpsapiVector(wrapped * pWrapped = nullptr, const Type & type = Type::Vector);
+  cpsapiVector(wrapped * pWrapped = nullptr, const cpsapiObjectData::Type & type = cpsapiObjectData::Type::Vector);
 
   /**
    * Destructor
@@ -180,10 +185,12 @@ public:
   virtual ~cpsapiVector();
 
   /**
-   * Accept a visitor
-   * @param cpsapiVisitor & visitor
+   * Accept the given visitor
+   * 
+   * @tparam Visitor 
+   * @param Visitor & visitor 
    */
-  virtual void accept(cpsapiVisitor & visitor) override;
+  template < typename Visitor > void accept(Visitor & visitor);
 
   size_t size() const;
 
@@ -202,10 +209,10 @@ template < class Object >
 const typename cpsapiVector< Object >::Properties cpsapiVector< Object >::SupportedProperties = {};
 
 template < class Object > 
-cpsapiVector< Object >::cpsapiVector(wrapped * pWrapped, const cpsapiObject::Type & type)
+cpsapiVector< Object >::cpsapiVector(wrapped * pWrapped, const cpsapiObjectData::Type & type)
   : base(pWrapped, type)
 {
-  assertData< cpsapiVector< Object > >(pWrapped);
+  cpsapiObjectData::assertDataType< cpsapiVector< Object > >(mpData);
 }
 
 template < class Object > 
@@ -213,13 +220,14 @@ cpsapiVector< Object >::~cpsapiVector()
 {}
 
 template < class Object > 
-void cpsapiVector< Object >::accept(cpsapiVisitor & visitor)
+template < class Visitor >
+void cpsapiVector< Object >::accept(Visitor & visitor)
 {
-  if (!isValid())
-    return;
-
-  visitor.visit(this, Type::Vector);
-  base::accept(visitor);
+  if (isValid())
+    {
+      cpsapiVisitor::acceptIfVisitable(visitor, this); 
+      base::accept(visitor);
+    }
 }
 
 template < class Object > 

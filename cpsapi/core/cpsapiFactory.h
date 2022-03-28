@@ -18,110 +18,68 @@
 #include <typeindex>
 #include <memory>
 
-class CDataObject;
+#pragma GCC diagnostic push
+#include <copasi/CopasiDataModel/CDataModel.h>
+#include <copasi/core/CDataObjectReference.h>
+#include <copasi/utilities/CCopasiMethod.h>
+#include <copasi/utilities/CCopasiProblem.h>
+#include <copasi/utilities/CCopasiTask.h>
+#pragma GCC diagnostic pop
 
 CPSAPI_NAMESPACE_BEGIN
 
 class cpsapiFactory
 {
-private:
-  struct createInterface
-  {
-    virtual ~createInterface()
-    {}
-
-    virtual cpsapiObject * operator()(CDataObject *) = 0;
-  };
-
-  template < class Target, class Source >
-  struct createTemplate : public createInterface
-  {
-    virtual ~createTemplate()
-    {}
-
-    virtual cpsapiObject * operator()(CDataObject * pDataObject)
-    {
-      return new Target(static_cast< Source * >(pDataObject));
-    }
-  };
-
-  struct copyInterface
-  {
-    virtual ~copyInterface()
-    {}
-
-    virtual cpsapiObject * operator()(const cpsapiObject &) = 0;
-  };
-
-  template < class CType >
-  struct copyTemplate : public copyInterface
-  {
-    virtual ~copyTemplate()
-    {}
-
-    virtual cpsapiObject * operator()(const cpsapiObject & object)
-    {
-      return new CType(*static_cast< const CType *>(&object));
-    }
-  };
-
-
 public:
   typedef void (*free_unique_t)(void *);
 
   template < class Type >
   static void free_unique(void *);
 
-  struct TypeInfo
+  struct PartInterface
   {
-    std::type_index cpsapiClass;
-    std::shared_ptr< createInterface > cpsapiCreate;
-    std::shared_ptr< copyInterface > cpsapiCopy;
-    std::type_index copasiClass;
-    std::string copasiString;
+    virtual ~PartInterface() {}
 
-    template < class Target, class Source >
-    static void initProtected()
-    {
-      insert(TypeInfo(std::type_index(typeid(Target)),
-                      nullptr,
-                      nullptr,
-                      std::type_index(typeid(Source)),
-                      typeid(Source).name()));
-    }
+    virtual cpsapiObject * create(CDataObject * /* pDataObject */) const = 0;
 
-    template < class Target, class Source >
-    static void init()
-    {
-      insert(TypeInfo(std::type_index(typeid(Target)),
-                      std::make_shared< createTemplate< Target, Source > >(),
-                      std::make_shared< copyTemplate< Target > >(),
-                      std::type_index(typeid(Source)),
-                      typeid(Source).name()));
-    }
+    virtual cpsapiObject * copy(const cpsapiObject & /* src */) const = 0;
 
-    TypeInfo(const std::type_index & cpsapiClass = std::type_index(typeid(cpsapiObject)),
-             std::shared_ptr< createInterface > cpsapiCreate = nullptr,
-             std::shared_ptr< copyInterface > cpsapiCopy = nullptr,
-             const std::type_index & copasiClass = std::type_index(typeid(CDataObject)),
-             const std::string copasiString = "unknown");
+    virtual const std::type_info & cpsapiType() const = 0;
+
+    virtual const std::type_info & copasiType() const = 0;
   };
 
+  template < class cpsapi, class copasi >
+  struct Part : public PartInterface
+  {
+    virtual ~Part() {}
+
+    virtual cpsapiObject * create(CDataObject * pDataObject) const override;
+
+    virtual cpsapiObject * copy(const cpsapiObject & src) const override;
+
+    virtual const std::type_info & cpsapiType() const override;
+
+    virtual const std::type_info & copasiType() const override;
+  };
+
+
 private:
-  typedef std::map< std::type_index, TypeInfo > CopasiMap;
+  typedef std::map< std::type_index, std::shared_ptr< PartInterface > > CopasiMap;
 
   static CopasiMap copasiMap;
 
-  static void insert(const TypeInfo & typeInfo);
+  template < class cpsapi, class copasi >
+  static void insert();
 
 public:
   static void init();
 
-  static const TypeInfo & info(const std::type_index & typeIndex);
+  static const PartInterface & info(const std::type_index & typeIndex);
 
-  static const TypeInfo & info(CDataObject * pObject);
+  static const PartInterface & info(CDataObject * pObject);
 
-  static const TypeInfo & info(const cpsapiObject & object);
+  static const PartInterface & info(const cpsapiObject & object);
 
   template < class CType >
   static std::shared_ptr< CType > make_shared(CDataObject * pFrom);
@@ -135,15 +93,72 @@ public:
   template < class CType >
   static std::unique_ptr< CType, free_unique_t > make_unique(const cpsapiObject & from);
 
+  template < class Visitor >
+  static void accept(Visitor & visitor, CDataObject * pObject);
+
   static cpsapiObject * copy(const cpsapiObject & object);
 
   static cpsapiObject * create(CDataObject * pFrom);
 
   static CDataValue::Type getDataType(const CObjectInterface * pObject);
 
+  template< class Function >
+  static void callDerived(CDataObject * pObject);
+
 private:
-  static cpsapiObject * make(CDataObject * pObject, const TypeInfo * pTypeInfo = nullptr);
+  static cpsapiObject * make(CDataObject * pObject, const PartInterface * pInfo = nullptr);
 };
+
+// virtual
+template <>
+inline cpsapiObject * cpsapiFactory::Part< void, void >::create(CDataObject * /* pDataObject */) const
+{
+  return nullptr;
+}
+
+template < class cpsapi, class copasi >
+cpsapiObject * cpsapiFactory::Part< cpsapi, copasi >::create(CDataObject * pDataObject) const
+{
+  return new cpsapi(static_cast< copasi * >(pDataObject));
+}
+
+// virtual
+template <>
+inline cpsapiObject * cpsapiFactory::Part< void, void >::copy(const cpsapiObject & /* src */) const
+{
+  return nullptr;
+}
+
+// virtual
+template < class cpsapi, class copasi >
+cpsapiObject * cpsapiFactory::Part< cpsapi, copasi >::copy(const cpsapiObject & src) const
+{
+  return new cpsapi(*static_cast< const cpsapi * >(&src));
+}
+
+// virtual
+template < class cpsapi, class copasi >
+const std::type_info & cpsapiFactory::Part< cpsapi, copasi >::cpsapiType() const
+{
+  return typeid(cpsapi);
+}
+
+// virtual
+template < class cpsapi, class copasi >
+const std::type_info & cpsapiFactory::Part< cpsapi, copasi >::copasiType() const
+{
+  return typeid(copasi);
+}
+
+// static
+template < class cpsapi, class copasi >
+void cpsapiFactory::insert()
+{
+  std::shared_ptr< Part< cpsapi, copasi > > InfoPointer = std::make_shared< Part< cpsapi, copasi > >();
+
+  copasiMap.insert(std::make_pair(std::type_index(typeid(cpsapi)), InfoPointer));
+  copasiMap.insert(std::make_pair(std::type_index(typeid(copasi)), InfoPointer));
+}
 
 template <>
 inline std::shared_ptr< cpsapiObject > cpsapiFactory::make_shared(CDataObject * pFrom)
@@ -202,5 +217,6 @@ void cpsapiFactory::free_unique(void * pointer)
 {
   delete static_cast< Type * >(pointer);
 }
+
 
 CPSAPI_NAMESPACE_END

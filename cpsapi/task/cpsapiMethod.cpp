@@ -23,22 +23,12 @@ const cpsapiMethod::Properties cpsapiMethod::SupportedProperties =
   };
 
 cpsapiMethod::cpsapiMethod(wrapped * pWrapped)
-  : base(pWrapped, Type::Method)
+  : base(pWrapped, cpsapiObjectData::Type::Method)
 {}
 
 // virtual
 cpsapiMethod::~cpsapiMethod()
 {}
-
-// virtual
-void cpsapiMethod::accept(cpsapiVisitor & visitor)
-{
-  if (!isValid())
-    return;
-
-  visitor.visit(this, Type::Method);
-  base::accept(visitor);
-}
 
 bool cpsapiMethod::setProperty(const cpsapiMethod::Property & property, const cpsapiData & value, const CCore::Framework & framework)
 {

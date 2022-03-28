@@ -64,9 +64,9 @@ public:
 
   void clearReferences();
 
-  const cpsapiDataVector & getDataBefore() const;
-  const cpsapiDataVector & getDataDuring() const;
-  const cpsapiDataVector & getDataAfter() const;
+  const cpsapiData::Vector & getDataBefore() const;
+  const cpsapiData::Vector & getDataDuring() const;
+  const cpsapiData::Vector & getDataAfter() const;
 
   std::vector< cpsapiData::Type > getDataTypesBefore() const;
   std::vector< cpsapiData::Type > getDataTypesDuring() const;
@@ -75,15 +75,15 @@ public:
   void clearData();
 
 private:
-  static void collect(cpsapiDataVector & data, const std::vector< std::pair< cpsapiData::Type, void * > > & values);
+  static void collect(cpsapiData::Vector & data, const std::vector< std::pair< cpsapiData::Type, void * > > & values);
 
   bool generateValues(const CObjectInterface::ContainerList & listOfContainer,
                       const std::vector< CRegisteredCommonName > & cns,
                       std::vector< std::pair< cpsapiData::Type, void * > > & values);
 
-  cpsapiDataVector mDataBefore;
-  cpsapiDataVector mDataDuring;
-  cpsapiDataVector mDataAfter;
+  cpsapiData::Vector mDataBefore;
+  cpsapiData::Vector mDataDuring;
+  cpsapiData::Vector mDataAfter;
 
   std::vector< CRegisteredCommonName > mCNsBefore;
   std::vector< CRegisteredCommonName > mCNsDuring;

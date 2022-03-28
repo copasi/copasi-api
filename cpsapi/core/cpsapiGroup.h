@@ -31,8 +31,8 @@ public:
   enum class Property
   {
     PARAMETER_VALUE = cpsapiProperty::Type::PARAMETER_VALUE,
-    OBJECT_NAME = cpsapiProperty::Type::OBJECT_NAME,
-    DISPLAY_NAME = cpsapiProperty::Type::DISPLAY_NAME,
+    NAME = cpsapiProperty::Type::NAME,
+    UNIQUE_NAME = cpsapiProperty::Type::UNIQUE_NAME,
     CN = cpsapiProperty::Type::CN
   };
 
@@ -51,8 +51,8 @@ public:
    */
   enum class Reference
   {
-    NAME = cpsapiReference::Type::OBJECT_NAME,
-    DISPLAY_NAME = cpsapiReference::Type::DISPLAY_NAME,
+    NAME = cpsapiReference::Type::NAME,
+    UNIQUE_NAME = cpsapiReference::Type::UNIQUE_NAME,
   };
 
   /**
@@ -64,6 +64,11 @@ public:
    * Static set of hidden references
    */
   static const References HiddenReferences;
+
+  /**
+   * The class
+   */
+  typedef cpsapiGroup self;
 
   /**
    * The base class
@@ -92,7 +97,7 @@ public:
    * Specific constructor
    * @param wrapped * pGroup
    */
-  cpsapiGroup(wrapped * pGroup, const Type & type = Type::Group);
+  cpsapiGroup(wrapped * pGroup, const cpsapiObjectData::Type & type = cpsapiObjectData::Type::Group);
 
   /**
    * Destructor
@@ -100,10 +105,12 @@ public:
   virtual ~cpsapiGroup();
 
   /**
-   * Accept a visitor
-   * @param cpsapiVisitor & visitor
+   * Accept the given visitor
+   * 
+   * @tparam Visitor 
+   * @param Visitor & visitor 
    */
-  virtual void accept(cpsapiVisitor & visitor) override;
+  template < typename Visitor > void accept(Visitor & visitor);
 
   /**
    * Add parameter
@@ -209,5 +216,15 @@ protected:
    */
   virtual CCommonName getDataCN(const cpsapiReference::Type & reference, const CCore::Framework & framework) const override;
 };
+
+template< class Visitor >
+void cpsapiGroup::accept(Visitor & visitor)
+{
+  if (isValid())
+    {
+      cpsapiVisitor::acceptIfVisitable(visitor, this); 
+      base::accept(visitor);
+    }
+}
 
 CPSAPI_NAMESPACE_END

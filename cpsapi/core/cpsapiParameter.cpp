@@ -38,23 +38,13 @@ const cpsapiParameter::References cpsapiParameter::SupportedReferences =
 // static
 const cpsapiParameter::References cpsapiParameter::HiddenReferences = {};
 
-cpsapiParameter::cpsapiParameter(wrapped * pWrapped, const cpsapiObject::Type & type)
+cpsapiParameter::cpsapiParameter(wrapped * pWrapped, const cpsapiObjectData::Type & type)
   : base(pWrapped, type)
 {}
 
 // virtual
 cpsapiParameter::~cpsapiParameter()
 {}
-
-// virtual 
-void cpsapiParameter::accept(cpsapiVisitor & visitor)
-{
-  if (!isValid())
-    return;
-
-  visitor.visit(this, Type::Parameter);
-  base::accept(visitor);
-}
 
 bool cpsapiParameter::setProperty(const cpsapiParameter::Property & property, const cpsapiData & value, const CCore::Framework & framework)
 {

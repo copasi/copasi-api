@@ -35,32 +35,39 @@ const cpsapiReaction::Properties cpsapiReaction::SupportedProperties =
     cpsapiProperty::Type::NOISE_EXPRESSION
   };
 
+// static
+const cpsapiReaction::Properties cpsapiReaction::HiddenProperties = {};
+
+// static
+const cpsapiReaction::References cpsapiReaction::SupportedReferences =
+  {
+    cpsapiReference::Type::FLUX,
+    cpsapiReference::Type::PARTICLE_FLUX,
+    cpsapiReference::Type::INITIAL_FLUX,
+    cpsapiReference::Type::INITIAL_PARTICLE_FLUX,
+    cpsapiReference::Type::NOISE,
+    cpsapiReference::Type::PROPENSITY
+  };
+
+// static
+const cpsapiReaction::References cpsapiReaction::HiddenReferences = {};
+
 cpsapiReaction::cpsapiReaction(cpsapiReaction::wrapped * pWrapped)
-  : base(pWrapped, Type::Reaction)
+  : base(pWrapped, cpsapiObjectData::Type::Reaction)
 {
-  assertData< cpsapiReaction >(pWrapped);
+  cpsapiObjectData::assertDataType< cpsapiReaction >(mpData);
 }
 
 // virtual
 cpsapiReaction::~cpsapiReaction()
 {}
 
-// virtual 
-void cpsapiReaction::accept(cpsapiVisitor & visitor)
-{
-  if (!isValid())
-    return;
-
-  visitor.visit(this, Type::Reaction);
-  base::accept(visitor);
-}
-
 cpsapiKineticLawVariable::KineticLawVariable * cpsapiReaction::assertVariable(const std::string & name)
 {
-  VariableManager::iterator found = DATA->mManager.find(name);
+  VariableManager::iterator found = DATA->mVariableManager.find(name);
 
-  if (found == DATA->mManager.end())
-    found = DATA->mManager.insert(std::make_pair(name, cpsapiKineticLawVariable(new cpsapiKineticLawVariable::KineticLawVariable(WRAPPED, name)))).first;
+  if (found == DATA->mVariableManager.end())
+    found = DATA->mVariableManager.insert(std::make_pair(name, cpsapiKineticLawVariable(new cpsapiKineticLawVariable::KineticLawVariable(WRAPPED, name)))).first;
 
   return static_cast< cpsapiKineticLawVariable::KineticLawVariable * >(*found->second);
 }
@@ -71,10 +78,10 @@ cpsapiKineticLawVariable cpsapiReaction::variable(const std::string & name)
     return nullptr;
 
   if (!name.empty() &&
-      name != DATA->mDefaultParameter.getProperty(cpsapiKineticLawVariable::Property::NAME).toString())
-    DATA->mDefaultParameter = cpsapiKineticLawVariable(assertVariable(name));
+      name != DATA->mDefaultVariable.getProperty(cpsapiKineticLawVariable::Property::NAME).toString())
+    DATA->mDefaultVariable = cpsapiKineticLawVariable(assertVariable(name));
     
-  return DATA->mDefaultParameter;
+  return DATA->mDefaultVariable;
 }
 
 cpsapiVector< cpsapiKineticLawVariable > cpsapiReaction::variables()
@@ -223,4 +230,46 @@ cpsapiData cpsapiReaction::getProperty(const cpsapiProperty::Type & property, co
     }
 
   return cpsapiData();
+}
+
+CCommonName cpsapiReaction::getDataCN(const cpsapiReaction::Reference & reference, const CCore::Framework & framework) const
+{
+  return getDataCN(static_cast< cpsapiReference::Type >(reference), framework);
+}
+
+// virtual
+CCommonName cpsapiReaction::getDataCN(const cpsapiReference::Type & reference, const CCore::Framework & framework) const
+{
+  if (!isValid()
+      || isHiddenReference< cpsapiReaction >(reference))
+    return Invalid;
+
+  if (!isImplementedReference< cpsapiReaction >(reference))
+    return base::getDataCN(reference, framework);
+
+  switch (reference)
+    {
+    case cpsapiReference::Type::FLUX:
+      break;
+
+    case cpsapiReference::Type::PARTICLE_FLUX:
+      break;
+
+    case cpsapiReference::Type::INITIAL_FLUX:
+      break;
+
+    case cpsapiReference::Type::INITIAL_PARTICLE_FLUX:
+      break;
+
+    case cpsapiReference::Type::NOISE:
+      break;
+
+    case cpsapiReference::Type::PROPENSITY:
+      break;
+
+    default:
+      break;
+    }
+
+  return Invalid;
 }

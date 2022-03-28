@@ -22,76 +22,14 @@
 CPSAPI_NAMESPACE_USE
 
 // static 
-cpsapiObject::Map cpsapiObject::Manager;
-
-// static
 const CCommonName cpsapiObject::Invalid;
 
-// static
-void cpsapiObject::release()
-{
-  Map::iterator it = Manager.begin();
-  Map::iterator end = Manager.end();
-
-  for (; it != end; ++it)
-    it->second.reset();
-}
-
-// static 
-void cpsapiObject::erase(const CDataObject * pObject)
-{
-  if (pObject == nullptr)
-    return;
-
-  Map::iterator found = Manager.find(const_cast< CDataObject * >(pObject));
-  
-  if (found == Manager.end())
-    return;
-
-  
-  if (found->second.get() != nullptr)
-    std::static_pointer_cast< Data >(found->second)->mpObject = nullptr;
-
-  Manager.erase(pObject);
-}
-
-// static
-void cpsapiObject::deleted(const CDataObject * pObject)
-{
-  if (dynamic_cast< const CDataContainer * >(pObject))
-    for (const CDataObject * pChildObject : static_cast< const CDataContainer * >(pObject)->getObjects())
-      deleted(pChildObject);
-
-  erase(pObject);
-}
-
-// static
-const CEnumAnnotation< std::string, cpsapiObject::Type > cpsapiObject::TypeName(
-{
-  "Object",
-  "Container",
-  "Vector",
-  "ModelEntity",
-  "Value",
-  "Model",
-  "Compartment",
-  "Species",
-  "GlobalQuantity",
-  "Reaction",
-  "ReactionParameter",
-  "DataModel",
-  "Parameter",
-  "Group",
-  "Method",
-  "Problem",
-  "Task"
-});
 
 // static
 const cpsapiObject::Properties cpsapiObject::SupportedProperties =
 {
-  cpsapiProperty::Type::OBJECT_NAME,
-  cpsapiProperty::Type::DISPLAY_NAME,
+  cpsapiProperty::Type::NAME,
+  cpsapiProperty::Type::UNIQUE_NAME,
   cpsapiProperty::Type::CN
 };
 
@@ -101,8 +39,8 @@ const cpsapiObject::Properties cpsapiObject::HiddenProperties = {};
 // static
 const cpsapiObject::References cpsapiObject::SupportedReferences =
 {
-  cpsapiReference::Type::OBJECT_NAME,
-  cpsapiProperty::Type::DISPLAY_NAME
+  cpsapiReference::Type::NAME,
+  cpsapiProperty::Type::UNIQUE_NAME
 };
 
 // static
@@ -110,32 +48,15 @@ const cpsapiObject::References cpsapiObject::HiddenReferences = {};
 
 std::ostream & operator << (std::ostream &os, const cpsapiObject & object)
 {
-  os << cpsapiObject::TypeName[object.getType()] << ": " << object.getProperty(cpsapiObject::Property::OBJECT_NAME).toString();
+  os << cpsapiObjectData::TypeName[object.getType()] << ": " << object.getProperty(cpsapiObject::Property::NAME).toString();
 
   return os;
 }
 
-cpsapiObject::cpsapiObject(CDataObject * pObject, const cpsapiObject::Type & type)
-  : mpData()
+cpsapiObject::cpsapiObject(CDataObject * pObject, const cpsapiObjectData::Type & type)
+  : mpData(std::make_shared< Data >(pObject, type))
 {
-  Data data;
-
-  data.mpObject = pObject;
-  data.mType = type;
-
-  if (pObject == nullptr)
-    {
-      mpData = std::make_shared< Data >(data);
-    }
-  else
-    {
-      Map::iterator found = Manager.insert(std::make_pair(data.mpObject, nullptr)).first;
-
-      if (!std::dynamic_pointer_cast< Data >(found->second))
-        found->second = std::make_shared< Data >(data);
-
-      mpData = found->second;
-    }
+  Data::assertDataType< cpsapiObject >(mpData);
 }
 
 cpsapiObject::cpsapiObject(const cpsapiObject & src)
@@ -174,7 +95,7 @@ bool cpsapiObject::operator!=(const cpsapiObject & rhs) const
   return DATA != std::static_pointer_cast< Data >(rhs.mpData);
 }
 
-cpsapiObject::Type cpsapiObject::getType() const
+cpsapiObjectData::Type cpsapiObject::getType() const
 {
   return DATA->mType;
 }
@@ -193,15 +114,6 @@ bool cpsapiObject::isValid() const
 CDataObject * cpsapiObject::getObject() const
 {
   return DATA->mpObject;
-}
-
-// virtual 
-void cpsapiObject::accept(cpsapiVisitor & visitor)
-{
-  if (!isValid())
-    return;
-
-  visitor.visit(this, Type::Object);
 }
 
 bool cpsapiObject::setProperty(const cpsapiObject::Property & property, const cpsapiData & value, const CCore::Framework & framework)
@@ -246,7 +158,7 @@ bool cpsapiObject::setProperty(const cpsapiProperty::Type & property, const cpsa
 
   switch (property)
     {
-    case cpsapiProperty::Type::OBJECT_NAME:
+    case cpsapiProperty::Type::NAME:
       if (value.getType() == cpsapiData::Type::String)
         success = getObject()->setObjectName(value.toString());
 
@@ -269,11 +181,11 @@ cpsapiData cpsapiObject::getProperty(const cpsapiProperty::Type & property, cons
 
   switch (property)
     {
-    case cpsapiProperty::Type::OBJECT_NAME:
+    case cpsapiProperty::Type::NAME:
       return getObject()->getObjectName();
       break;
 
-    case cpsapiProperty::Type::DISPLAY_NAME:
+    case cpsapiProperty::Type::UNIQUE_NAME:
       return getObject()->getObjectDisplayName();
 
     case cpsapiProperty::Type::CN:
@@ -296,11 +208,11 @@ CCommonName cpsapiObject::getDataCN(const cpsapiReference::Type & reference, con
 
   switch (reference)
     {
-    case cpsapiReference::Type::OBJECT_NAME:
+    case cpsapiReference::Type::NAME:
       return getObject()->getObject(std::string("Property=Name"))->getDataObject()->getCN();
       break;
 
-    case cpsapiReference::Type::DISPLAY_NAME:
+    case cpsapiReference::Type::UNIQUE_NAME:
       return getObject()->getObject(std::string("Property=DisplayName"))->getDataObject()->getCN();
 
     default:

@@ -42,8 +42,8 @@ public:
   enum class Property
   {
     INITIAL_VALUE = cpsapiProperty::Type::INITIAL_VALUE,
-    OBJECT_NAME = cpsapiProperty::Type::OBJECT_NAME,
-    DISPLAY_NAME = cpsapiProperty::Type::DISPLAY_NAME,
+    NAME = cpsapiProperty::Type::NAME,
+    UNIQUE_NAME = cpsapiProperty::Type::UNIQUE_NAME,
     CN = cpsapiProperty::Type::CN,
     UNIT = cpsapiProperty::Type::UNIT,
     VOLUME_UNIT = cpsapiProperty::Type::VOLUME_UNIT,
@@ -64,6 +64,11 @@ public:
    * Static set of hidden properties
    */
   static const Properties HiddenProperties;
+
+  /**
+   * The class
+   */
+  typedef cpsapiModel self;
 
   /**
    * The base class
@@ -102,7 +107,13 @@ public:
 
   virtual ~cpsapiModel();
 
-  virtual void accept(cpsapiVisitor & visitor) override;
+  /**
+   * Accept the given visitor
+   * 
+   * @tparam Visitor 
+   * @param Visitor & visitor 
+   */
+  template < typename Visitor > void accept(Visitor & visitor);
 
   void beginTransaction() const;
 
@@ -172,5 +183,15 @@ private:
   
   void deleteDependents(const CDataObject::DataObjectSet & set);
 };
+
+template< class Visitor >
+void cpsapiModel::accept(Visitor & visitor)
+{
+  if (isValid())
+    {
+      cpsapiVisitor::acceptIfVisitable(visitor, this); 
+      base::accept(visitor);
+    }
+}
 
 CPSAPI_NAMESPACE_END

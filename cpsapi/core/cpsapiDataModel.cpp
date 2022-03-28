@@ -28,24 +28,14 @@
 CPSAPI_NAMESPACE_USE
 
 cpsapiDataModel::cpsapiDataModel(wrapped * pWrapped)
-  : base(pWrapped, Type::DataModel)
+  : base(pWrapped, cpsapiObjectData::Type::DataModel)
 {
-  assertData< cpsapiDataModel >(pWrapped);
+  cpsapiObjectData::assertDataType< cpsapiDataModel >(mpData);
 }
 
 // virtual 
 cpsapiDataModel::~cpsapiDataModel()
 {}
-
-// virtual 
-void cpsapiDataModel::accept(cpsapiVisitor & visitor)
-{
-  if (!isValid())
-    return;
-
-  visitor.visit(this, Type::DataModel);
-  base::accept(visitor);
-}
 
 bool cpsapiDataModel::loadFromFile(const std::string & fileName)
 {
@@ -66,11 +56,11 @@ bool cpsapiDataModel::loadFromFile(const std::string & fileName)
       if (success)
         {
           // We need to mark all old data as deleted before we actually delete it
-          deleted(pModel);
-          deleted(pTaskList);
-          deleted(pReportDefinitionList);
-          deleted(pPlotDefinitionList);
-          deleted(pListOfLayouts);
+          Data::deleted(pModel);
+          Data::deleted(pTaskList);
+          Data::deleted(pReportDefinitionList);
+          Data::deleted(pPlotDefinitionList);
+          Data::deleted(pListOfLayouts);
 
           pData->mpDefaultReportDefinition = nullptr;
           pData->mpDefaultPlotSpecification = nullptr;
@@ -104,11 +94,11 @@ bool cpsapiDataModel::loadFromString(const std::string & content, const std::str
         {
           // We need to mark all old data as deleted before we actually delete it
           // We need to mark all old data as deleted before we actually delete it
-          deleted(pModel);
-          deleted(pTaskList);
-          deleted(pReportDefinitionList);
-          deleted(pPlotDefinitionList);
-          deleted(pListOfLayouts);
+          Data::deleted(pModel);
+          Data::deleted(pTaskList);
+          Data::deleted(pReportDefinitionList);
+          Data::deleted(pPlotDefinitionList);
+          Data::deleted(pListOfLayouts);
 
           pData->mpDefaultReportDefinition = nullptr;
           pData->mpDefaultPlotSpecification = nullptr;

@@ -47,9 +47,9 @@ const cpsapiKineticLawVariable::References cpsapiKineticLawVariable::HiddenRefer
   {};
 
 cpsapiKineticLawVariable::cpsapiKineticLawVariable(wrapped * pWrapped)
-  : base(pWrapped, Type::ReactionParameter)
+  : base(pWrapped, cpsapiObjectData::Type::ReactionParameter)
 {
-  assertData< cpsapiKineticLawVariable >(pWrapped);
+  cpsapiObjectData::assertDataType< cpsapiKineticLawVariable >(mpData);
 }
 
 // virtual
@@ -62,16 +62,6 @@ bool cpsapiKineticLawVariable::isValid() const
   return (base::isValid()
           && dynamic_cast< CReaction * >(WRAPPED->getObjectParent()) != nullptr
           && WRAPPED->getObjectName() != "@");
-}
-
-// virtual
-void cpsapiKineticLawVariable::accept(cpsapiVisitor & visitor)
-{
-  if (!isValid())
-    return;
-
-  visitor.visit(this, Type::ReactionParameter);
-  base::accept(visitor);
 }
 
 bool cpsapiKineticLawVariable::setProperty(const cpsapiKineticLawVariable::Property & property, const cpsapiData & value, const CCore::Framework & framework)
@@ -115,7 +105,7 @@ bool cpsapiKineticLawVariable::setProperty(const cpsapiProperty::Type & property
 
     case cpsapiProperty::Type::PARAMETER_VALUE:
       if (WRAPPED->mpMappedObject != nullptr
-          && WRAPPED->mpMappedObject->getType() == cpsapiObject::Type::Parameter)
+          && WRAPPED->mpMappedObject->getType() == cpsapiObjectData::Type::Parameter)
         success &= static_cast< CCopasiParameter * >(**WRAPPED->mpMappedObject)->setValue(value.toDouble());
       break;
 
@@ -207,7 +197,7 @@ cpsapiData cpsapiKineticLawVariable::getProperty(const cpsapiProperty::Type & pr
 
     case cpsapiProperty::Type::PARAMETER_VALUE:
       if (WRAPPED->mpMappedObject != nullptr
-          && WRAPPED->mpMappedObject->getType() == cpsapiObject::Type::Parameter)
+          && WRAPPED->mpMappedObject->getType() == cpsapiObjectData::Type::Parameter)
         return static_cast< CCopasiParameter * >(**WRAPPED->mpMappedObject)->getValue< C_FLOAT64 >();
       break;
 
@@ -256,7 +246,7 @@ CCommonName cpsapiKineticLawVariable::getDataCN(const cpsapiReference::Type & re
     {
     case cpsapiReference::Type::PARAMETER_VALUE:
       if (WRAPPED->mpMappedObject != nullptr
-          && WRAPPED->mpMappedObject->getType() == cpsapiObject::Type::Parameter)
+          && WRAPPED->mpMappedObject->getType() == cpsapiObjectData::Type::Parameter)
         return static_cast< CCopasiParameter * >(**WRAPPED->mpMappedObject)->getValueReference()->getCN();
 
       break;

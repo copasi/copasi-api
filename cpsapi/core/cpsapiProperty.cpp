@@ -1,3 +1,17 @@
+// BEGIN: Copyright 
+// Copyright (C) 2021 - 2022 by Pedro Mendes, Rector and Visitors of the 
+// University of Virginia, University of Heidelberg, and University 
+// of Connecticut School of Medicine. 
+// All rights reserved 
+// END: Copyright 
+
+// BEGIN: License 
+// Licensed under the Artistic License 2.0 (the "License"); 
+// you may not use this file except in compliance with the License. 
+// You may obtain a copy of the License at 
+//   https://opensource.org/licenses/Artistic-2.0 
+// END: License 
+
 #include "cpsapi/core/cpsapiProperty.h"
 
 CPSAPI_NAMESPACE_USE
@@ -31,7 +45,7 @@ const CEnumAnnotation< std::string, cpsapiProperty::Type > cpsapiProperty::Name(
   "Initial Flux", // INITIAL_FLUX
   "Initial Particle Flux", // INITIAL_PARTICLE_FLUX
   "Object UUID", // OBJECT_UUID
-  "Object Name", // OBJECT_NAME
+  "Object Name", // NAME
   "Object Parent CN", // OBJECT_PARENT_CN
   "Object Type", // OBJECT_TYPE
   "Object Flag", // OBJECT_FLAG
@@ -42,7 +56,7 @@ const CEnumAnnotation< std::string, cpsapiProperty::Type > cpsapiProperty::Name(
   "Object Reference CN", // OBJECT_REFERENCE_CN
   "Object Reference Index", // OBJECT_REFERENCE_INDEX
   "Object Pointer", // OBJECT_POINTER
-  "Display Name", // DISPLAY_NAME
+  "Display Name", // UNIQUE_NAME
   "CN", // CN
   "Evaluation Tree Type", // EVALUATION_TREE_TYPE
   "Task Type", // TASK_TYPE
@@ -99,5 +113,7 @@ const CEnumAnnotation< std::string, cpsapiProperty::Type > cpsapiProperty::Name(
   "Vector Content" // VECTOR_CONTENT
   "Unit symbol", // UNIT_SYMBOL
   "Unit expression", // UNIT_EXPRESSION
-});
+  "Noise",  // NOISE
+  "Propensity", // PROPENSITY
+ });
 

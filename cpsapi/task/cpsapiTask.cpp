@@ -27,9 +27,9 @@ const cpsapiTask::Properties cpsapiTask::SupportedProperties =
   };
 
 cpsapiTask::cpsapiTask(wrapped * pWrapped)
-  : base(pWrapped, Type::Task)
+  : base(pWrapped, cpsapiObjectData::Type::Task)
 {
-  assertData< cpsapiTask >(pWrapped);
+  cpsapiObjectData::assertDataType< cpsapiTask >(mpData);
 
   if (operator bool())
     {
@@ -41,16 +41,6 @@ cpsapiTask::cpsapiTask(wrapped * pWrapped)
 // virtual
 cpsapiTask::~cpsapiTask()
 {}
-
-// virtual
-void cpsapiTask::accept(cpsapiVisitor & visitor)
-{
-  if (!isValid())
-    return;
-
-  visitor.visit(this, Type::Task);
-  base::accept(visitor);
-}
 
 cpsapiMethod cpsapiTask::createMethod(const CTaskEnum::Method & type) const
 {
@@ -74,7 +64,7 @@ bool cpsapiTask::setMethod(const cpsapiMethod & newMethod)
 
   if (NewType != OldType)
     {
-      deleted(*DATA->mMethod);
+      cpsapiObjectData::deleted(*DATA->mMethod);
       WRAPPED->setMethodType(NewType);
     }
 

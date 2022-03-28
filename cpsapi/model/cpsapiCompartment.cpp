@@ -28,24 +28,14 @@ const cpsapiCompartment::Properties cpsapiCompartment::SupportedProperties =
   };
 
 cpsapiCompartment::cpsapiCompartment(cpsapiCompartment::wrapped * pWrapped)
-  : base(pWrapped, Type::Compartment)
+  : base(pWrapped, cpsapiObjectData::Type::Compartment)
 {
-  assertData< cpsapiCompartment >(pWrapped);
+  cpsapiObjectData::assertDataType< cpsapiCompartment >(mpData);
 }
 
 // virtual
 cpsapiCompartment::~cpsapiCompartment()
 {}
-
-// virtual 
-void cpsapiCompartment::accept(cpsapiVisitor & visitor)
-{
-  if (!isValid())
-    return;
-
-  visitor.visit(this, Type::Compartment);
-  base::accept(visitor);
-}
 
 cpsapiSpecies cpsapiCompartment::addSpecies(const std::string & name)
 {
@@ -76,7 +66,7 @@ bool cpsapiCompartment::deleteSpecies(const std::string & name)
   cpsapiTransaction::beginStructureChange(WRAPPED->getModel());
 
   cpsapiModel(WRAPPED->getModel()).deleteAllDependents(pSpecies);
-  deleted(pSpecies);
+  cpsapiObjectData::deleted(pSpecies);
   pdelete(pSpecies);
 
   return true;

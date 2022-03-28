@@ -43,24 +43,14 @@ const cpsapiModel::Properties cpsapiModel::HiddenProperties =
     cpsapiProperty::Type::NOISE_EXPRESSION};
 
 cpsapiModel::cpsapiModel(wrapped * pWrapped)
-  : base(pWrapped, Type::Model)
+  : base(pWrapped, cpsapiObjectData::Type::Model)
 {
-  assertData< cpsapiModel >(pWrapped);
+  cpsapiObjectData::assertDataType< cpsapiModel >(mpData);
 }
 
 // virtual
 cpsapiModel::~cpsapiModel()
 {}
-
-// virtual
-void cpsapiModel::accept(cpsapiVisitor & visitor)
-{
-  if (!isValid())
-    return;
-
-  visitor.visit(this, Type::Model);
-  base::accept(visitor);
-}
 
 void cpsapiModel::beginTransaction() const
 {
@@ -122,7 +112,7 @@ bool cpsapiModel::deleteCompartment(const std::string & name)
   cpsapiTransaction::beginStructureChange(WRAPPED);
 
   deleteAllDependents(pCompartment);
-  deleted(pCompartment);
+  cpsapiObjectData::deleted(pCompartment);
   delete pCompartment;
 
   return true;
@@ -243,7 +233,7 @@ bool cpsapiModel::deleteGlobalQuantity(const std::string & name)
   cpsapiTransaction::beginStructureChange(WRAPPED);
 
   deleteAllDependents(pGlobalQuantity);
-  deleted(pGlobalQuantity);
+  cpsapiObjectData::deleted(pGlobalQuantity);
   delete pGlobalQuantity;
 
   return true;
@@ -319,7 +309,7 @@ bool cpsapiModel::deleteReaction(const std::string & name)
   cpsapiTransaction::beginStructureChange(WRAPPED);
 
   deleteAllDependents(pReaction);
-  deleted(pReaction);
+  cpsapiObjectData::deleted(pReaction);
   delete pReaction;
 
   return true;
@@ -371,7 +361,7 @@ void cpsapiModel::deleteDependents(const CDataObject::DataObjectSet & set)
 {
   for (const CDataObject * pObject : set)
     {
-      deleted(pObject);
+      cpsapiObjectData::deleted(pObject);
       delete pObject;
     }
 }

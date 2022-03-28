@@ -16,6 +16,7 @@
 
 #include <string>
 #include <memory>
+#include <variant>
 
 #pragma GCC diagnostic push
 #include <copasi/core/CCore.h>
@@ -25,14 +26,14 @@
 
 CPSAPI_NAMESPACE_BEGIN
 
-typedef std::vector< cpsapiData > cpsapiDataVector;
-
-class cpsapiData
+class cpsapiData : public std::variant< C_FLOAT64, C_INT32, unsigned C_INT32, size_t, bool, std::string, CRegisteredCommonName, std::shared_ptr< cpsapiObject >, std::vector< cpsapiData > >
 {
+  typedef std::variant< C_FLOAT64, C_INT32, unsigned C_INT32, size_t, bool, std::string, CRegisteredCommonName, std::shared_ptr< cpsapiObject >, std::vector< cpsapiData > > base;
+
 public:
   enum struct Type
   {
-    Double,
+    Double = 0,
     Int32,
     UnsignedInt32,
     SizeType,
@@ -40,11 +41,11 @@ public:
     String,
     CommonName,
     Object,
-    Data,
+    Vector,
     __SIZE
   };
 
-  typedef std::unique_ptr< void, cpsapiFactory::free_unique_t > DataPointer;
+  typedef std::vector< cpsapiData > Vector;
 
   // static const CEnumAnnotation< std::string, Type > Name;
 
@@ -66,7 +67,7 @@ public:
 
   cpsapiData(const CCommonName & value);
 
-  cpsapiData(const cpsapiDataVector & value);
+  cpsapiData(const Vector & value);
 
   template < class Object > cpsapiData(const Object & value);
 
@@ -92,64 +93,33 @@ public:
 
   CCommonName toCommonName() const;
 
-  const cpsapiDataVector & toData() const;
+  const Vector & toData() const;
 
   template < class Object > Object toObject() const;
 
-  const Type & getType() const;
-
-private:
-  DataPointer copyData() const;
-
-  template < class CType > void assign(const CType * pValue, const Type & type);
-
-  template < class CType > static void free_unique(void *);
-
-  Type mType;
-
-  DataPointer mpData;
+  Type getType() const;
 };
 
 template < class Object > 
 cpsapiData::cpsapiData(const Object & value)
-  : mType(Type::Object)
-  , mpData(cpsapiFactory::make_unique< Object >(value))
+  : base(std::make_shared< Object >(value))
 {}
-
-template <> inline
-void cpsapiData::assign(const cpsapiObject * pValue, const cpsapiData::Type & type)
-{
-  mType = type;
-  mpData = cpsapiFactory::make_unique< cpsapiObject >(*pValue);
-}
-
-template < class CType > 
-void cpsapiData::assign(const CType * pValue, const cpsapiData::Type & type)
-{
-  if (mType == type)
-    *static_cast< CType * >(mpData.get()) = *pValue;
-  else
-    {
-      mType = type;
-      mpData = std::unique_ptr< CType, cpsapiFactory::free_unique_t >(new CType(*pValue), &cpsapiFactory::free_unique< Type >);
-    }
-}
 
 template <>
 inline cpsapiObject cpsapiData::toObject() const
 {
-  if (mType == Type::Object)
-    return *static_cast< cpsapiObject * >(mpData.get());
+  if (std::holds_alternative< std::shared_ptr< cpsapiObject > >(*this))
+    return *std::get< std::shared_ptr< cpsapiObject > >(*this);
 
-  return cpsapiObject(nullptr, cpsapiObject::Type::Object);
+  return cpsapiObject(nullptr, cpsapiObjectData::Type::Object);
 }
 
 template < class Object > 
 Object cpsapiData::toObject() const
 {
-  if (mType == Type::Object
-      && dynamic_cast< Object * >(static_cast< cpsapiObject * >(mpData.get())) != nullptr)
-    return *static_cast< Object * >(mpData.get());
+  if (std::holds_alternative< std::shared_ptr< cpsapiObject > >(*this)
+      && std::dynamic_pointer_cast< Object >(std::get< std::shared_ptr< cpsapiObject > >(*this)) != nullptr)
+    return *std::static_pointer_cast< Object >(std::get< std::shared_ptr< cpsapiObject > >(*this));
 
   return Object(nullptr);
 }

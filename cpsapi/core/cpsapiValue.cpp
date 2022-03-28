@@ -35,7 +35,7 @@ const cpsapiValue::References cpsapiValue::SupportedReferences =
 const cpsapiValue::References cpsapiValue::HiddenReferences = {};
 
 cpsapiValue::cpsapiValue(wrapped * pWrapped)
-  : base(pWrapped, Type::Value)
+  : base(pWrapped, cpsapiObjectData::Type::Value)
 {
   if (cpsapiFactory::getDataType(pWrapped) == CDataValue::Type::INVALID)
     operator=(nullptr);
@@ -43,16 +43,6 @@ cpsapiValue::cpsapiValue(wrapped * pWrapped)
 
 cpsapiValue::~cpsapiValue()
 {}
-
-// virtual 
-void cpsapiValue::accept(cpsapiVisitor & visitor)
-{
-  if (!isValid())
-    return;
-
-  visitor.visit(this, Type::Value);
-  base::accept(visitor);
-}
 
 bool cpsapiValue::setProperty(const cpsapiValue::Property & property, const cpsapiData & value, const CCore::Framework & framework)
 {

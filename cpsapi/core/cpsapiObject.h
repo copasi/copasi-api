@@ -23,6 +23,8 @@
 #pragma GCC diagnostic pop
 
 #include "cpsapi/core/cpsapiProperty.h"
+#include "cpsapi/core/cpsapiVisitor.h"
+#include "cpsapi/core/cpsapiObjectData.h"
 
 class CDataObject;
 
@@ -31,9 +33,7 @@ class CDataObject;
 
 CPSAPI_NAMESPACE_BEGIN
 
-class cpsapiVisitor;
 class cpsapiData;
-
 
 /**
  * The cpsapiObject class is the base class for all COPASI CDataObjects exposed in the cpsapi.
@@ -43,56 +43,12 @@ class cpsapiObject
   friend class cpsapiData;
 
 public:
-  static void release();
-
-  static void erase(const CDataObject * pObject);
-
-  static void deleted(const CDataObject * pObject);
-
-  enum struct Type
-  {
-    Object,
-    Container,
-    Vector,
-    ModelEntity,
-    Value,
-    Model,
-    Compartment,
-    Species,
-    GlobalQuantity,
-    Reaction,
-    ReactionParameter,
-    DataModel,
-    Parameter,
-    Group,
-    Method,
-    Problem,
-    Task,
-    __SIZE
-  };
-
-  static const CEnumAnnotation< std::string, Type > TypeName;
-
   static  const CCommonName Invalid;
 
   typedef std::set< cpsapiProperty::Type > Properties;
   typedef std::set< cpsapiReference::Type > References;
 
-protected:
-  class Data 
-  {
-  public:
-    virtual ~Data() {}
-
-    CDataObject * mpObject;
-    Type mType;
-  };
-
-  typedef std::shared_ptr< Data > DataPointer;
-
-  typedef std::map< const CDataObject *, DataPointer > Map;
-
-  static Map Manager;
+  typedef cpsapiObjectData Data;
 
 public:
   /**
@@ -100,8 +56,8 @@ public:
    */
   enum class Property
   {
-    OBJECT_NAME = cpsapiProperty::Type::OBJECT_NAME,
-    DISPLAY_NAME = cpsapiProperty::Type::DISPLAY_NAME,
+    NAME = cpsapiProperty::Type::NAME,
+    UNIQUE_NAME = cpsapiProperty::Type::UNIQUE_NAME,
     CN = cpsapiProperty::Type::CN
   };
 
@@ -120,8 +76,8 @@ public:
    */
   enum class Reference
   {
-    OBJECT_NAME = cpsapiReference::Type::OBJECT_NAME,
-    DISPLAY_NAME = cpsapiReference::Type::DISPLAY_NAME
+    NAME = cpsapiReference::Type::NAME,
+    UNIQUE_NAME = cpsapiReference::Type::UNIQUE_NAME
   };
 
   /**
@@ -135,25 +91,25 @@ public:
   static const References HiddenReferences;
 
   /**
-   * Deleted default constructor
+   * The base class
    */
-  cpsapiObject() = delete;
+  typedef cpsapiObject self;
 
 protected:
   /**
    * Specific  constructor
    * @param CDataObject * pObject (default: nullptr)
-   * @param const Type & type
+   * @param const Type & type (default: Type::Object)
    */
-  cpsapiObject(CDataObject * pObject, const Type & type);
+  cpsapiObject(CDataObject * pObject = nullptr, const cpsapiObjectData::Type & type = cpsapiObjectData::Type::Object);
 
+public:
   /**
    * Copy constructor
    * @param const cpsapiObject & src
    */
   cpsapiObject(const cpsapiObject & src);
 
-public:
   /**
    * Destructor
    */
@@ -205,9 +161,9 @@ public:
 
   /** 
    * Retrieve the type of the object
-   * @return cpsapiObject::Type type
+   * @return cpsapiObjectData::Type type
    * */
-  Type getType() const;
+  cpsapiObjectData::Type getType() const;
 
   /**
    * Conversion to bool indicating whether the underlying COPASI CDataObject is accessible.
@@ -223,12 +179,12 @@ public:
   virtual bool isValid() const;
 
   /**
-   * A a virtual accept method implementing a visitor pattern.
-   * Valid cpsapiObjects will call:  visitor.visit(*this)
-   * Visitors have read and write access to the object.
-   * @param accept(cpsapiVisitor& visitor)
+   * Accept the given visitor
+   * 
+   * @tparam Visitor 
+   * @param Visitor & visitor 
    */
-  virtual void accept(cpsapiVisitor & visitor);
+  template < typename Visitor > void accept(Visitor & visitor);
 
 protected:
   /**
@@ -297,7 +253,7 @@ public:
    * @return bool supported
    */
   template < class CType >
-  bool isSupportedProperty(const cpsapiProperty::Type & property);
+  static bool isSupportedProperty(const cpsapiProperty::Type & property);
 
   /**
    * Retrieve a data reference of the object under the given framework.
@@ -335,7 +291,7 @@ CCommonName getDataCN(const std::string & reference, const std::string & framewo
    * @return bool supported
    */
   template < class CType >
-  bool isSupportedReference(const cpsapiReference::Type & reference);
+  static bool isSupportedReference(const cpsapiReference::Type & reference);
 
 protected:
   /**
@@ -404,28 +360,27 @@ protected:
    * @param const CCore::Framework &framework 
    * @return CCommonName
    */
-virtual CCommonName getDataCN(const cpsapiReference::Type & reference, const CCore::Framework & framework) const;
+  virtual CCommonName getDataCN(const cpsapiReference::Type & reference, const CCore::Framework & framework) const;
 
-  /**
-   * Assert that mpData points of the proper class 
-   * 
-   * @tparam @tparam class CType cpsapiObject or a derived class
-   * @param CDataObject * pObject 
-   */
-  template < class CType >
-  void assertData(CDataObject * pObject);
 
-  DataPointer mpData;
+  Data::Pointer mpData;
 };
 
+template < class Visitor >
+void cpsapiObject::accept(Visitor & visitor)
+{
+  if (isValid())
+    cpsapiVisitor::acceptIfVisitable(visitor, this); 
+}
+
 template <>
-inline cpsapiObject::Properties cpsapiObject::supportedProperties< cpsapiObject >()
+inline typename cpsapiObject::Properties cpsapiObject::supportedProperties< cpsapiObject >()
 {
   return cpsapiObject::SupportedProperties;
 }
 
 template < class CType >
-cpsapiObject::Properties cpsapiObject::supportedProperties()
+typename cpsapiObject::Properties cpsapiObject::supportedProperties()
 {
   Properties All = supportedProperties< typename CType::base >();
 
@@ -460,13 +415,13 @@ bool cpsapiObject::isHiddenProperty(const cpsapiProperty::Type & property)
 }
 
 template <>
-inline cpsapiObject::References cpsapiObject::supportedReferences< cpsapiObject >()
+inline typename cpsapiObject::References cpsapiObject::supportedReferences< cpsapiObject >()
 {
   return cpsapiObject::SupportedReferences;
 }
 
 template < class CType >
-cpsapiObject::References cpsapiObject::supportedReferences()
+typename cpsapiObject::References cpsapiObject::supportedReferences()
 {
   References All = supportedReferences< typename CType::base >();
 
@@ -500,27 +455,9 @@ bool cpsapiObject::isHiddenReference(const cpsapiReference::Type & reference)
   return CType::HiddenReferences.find(reference) != CType::HiddenReferences.end();
 }
 
-template < class CType >
-void cpsapiObject::assertData(CDataObject * pObject)
-{
-  if (pObject == nullptr)
-    {
-      mpData = std::make_shared< typename CType::Data >(typename CType::Data(*std::static_pointer_cast< typename CType::base::Data >(mpData)));
-      return;
-    }
-
-  Map::iterator found = Manager.insert(std::make_pair(pObject, nullptr)).first;
-
-  if (!std::dynamic_pointer_cast< typename CType::Data >(found->second))
-    found->second = std::make_shared< typename CType::Data >(typename CType::Data(*std::static_pointer_cast< typename CType::base::Data >(mpData)));
-
-  mpData = found->second;
-}
-
 CPSAPI_NAMESPACE_END
 
 std::ostream & operator << (std::ostream &os, const CPSAPI_NAMESPACE_QUALIFIER cpsapiObject & object);
 
 #include "cpsapi/core/cpsapiFactory.h"
 #include "cpsapi/core/cpsapiData.h"
-#include "cpsapi/core/cpsapiVisitor.h"

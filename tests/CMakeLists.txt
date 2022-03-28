@@ -1,5 +1,5 @@
 # BEGIN: Copyright 
-# Copyright (C) 2021 by Pedro Mendes, Rector and Visitors of the 
+# Copyright (C) 2021 - 2022 by Pedro Mendes, Rector and Visitors of the 
 # University of Virginia, University of Heidelberg, and University 
 # of Connecticut School of Medicine. 
 # All rights reserved 
@@ -24,9 +24,9 @@ endif(EXTRA_INCLUDE_DIRS)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/..)
 add_executable(test_api ${TEST_FILES})
 set_target_properties(test_api PROPERTIES
-    CXX_STANDARD 11
-    CXX_STANDARD_REQUIRED YES
-    CXX_EXTENSIONS NO
+    CXX_STANDARD ${CMAKE_CXX_STANDARD}
+    CXX_STANDARD_REQUIRED ${CMAKE_CXX_STANDARD_REQUIRED}
+    CXX_EXTENSIONS {CMAKE_CXX_EXTENSIONS}
 )
 target_link_libraries(test_api cpsapi ${LIBCOPASISE_LIBRARY} ${EXTRA_LIBS})
 add_test(NAME test_api_run COMMAND "$<TARGET_FILE:test_api>")

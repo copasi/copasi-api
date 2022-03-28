@@ -42,7 +42,7 @@ TEST_CASE("load COPASI file and access via cpsapi", "[cpsapi]")
   REQUIRE(cpsapi::addDataModel("brusselator") == true);
   REQUIRE(cpsapi::loadFromFile(fileName) == true);
   REQUIRE(cpsapi::model() == true);
-  REQUIRE(cpsapi::model().getDataCN(cpsapiObject::Reference::OBJECT_NAME) == "CN=Root,Model=The Brusselator,Reference=Name");
+  REQUIRE(cpsapi::model().getDataCN(cpsapiObject::Reference::NAME) == "CN=Root,Model=The Brusselator,Reference=Name");
   REQUIRE(cpsapi::model().getSpecies().size() == 6);
 
   REQUIRE(cpsapi::deleteDataModel());

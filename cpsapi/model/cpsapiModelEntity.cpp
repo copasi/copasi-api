@@ -32,23 +32,13 @@ const cpsapiModelEntity::Properties cpsapiModelEntity::SupportedProperties =
     cpsapiProperty::Type::NOISE_EXPRESSION
   };
 
-cpsapiModelEntity::cpsapiModelEntity(CModelEntity * pObject, const cpsapiObject::Type & type)
+cpsapiModelEntity::cpsapiModelEntity(CModelEntity * pObject, const cpsapiObjectData::Type & type)
   : base(pObject, type)
 {}
 
 // virtual
 cpsapiModelEntity::~cpsapiModelEntity()
 {}
-
-// virtual 
-void cpsapiModelEntity::accept(cpsapiVisitor & visitor)
-{
-  if (!isValid())
-    return;
-
-  visitor.visit(this, Type::ModelEntity);
-  base::accept(visitor);
-}
 
 bool cpsapiModelEntity::setProperty(const cpsapiModelEntity::Property & property, const cpsapiData & value, const CCore::Framework & framework)
 {

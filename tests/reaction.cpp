@@ -32,8 +32,8 @@ CPSAPI_NAMESPACE_USE
 TEST_CASE("edit reaction", "[cpsapi]")
 {
   REQUIRE(cpsapiObject::supportedProperties< cpsapiReaction >().size() == 10);
+  REQUIRE(cpsapiObject::supportedReferences< cpsapiReaction >().size() == 8);
   REQUIRE(cpsapiObject::supportedProperties< cpsapiKineticLawVariable >().size() == 6);
-  REQUIRE(cpsapiObject::supportedReferences< cpsapiReaction >().size() == 2);
   REQUIRE(cpsapiObject::supportedReferences< cpsapiKineticLawVariable >().size() == 3);
     
   cpsapiModel Model = cpsapi::addDataModel("test_model").model();

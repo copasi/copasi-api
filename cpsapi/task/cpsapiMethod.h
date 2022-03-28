@@ -31,8 +31,8 @@ public:
   enum class Property
   {
     VALUE = cpsapiProperty::Type::VALUE,
-    OBJECT_NAME = cpsapiProperty::Type::OBJECT_NAME,
-    DISPLAY_NAME = cpsapiProperty::Type::DISPLAY_NAME,
+    NAME = cpsapiProperty::Type::NAME,
+    UNIQUE_NAME = cpsapiProperty::Type::UNIQUE_NAME,
     CN = cpsapiProperty::Type::CN,
     TYPE = cpsapiProperty::Type::METHOD_TYPE
   };
@@ -41,6 +41,11 @@ public:
    * Static set of supported properties
    */
   static const Properties SupportedProperties;
+
+  /**
+   * The class
+   */
+  typedef cpsapiMethod self;
 
   /**
    * The base class
@@ -64,10 +69,12 @@ public:
   virtual ~cpsapiMethod();
 
   /**
-   * Accept a visitor
-   * @param cpsapiVisitor & visitor
+   * Accept the given visitor
+   * 
+   * @tparam Visitor 
+   * @param Visitor & visitor 
    */
-  virtual void accept(cpsapiVisitor & visitor) override;
+  template < typename Visitor > void accept(Visitor & visitor);
 
   bool setProperty(const Property & property, const cpsapiData & value, const CCore::Framework & framework = CCore::Framework::__SIZE);
 
@@ -78,5 +85,15 @@ protected:
 
   virtual cpsapiData getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const override;
 };
+
+template< class Visitor >
+void cpsapiMethod::accept(Visitor & visitor)
+{
+  if (isValid())
+    {
+      cpsapiVisitor::acceptIfVisitable(visitor, this); 
+      base::accept(visitor);
+    }
+}
 
 CPSAPI_NAMESPACE_END

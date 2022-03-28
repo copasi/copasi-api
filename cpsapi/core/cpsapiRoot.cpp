@@ -78,7 +78,7 @@ bool cpsapi::deleteDataModel(const std::string & name)
   if (*DefaultDataModel == found->second)
     DefaultDataModel = cpsapiDataModel(nullptr);
 
-  deleted(found->second);
+  Data::deleted(found->second);
   CRootContainer::removeDatamodel(found->second);
 
   DataModels.erase(found);
@@ -244,6 +244,6 @@ void cpsapi::init()
 // static 
 void cpsapi::release()
 {
-  cpsapiObject::release();
+  Data::release();
   CRootContainer::destroy();
 }
