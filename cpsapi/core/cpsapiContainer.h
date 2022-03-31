@@ -80,7 +80,6 @@ void cpsapiContainer::accept(Visitor & visitor)
           if (Object)
             {
               std::cout << pDataObject->getObjectType() << " -> " << cpsapiObjectData::TypeName[Object->getType()] << std::endl;
-              static_cast< ObjectType >(Object)->accept(visitor);
             }
         }
     }

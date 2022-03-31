@@ -1,5 +1,5 @@
 # BEGIN: Copyright 
-# Copyright (C) 2019 - 2021 by Pedro Mendes, Rector and Visitors of the 
+# Copyright (C) 2019 - 2022 by Pedro Mendes, Rector and Visitors of the 
 # University of Virginia, University of Heidelberg, and University 
 # of Connecticut School of Medicine. 
 # All rights reserved 
@@ -21,8 +21,6 @@
 #
 # $LIBCOPASISE_DIR is an environment variable that would
 # correspond to the ./configure --prefix=$LIBCOPASISE_DIR
-
-message(STATUS "${CMAKE_INSTALL_LIBDIR}/cmake")
 
 find_package(libcopasise CONFIG REQUIRED
   CONFIGS libcopasise-static-config.cmake
@@ -51,22 +49,31 @@ if (LIBCOPASISE_INTERFACE_LINK_LIBRARIES)
   set(LIBCOPASISE_LIBRARY ${LIBCOPASISE_LIBRARY} ${LIBCOPASISE_INTERFACE_LINK_LIBRARIES})
 endif (LIBCOPASISE_INTERFACE_LINK_LIBRARIES)
 
+string(REPLACE include share/copasi/CMakeModules LIBCOPASISE_CMAKEMODULE_DIR ${LIBCOPASISE_INCLUDE_DIR})
+set(CMAKE_MODULE_PATH ${LIBCOPASISE_CMAKEMODULE_DIR} ${CMAKE_MODULE_PATH})
+
+foreach (library ${LIBCOPASISE_INTERFACE_LINK_LIBRARIES})
+  string(FIND "${library}" "::" index)
+
+  if (${index} GREATER 0)
+    # found dependent library
+    string(SUBSTRING "${library}" 0 ${index} DEPENDENT_NAME)
+    message(VERBOSE "Looking for dependent library: ${DEPENDENT_NAME}")
+    find_package(${DEPENDENT_NAME})
+    set(LIBCOPASISE_INCLUDE_DIR ${LIBCOPASISE_INCLUDE_DIR} ${${DEPENDENT_NAME}_INCLUDE_DIR})
+    endif()
+endforeach()
+
+# find_package(LIBSBML REQUIRED)
+find_package(LIBSEDML REQUIRED)
+set(LIBCOPASISE_INCLUDE_DIR ${LIBCOPASISE_INCLUDE_DIR} ${LIBSEDML_INCLUDE_DIR})
+find_package(LIBCOMBINE REQUIRED)
+set(LIBCOPASISE_INCLUDE_DIR ${LIBCOPASISE_INCLUDE_DIR} ${LIBCOMBINE_INCLUDE_DIR})
+
+list(REMOVE_DUPLICATES LIBCOPASISE_INCLUDE_DIR)
+
 include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(LIBCOPASISE REQUIRED LIBCOPASISE_INCLUDE_DIR LIBCOPASISE_LIBRARY)
 
 mark_as_advanced(LIBCOPASISE_INCLUDE_DIR LIBCOPASISE_LIBRARY)
 
-string(REPLACE include share/copasi/CMakeModules LIBCOPASISE_CMAKEMODULE_DIR ${LIBCOPASISE_INCLUDE_DIR})
-set(CMAKE_MODULE_PATH ${LIBCOPASISE_CMAKEMODULE_DIR} ${CMAKE_MODULE_PATH})
-
-find_package(LIBSBML REQUIRED)
-find_package(LIBSEDML REQUIRED)
-find_package(LIBCOMBINE REQUIRED)
-
-list(FIND LIBCOPASISE_LIBRARY "OpenMP::OpenMP_CXX" OPENMP_ENABLED)
-
-if (${OPENMP_ENABLED} GREATER -1)
-  set(OPENMP_ENABLED ON)
-  find_package (OpenMP REQUIRED)
-  include_directories(BEFORE ${OpenMP_INCLUDE_PATH})
-endif()
