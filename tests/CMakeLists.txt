@@ -23,6 +23,11 @@ endif(EXTRA_INCLUDE_DIRS)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/..)
 add_executable(test_api ${TEST_FILES})
+
+if (MSVC)
+    target_compile_options(test_api PRIVATE -wd4068)
+endif(MSVC)
+
 set_target_properties(test_api PROPERTIES
     CXX_STANDARD ${CMAKE_CXX_STANDARD}
     CXX_STANDARD_REQUIRED ${CMAKE_CXX_STANDARD_REQUIRED}
