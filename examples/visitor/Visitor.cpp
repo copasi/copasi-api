@@ -16,7 +16,6 @@
 
 #include <cpsapi/core/cpsapiRoot.h>
 #include <cpsapi/core/cpsapiFactory.h>
-#include <cpsapi/crtp/interface.h>
 
 CPSAPI_NAMESPACE_USE
 

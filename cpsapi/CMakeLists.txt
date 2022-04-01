@@ -111,6 +111,10 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug"  AND NOT MSVC)
     target_compile_options(cpsapi PRIVATE -Wall -Wextra -Wpedantic -Werror -Wno-overloaded-virtual)
 endif()
 
+if (MSVC)
+    target_compile_options(cpsapi PRIVATE -wd4068)
+endif(MSVC)
+
 target_link_libraries(cpsapi ${LIBCOPASISE_LIBRARY_NAME})
 
 # set include directory, so that binary dir will be included during build

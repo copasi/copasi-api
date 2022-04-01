@@ -16,6 +16,7 @@
 
 #include <map>
 #include <memory>
+#include <string>
 
 #include <copasi/core/CEnumAnnotation.h>
 
