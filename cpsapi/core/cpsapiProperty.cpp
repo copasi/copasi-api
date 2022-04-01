@@ -56,7 +56,7 @@ const CEnumAnnotation< std::string, cpsapiProperty::Type > cpsapiProperty::Name(
   "Object Reference CN", // OBJECT_REFERENCE_CN
   "Object Reference Index", // OBJECT_REFERENCE_INDEX
   "Object Pointer", // OBJECT_POINTER
-  "Display Name", // UNIQUE_NAME
+  "Display Name", // OBJECT_UNIQUE_NAME
   "CN", // CN
   "Evaluation Tree Type", // EVALUATION_TREE_TYPE
   "Task Type", // TASK_TYPE

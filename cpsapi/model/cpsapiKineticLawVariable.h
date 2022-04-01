@@ -96,7 +96,7 @@ public:
   enum class Property
   {
     NAME = cpsapiProperty::Type::NAME,
-    UNIQUE_NAME = cpsapiProperty::Type::UNIQUE_NAME,
+    OBJECT_UNIQUE_NAME = cpsapiProperty::Type::OBJECT_UNIQUE_NAME,
     CN = cpsapiProperty::Type::CN,
     ROLE = cpsapiProperty::Type::PARAMETER_ROLE,
     VALUE = cpsapiProperty::Type::PARAMETER_VALUE,
@@ -119,7 +119,7 @@ public:
   enum class Reference
   {
     NAME = cpsapiReference::Type::NAME,
-    UNIQUE_NAME = cpsapiReference::Type::UNIQUE_NAME,
+    OBJECT_UNIQUE_NAME = cpsapiReference::Type::OBJECT_UNIQUE_NAME,
     VALUE = cpsapiReference::Type::PARAMETER_VALUE
   };
 

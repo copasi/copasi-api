@@ -100,7 +100,7 @@ TEST_CASE("Edit model", "[cpsapi]")
     REQUIRE_FALSE(ParticleNumber == species.getProperty(cpsapiSpecies::Property::INITIAL_VALUE, CCore::Framework::ParticleNumbers).toDouble());
     
   std::ostringstream Equation;
-  Equation << 3 << "*" << Model.species().getProperty(cpsapiSpecies::Property::UNIQUE_NAME).toString() << "->";
+  Equation << 3 << "*" << Model.species().getProperty(cpsapiSpecies::Property::OBJECT_UNIQUE_NAME).toString() << "->";
   REQUIRE("3*test_species_2->" == Equation.str());
 
   REQUIRE_FALSE(Model.globalQuantity());

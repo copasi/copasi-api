@@ -38,7 +38,7 @@ public:
     ADD_NOISE = cpsapiProperty::Type::ADD_NOISE,
     NOISE_EXPRESSION = cpsapiProperty::Type::NOISE_EXPRESSION,
     NAME = cpsapiProperty::Type::NAME,
-    UNIQUE_NAME = cpsapiProperty::Type::UNIQUE_NAME,
+    OBJECT_UNIQUE_NAME = cpsapiProperty::Type::OBJECT_UNIQUE_NAME,
     CN = cpsapiProperty::Type::CN
   };
 
@@ -58,7 +58,7 @@ public:
   enum class Reference
   {
     NAME = cpsapiReference::Type::NAME,
-    UNIQUE_NAME = cpsapiReference::Type::UNIQUE_NAME,
+    OBJECT_UNIQUE_NAME = cpsapiReference::Type::OBJECT_UNIQUE_NAME,
     FLUX = cpsapiReference::Type::FLUX,
     PARTICLE_FLUX = cpsapiReference::Type::PARTICLE_FLUX,
     INITIAL_FLUX = cpsapiReference::Type::INITIAL_FLUX,

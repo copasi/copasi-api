@@ -44,7 +44,7 @@ public:
     ADD_NOISE = cpsapiProperty::Type::ADD_NOISE,
     NOISE_EXPRESSION = cpsapiProperty::Type::NOISE_EXPRESSION,
     NAME = cpsapiProperty::Type::NAME,
-    UNIQUE_NAME = cpsapiProperty::Type::UNIQUE_NAME,
+    OBJECT_UNIQUE_NAME = cpsapiProperty::Type::OBJECT_UNIQUE_NAME,
     CN = cpsapiProperty::Type::CN,
     UNIT = cpsapiProperty::Type::UNIT
   };

@@ -43,7 +43,7 @@ public:
   {
     INITIAL_VALUE = cpsapiProperty::Type::INITIAL_VALUE,
     NAME = cpsapiProperty::Type::NAME,
-    UNIQUE_NAME = cpsapiProperty::Type::UNIQUE_NAME,
+    OBJECT_UNIQUE_NAME = cpsapiProperty::Type::OBJECT_UNIQUE_NAME,
     CN = cpsapiProperty::Type::CN,
     UNIT = cpsapiProperty::Type::UNIT,
     VOLUME_UNIT = cpsapiProperty::Type::VOLUME_UNIT,
