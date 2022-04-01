@@ -108,7 +108,7 @@ set_target_properties(cpsapi PROPERTIES
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug"  AND NOT MSVC)
-    target_compile_options(cpsapi PRIVATE -Wall -Wextra -Wpedantic -Werror -Wno-overloaded-virtual)
+    target_compile_options(cpsapi PRIVATE -Wall -Wextra -Wpedantic -Werror -Wno-overloaded-virtual -Wno-inconsistent-missing-override)
 endif()
 
 if (MSVC)

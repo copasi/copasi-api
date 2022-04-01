@@ -28,7 +28,17 @@ set_target_properties(test_api PROPERTIES
     CXX_STANDARD_REQUIRED ${CMAKE_CXX_STANDARD_REQUIRED}
     CXX_EXTENSIONS {CMAKE_CXX_EXTENSIONS}
 )
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug"  AND NOT MSVC)
+    target_compile_options(test_api PRIVATE -Wall -Wextra -Wpedantic -Werror -Wno-overloaded-virtual -Wno-inconsistent-missing-override)
+endif()
+
+if (MSVC)
+    target_compile_options(test_api PRIVATE -wd4068)
+endif(MSVC)
+
 target_link_libraries(test_api cpsapi ${LIBCOPASISE_LIBRARY} ${EXTRA_LIBS})
+
 add_test(NAME test_api_run COMMAND "$<TARGET_FILE:test_api>")
 set_tests_properties(test_api_run PROPERTIES ENVIRONMENT 
 	"srcdir=${CMAKE_CURRENT_SOURCE_DIR}")
