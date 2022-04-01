@@ -25,7 +25,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/..)
 add_executable(test_api ${TEST_FILES})
 
 if (MSVC)
-    target_compile_options(test_api PRIVATE -wd4068)
+    target_compile_options(test_api PRIVATE -wd4068 -DCATCH_CPP14_OR_GREATER)
 endif(MSVC)
 
 set_target_properties(test_api PROPERTIES
