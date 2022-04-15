@@ -31,7 +31,7 @@ jobs:
       shell: bash
       run: |
         cmake --version
-        curl -L https://github.com/copasi/copasi-dependencies/releases/download/Version-4.35.252/${{ matrix.platform }}.zip -o ${{ matrix.platform }}.zip
+        curl -L https://github.com/copasi/copasi-dependencies/releases/latest/download/${{ matrix.platform }}.zip -o ${{ matrix.platform }}.zip
         unzip ${{ matrix.platform }}.zip -d dependencies
 
     - name: Patch dependencies (windows)
@@ -96,7 +96,7 @@ jobs:
       # Note the current convention is to use the -S and -B options here to specify source 
       # and build directories, but this is only available with CMake 3.13 and higher.  
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: cmake $GITHUB_WORKSPACE -G Ninja -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_PREFIX_PATH=./dependencies/CMakeModules -DCMAKE_INSTALL_PREFIX=./install/ -DCOPASI_DEPENDENCY_DIR=./dependencies/ -S .  -B ./build
+      run: cmake $GITHUB_WORKSPACE -G Ninja -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_PREFIX_PATH=./dependencies/share/cmake/Modules -DCMAKE_INSTALL_PREFIX=./install/ -DCPSAPI_DEPENDENCY_DIR=./dependencies/ -S .  -B ./build
 
     - name: Build
       working-directory: ${{github.workspace}}/build

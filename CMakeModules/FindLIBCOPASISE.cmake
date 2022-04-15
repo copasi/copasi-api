@@ -22,10 +22,13 @@
 # $LIBCOPASISE_DIR is an environment variable that would
 # correspond to the ./configure --prefix=$LIBCOPASISE_DIR
 
+string(TOUPPER ${PROJECT_NAME} _UPPER_PROJECT_NAME)
+set(_PROJECT_DEPENDENCY_DIR ${_UPPER_PROJECT_NAME}_DEPENDENCY_DIR)
+
 find_package(libcopasise CONFIG REQUIRED
   CONFIGS libcopasise-static-config.cmake
   PATHS $ENV{LIBCOPASISE_DIR}/${CMAKE_INSTALL_LIBDIR}/cmake
-        ${COPASI_DEPENDENCY_DIR}/${CMAKE_INSTALL_LIBDIR}/cmake
+        ${${_PROJECT_DEPENDENCY_DIR}}/${CMAKE_INSTALL_LIBDIR}/cmake
         /usr/${CMAKE_INSTALL_LIBDIR}/cmake
   )
 
