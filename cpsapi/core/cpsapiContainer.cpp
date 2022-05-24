@@ -32,3 +32,4 @@ cpsapiContainer::cpsapiContainer(wrapped * pWrapped, const cpsapiObjectData::Typ
 // virtual
 cpsapiContainer::~cpsapiContainer()
 {}
+

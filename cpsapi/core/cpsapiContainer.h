@@ -60,27 +60,23 @@ public:
    * @tparam Visitor 
    * @param Visitor & visitor 
    */
-  template < typename Visitor > void accept(Visitor & visitor);
+  template < typename Visitor >
+  void accept(Visitor & visitor);
 };
 
-template< class Visitor >
+template < class Visitor >
 void cpsapiContainer::accept(Visitor & visitor)
 {
   if (isValid())
     {
-      cpsapiVisitor::acceptIfVisitable(visitor, this); 
+      cpsapiVisitor::acceptIfVisitable(visitor, this);
       base::accept(visitor);
 
       wrapped::objectMap & Objects = WRAPPED->getObjects();
 
       for (CDataObject * pDataObject : Objects)
         {
-          std::unique_ptr< cpsapiObject > Object(cpsapiFactory::create(pDataObject));
-
-          if (Object)
-            {
-              std::cout << pDataObject->getObjectType() << " -> " << cpsapiObjectData::TypeName[Object->getType()] << std::endl;
-            }
+          cpsapiFactory::accept< Visitor >(visitor, pDataObject);
         }
     }
 }

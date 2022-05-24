@@ -26,6 +26,7 @@
 #include <copasi/utilities/CCopasiTask.h>
 #pragma GCC diagnostic pop
 
+
 CPSAPI_NAMESPACE_BEGIN
 
 class cpsapiFactory
@@ -36,8 +37,59 @@ public:
   template < class Type >
   static void free_unique(void *);
 
+  enum struct PartType { 
+    vectorCompartment = 0,
+    vectorSpecies,
+    vectorGlobalQuantity,
+    vectorReaction,
+    vectorDataModel,
+    vectorTask,
+    value,
+    model,
+    compartment,
+    species,
+    globalQuantity,
+    reaction,
+    dataModel,
+    parameter,
+    group,
+    method,
+    problem,
+    task,
+    __SIZE
+  };
+
+  struct VisitorInterface 
+  {
+    virtual ~VisitorInterface() {}
+    virtual void visit(cpsapiObject * pObject) const = 0;
+  };
+
+  template < class cpsapi, class Visitor >
+  struct VisitorImplementation : public VisitorInterface
+  {
+    VisitorImplementation(Visitor & visitor)
+      : mVisitor(visitor)
+    {}
+
+    virtual ~VisitorImplementation() {}
+
+    virtual void visit(cpsapiObject * pObject) const override
+    {
+      cpsapiVisitor::acceptIfVisitable< Visitor, cpsapi >(mVisitor, static_cast< cpsapi * >(pObject));
+      static_cast< typename cpsapi::base * >(pObject)->accept(mVisitor);
+    }
+
+    Visitor & mVisitor;
+  };
+
+
   struct PartInterface
   {
+    PartInterface(const PartType & partType)
+      : type(partType)
+    {}
+
     virtual ~PartInterface() {}
 
     virtual cpsapiObject * create(CDataObject * /* pDataObject */) const = 0;
@@ -47,11 +99,19 @@ public:
     virtual const std::type_info & cpsapiType() const = 0;
 
     virtual const std::type_info & copasiType() const = 0;
+
+    virtual void accept(CDataObject * /* pDataObject */, const VisitorInterface & /* visitor */) const = 0;
+
+    const PartType type;
   };
 
   template < class cpsapi, class copasi >
   struct Part : public PartInterface
   {
+    Part(const PartType & partType = PartType::__SIZE)
+      : PartInterface(partType)
+    {}
+
     virtual ~Part() {}
 
     virtual cpsapiObject * create(CDataObject * pDataObject) const override;
@@ -61,7 +121,9 @@ public:
     virtual const std::type_info & cpsapiType() const override;
 
     virtual const std::type_info & copasiType() const override;
-  };
+ 
+    virtual void accept(CDataObject * pDataObject, const VisitorInterface & visitor) const override;
+ };
 
 
 private:
@@ -70,7 +132,7 @@ private:
   static CopasiMap copasiMap;
 
   template < class cpsapi, class copasi >
-  static void insert();
+  static void insert(const PartType & partType);
 
 public:
   static void init();
@@ -137,6 +199,21 @@ cpsapiObject * cpsapiFactory::Part< cpsapi, copasi >::copy(const cpsapiObject & 
 }
 
 // virtual
+template <>
+inline void cpsapiFactory::Part< void, void >::accept(CDataObject * /* pDataObject */ , const VisitorInterface &  /* visitor */) const
+{}
+
+// virtual 
+template < class cpsapi, class copasi >
+void cpsapiFactory::Part< cpsapi, copasi >::accept(CDataObject * pDataObject, const VisitorInterface & visitor) const
+{
+  std::unique_ptr< cpsapiObject > Object(create(pDataObject));
+
+  if (Object)
+    visitor.visit(Object.get());
+}
+
+// virtual
 template < class cpsapi, class copasi >
 const std::type_info & cpsapiFactory::Part< cpsapi, copasi >::cpsapiType() const
 {
@@ -152,9 +229,9 @@ const std::type_info & cpsapiFactory::Part< cpsapi, copasi >::copasiType() const
 
 // static
 template < class cpsapi, class copasi >
-void cpsapiFactory::insert()
+void cpsapiFactory::insert(const PartType & partType)
 {
-  std::shared_ptr< Part< cpsapi, copasi > > InfoPointer = std::make_shared< Part< cpsapi, copasi > >();
+  std::shared_ptr< Part< cpsapi, copasi > > InfoPointer = std::make_shared< Part< cpsapi, copasi > >(partType);
 
   copasiMap.insert(std::make_pair(std::type_index(typeid(cpsapi)), InfoPointer));
   copasiMap.insert(std::make_pair(std::type_index(typeid(copasi)), InfoPointer));
@@ -217,6 +294,5 @@ void cpsapiFactory::free_unique(void * pointer)
 {
   delete static_cast< Type * >(pointer);
 }
-
 
 CPSAPI_NAMESPACE_END

@@ -14,10 +14,11 @@
 
 #pragma once
 
-#include "cpsapi/cpsapiConfig.h"
-
+#include <type_traits>
 #include <cstddef>
 #include <utility>
+
+#include "cpsapi/cpsapiConfig.h"
 
 CPSAPI_NAMESPACE_BEGIN
 
@@ -40,9 +41,6 @@ public:
   {
     doVisit(visitor, pVisited, 0);
   }
-
-  template< class Visited > 
-  static void visit(Visited * pObject) = delete;
 };
 
 CPSAPI_NAMESPACE_END

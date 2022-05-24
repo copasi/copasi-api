@@ -14,13 +14,10 @@
 
 #pragma once
 
-#include <cpsapi/core/cpsapiVisitor.h>
-#include <cpsapi/core/cpsapiContainer.h>
-#include <cpsapi/core/cpsapiDataModel.h>
-#include <cpsapi/core/cpsapiValue.h>
-#include <cpsapi/model/cpsapiModel.h>
-
 #include <iostream>
+
+#include "cpsapi/cpsapiConfig.h"
+#include <cpsapi/model/cpsapiModel.h>
 
 CPSAPI_NAMESPACE_BEGIN
 
@@ -44,5 +41,7 @@ void Visitor::visit< cpsapiModel >(cpsapiModel * pObject)
 {
   std::cout << "visit cpsapiModel: " << (*pObject)->getCN() << std::endl;
 }
-
 CPSAPI_NAMESPACE_END
+
+
+#include <cpsapi/core/cpsapiVisitor.hpp>

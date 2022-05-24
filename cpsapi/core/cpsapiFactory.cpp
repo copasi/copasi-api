@@ -12,6 +12,7 @@
 //   https://opensource.org/licenses/Artistic-2.0 
 // END: License 
 
+#include "cpsapi/core/cpsapiContainer.h"
 #include "cpsapi/core/cpsapiValue.h"
 #include "cpsapi/core/cpsapiContainer.h"
 #include "cpsapi/core/cpsapiVector.h"
@@ -34,30 +35,30 @@ void cpsapiFactory::init()
 {
   if (copasiMap.empty())
     {
-      insert< cpsapiVector< cpsapiCompartment >, CDataVectorNS< CCompartment > >();
-      insert< cpsapiVector< cpsapiSpecies >, CDataVector< CMetab > >();
-      insert< cpsapiVector< cpsapiSpecies >, CDataVectorNS< CMetab > >();
-      insert< cpsapiVector< cpsapiGlobalQuantity >, CDataVectorN< CModelValue > >();
-      insert< cpsapiVector< cpsapiReaction >, CDataVectorNS< CReaction > >();
-      insert< cpsapiVector< cpsapiDataModel >, CDataVector< CDataModel > >();
-      insert< cpsapiVector< cpsapiTask >, CDataVectorN< CCopasiTask > >();
-      insert< cpsapiValue, CDataObjectReference< C_FLOAT64 > >();
-      insert< cpsapiValue, CDataObjectReference< C_INT32 > >();
-      insert< cpsapiValue, CDataObjectReference< unsigned C_INT32 > >();
-      insert< cpsapiValue, CDataObjectReference< size_t > >();
-      insert< cpsapiValue, CDataObjectReference< std::string > >();
-      insert< cpsapiValue, CDataObjectReference< CCommonName > >();
-      insert< cpsapiModel, CModel >();
-      insert< cpsapiCompartment, CCompartment >();
-      insert< cpsapiSpecies, CMetab >();
-      insert< cpsapiGlobalQuantity, CModelValue >();
-      insert< cpsapiReaction, CReaction >();
-      insert< cpsapiDataModel, CDataModel >();
-      insert< cpsapiParameter, CCopasiParameter >();
-      insert< cpsapiGroup, CCopasiParameterGroup >();
-      insert< cpsapiMethod, CCopasiMethod >();
-      insert< cpsapiProblem, CCopasiProblem >();
-      insert< cpsapiTask, CCopasiTask >();
+      insert< cpsapiVector< cpsapiCompartment >, CDataVectorNS< CCompartment > >(PartType::vectorCompartment);
+      insert< cpsapiVector< cpsapiSpecies >, CDataVector< CMetab > >(PartType::vectorSpecies);
+      insert< cpsapiVector< cpsapiSpecies >, CDataVectorNS< CMetab > >(PartType::vectorSpecies);
+      insert< cpsapiVector< cpsapiGlobalQuantity >, CDataVectorN< CModelValue > >(PartType::vectorGlobalQuantity);
+      insert< cpsapiVector< cpsapiReaction >, CDataVectorNS< CReaction > >(PartType::vectorReaction);
+      insert< cpsapiVector< cpsapiDataModel >, CDataVector< CDataModel > >(PartType::vectorDataModel);
+      insert< cpsapiVector< cpsapiTask >, CDataVectorN< CCopasiTask > >(PartType::vectorTask);
+      insert< cpsapiValue, CDataObjectReference< C_FLOAT64 > >(PartType::value);
+      insert< cpsapiValue, CDataObjectReference< C_INT32 > >(PartType::value);
+      insert< cpsapiValue, CDataObjectReference< unsigned C_INT32 > >(PartType::value);
+      insert< cpsapiValue, CDataObjectReference< size_t > >(PartType::value);
+      insert< cpsapiValue, CDataObjectReference< std::string > >(PartType::value);
+      insert< cpsapiValue, CDataObjectReference< CCommonName > >(PartType::value);
+      insert< cpsapiModel, CModel >(PartType::model);
+      insert< cpsapiCompartment, CCompartment >(PartType::compartment);
+      insert< cpsapiSpecies, CMetab >(PartType::species);
+      insert< cpsapiGlobalQuantity, CModelValue >(PartType::globalQuantity);
+      insert< cpsapiReaction, CReaction >(PartType::reaction);
+      insert< cpsapiDataModel, CDataModel >(PartType::dataModel);
+      insert< cpsapiParameter, CCopasiParameter >(PartType::parameter);
+      insert< cpsapiGroup, CCopasiParameterGroup >(PartType::group);
+      insert< cpsapiMethod, CCopasiMethod >(PartType::method);
+      insert< cpsapiProblem, CCopasiProblem >(PartType::problem);
+      insert< cpsapiTask, CCopasiTask >(PartType::task);
     }
 }
 
