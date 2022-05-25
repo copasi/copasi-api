@@ -28,11 +28,11 @@ public:
    */ 
   enum class Property
   {
-    VALUE = cpsapiProperty::Type::VALUE,
-    NAME = cpsapiProperty::Type::NAME,
-    OBJECT_UNIQUE_NAME = cpsapiProperty::Type::OBJECT_UNIQUE_NAME,
-    CN = cpsapiProperty::Type::CN,
-    TYPE = cpsapiProperty::Type::TASK_TYPE
+    VALUE = cpsapiProperty::VALUE,
+    NAME = cpsapiProperty::NAME,
+    OBJECT_UNIQUE_NAME = cpsapiProperty::OBJECT_UNIQUE_NAME,
+    CN = cpsapiProperty::CN,
+    TYPE = cpsapiProperty::TASK_TYPE
   };
 
   /**

@@ -24,23 +24,23 @@ CPSAPI_NAMESPACE_USE
 // static
 const cpsapiModel::Properties cpsapiModel::SupportedProperties =
   {
-    cpsapiProperty::Type::UNIT, // Synonym for TIME_UNIT
-    cpsapiProperty::Type::VOLUME_UNIT,
-    cpsapiProperty::Type::AREA_UNIT,
-    cpsapiProperty::Type::LENGTH_UNIT,
-    cpsapiProperty::Type::TIME_UNIT,
-    cpsapiProperty::Type::QUANTITY_UNIT,
-    cpsapiProperty::Type::MODEL_TYPE,
-    cpsapiProperty::Type::AVOGADRO_NUMBER};
+    cpsapiProperty::UNIT, // Synonym for TIME_UNIT
+    cpsapiProperty::VOLUME_UNIT,
+    cpsapiProperty::AREA_UNIT,
+    cpsapiProperty::LENGTH_UNIT,
+    cpsapiProperty::TIME_UNIT,
+    cpsapiProperty::QUANTITY_UNIT,
+    cpsapiProperty::MODEL_TYPE,
+    cpsapiProperty::AVOGADRO_NUMBER};
 
 // static
 const cpsapiModel::Properties cpsapiModel::HiddenProperties =
   {
-    cpsapiProperty::Type::INITIAL_EXPRESSION,
-    cpsapiProperty::Type::EXPRESSION,
-    cpsapiProperty::Type::SIMULATION_TYPE,
-    cpsapiProperty::Type::ADD_NOISE,
-    cpsapiProperty::Type::NOISE_EXPRESSION};
+    cpsapiProperty::INITIAL_EXPRESSION,
+    cpsapiProperty::EXPRESSION,
+    cpsapiProperty::SIMULATION_TYPE,
+    cpsapiProperty::ADD_NOISE,
+    cpsapiProperty::NOISE_EXPRESSION};
 
 cpsapiModel::cpsapiModel(wrapped * pWrapped)
   : base(pWrapped, cpsapiObjectData::Type::Model)
@@ -425,7 +425,7 @@ bool cpsapiModel::setProperty(const cpsapiProperty::Type & property, const cpsap
 
   switch (property)
     {
-    case cpsapiProperty::Type::VOLUME_UNIT:
+    case cpsapiProperty::VOLUME_UNIT:
       if (value.getType() == cpsapiData::Type::String)
         {
           CUnit Unit;
@@ -440,7 +440,7 @@ bool cpsapiModel::setProperty(const cpsapiProperty::Type & property, const cpsap
 
       break;
 
-    case cpsapiProperty::Type::AREA_UNIT:
+    case cpsapiProperty::AREA_UNIT:
       if (value.getType() == cpsapiData::Type::String)
         {
           CUnit Unit;
@@ -455,7 +455,7 @@ bool cpsapiModel::setProperty(const cpsapiProperty::Type & property, const cpsap
 
       break;
 
-    case cpsapiProperty::Type::LENGTH_UNIT:
+    case cpsapiProperty::LENGTH_UNIT:
       if (value.getType() == cpsapiData::Type::String)
         {
           CUnit Unit;
@@ -470,8 +470,8 @@ bool cpsapiModel::setProperty(const cpsapiProperty::Type & property, const cpsap
 
       break;
 
-    case cpsapiProperty::Type::UNIT:
-    case cpsapiProperty::Type::TIME_UNIT:
+    case cpsapiProperty::UNIT:
+    case cpsapiProperty::TIME_UNIT:
       if (value.getType() == cpsapiData::Type::String)
         {
           CUnit Unit;
@@ -486,7 +486,7 @@ bool cpsapiModel::setProperty(const cpsapiProperty::Type & property, const cpsap
 
       break;
 
-    case cpsapiProperty::Type::QUANTITY_UNIT:
+    case cpsapiProperty::QUANTITY_UNIT:
       if (value.getType() == cpsapiData::Type::String)
         {
           if (Framework == CCore::Framework::__SIZE)
@@ -506,7 +506,7 @@ bool cpsapiModel::setProperty(const cpsapiProperty::Type & property, const cpsap
 
       break;
 
-    case cpsapiProperty::Type::MODEL_TYPE:
+    case cpsapiProperty::MODEL_TYPE:
       if (value.getType() == cpsapiData::Type::String && wrapped::ModelTypeNames.toEnum(value.toString()) != wrapped::ModelType::__SIZE)
         pWrapped->setModelType(wrapped::ModelTypeNames.toEnum(value.toString()));
       else
@@ -514,7 +514,7 @@ bool cpsapiModel::setProperty(const cpsapiProperty::Type & property, const cpsap
 
       break;
 
-    case cpsapiProperty::Type::AVOGADRO_NUMBER:
+    case cpsapiProperty::AVOGADRO_NUMBER:
       if (value.getType() == cpsapiData::Type::Double)
         {
           if (Framework == CCore::Framework::__SIZE)
@@ -546,35 +546,35 @@ cpsapiData cpsapiModel::getProperty(const cpsapiProperty::Type & property, const
 
   switch (property)
     {
-    case cpsapiProperty::Type::UNIT:
+    case cpsapiProperty::UNIT:
       return WRAPPED->getUnits();
       break;
 
-    case cpsapiProperty::Type::VOLUME_UNIT:
+    case cpsapiProperty::VOLUME_UNIT:
       return WRAPPED->getVolumeUnit();
       break;
 
-    case cpsapiProperty::Type::AREA_UNIT:
+    case cpsapiProperty::AREA_UNIT:
       return WRAPPED->getAreaUnit();
       break;
 
-    case cpsapiProperty::Type::LENGTH_UNIT:
+    case cpsapiProperty::LENGTH_UNIT:
       return WRAPPED->getLengthUnit();
       break;
 
-    case cpsapiProperty::Type::TIME_UNIT:
+    case cpsapiProperty::TIME_UNIT:
       return WRAPPED->getTimeUnit();
       break;
 
-    case cpsapiProperty::Type::QUANTITY_UNIT:
+    case cpsapiProperty::QUANTITY_UNIT:
       return WRAPPED->getQuantityUnit();
       break;
 
-    case cpsapiProperty::Type::MODEL_TYPE:
+    case cpsapiProperty::MODEL_TYPE:
       return WRAPPED->wrapped::ModelTypeNames[WRAPPED->getModelType()];
       break;
 
-    case cpsapiProperty::Type::AVOGADRO_NUMBER:
+    case cpsapiProperty::AVOGADRO_NUMBER:
       return WRAPPED->getAvogadro();
       break;
 

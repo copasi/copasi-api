@@ -15,92 +15,24 @@
 #pragma once
 
 #include "cpsapi/core/cpsapiContainer.h"
-#include "cpsapi/core/cpsapiVector.h"
 
-
-#pragma GCC diagnostic push
-#include <copasi/model/CReaction.h>
-#pragma GCC diagnostic pop
-
-class CReaction;
+class CEventAssignment;
 
 CPSAPI_NAMESPACE_BEGIN
 
-/**
- * @brief 
- * 
- */
-class cpsapiKineticLawVariable : public cpsapiObject
+class cpsapiEventAssignment : public cpsapiContainer
 {
 public:
   /**
-   * A fake CDataObject representing the the variables of the kinetic law  
-   */
-  class KineticLawVariable : public CDataObject
-  {
-    /**
-     * Only the class cpsapiReaction is allowed to create KineticLawVariable 
-     */
-    friend class cpsapiReaction;
-
-  public:
-    /**
-     * Required for objects to be insterted into CDataVector 
-     * 
-     * @param const CData & data 
-     * @param CUndoObjectInterface * pParent 
-     * @return KineticLawVariable * pData 
-     */
-    static KineticLawVariable * fromData(const CData & data, CUndoObjectInterface * pParent);
-
-  private:
-    /**
-     * Default constructor (not implemented)
-     */
-    KineticLawVariable();
-
-    /**
-     * Construct a new Fake Data object
-     * 
-     * @param CReaction * pReaction 
-     * @param const std::string & name 
-     */
-    KineticLawVariable(CReaction * pReaction, const std::string & name = "");
-
-  public:
-    /**
-     * Copy constructor
-     * 
-     * @param const KineticLawVariable & src, 
-     * @param CDataContainer * pParent (default: nullptr)
-     */
-    KineticLawVariable(const KineticLawVariable & src, CDataContainer * pParent = nullptr);
-
-    /**
-     * Destructor
-     */
-    virtual ~KineticLawVariable(); 
-
-    /**
-     * @brief 
-     * 
-     */
-    void updateMappedObject();
-
-    cpsapiObject * mpMappedObject;
-  };
-
-  /**
    * Enumeration of the exposed properties
-   */ 
+   */
   enum class Property
   {
+    EXPRESSION = cpsapiProperty::EXPRESSION,
+    OBJECT_REFERENCE_CN = cpsapiProperty::OBJECT_REFERENCE_CN,
     NAME = cpsapiProperty::NAME,
     OBJECT_UNIQUE_NAME = cpsapiProperty::OBJECT_UNIQUE_NAME,
-    CN = cpsapiProperty::CN,
-    ROLE = cpsapiProperty::PARAMETER_ROLE,
-    VALUE = cpsapiProperty::PARAMETER_VALUE,
-    MAPPING = cpsapiProperty::PARAMETER_MAPPING
+    CN = cpsapiProperty::CN
   };
 
   /**
@@ -119,8 +51,7 @@ public:
   enum class Reference
   {
     NAME = cpsapiReference::Type::NAME,
-    OBJECT_UNIQUE_NAME = cpsapiReference::Type::OBJECT_UNIQUE_NAME,
-    VALUE = cpsapiReference::Type::PARAMETER_VALUE
+    OBJECT_UNIQUE_NAME = cpsapiReference::Type::OBJECT_UNIQUE_NAME
   };
 
   /**
@@ -136,34 +67,29 @@ public:
   /**
    * The class
    */
-  typedef cpsapiKineticLawVariable self;
+  typedef cpsapiEventAssignment self;
 
   /**
    * The base class
    */
-  typedef cpsapiObject base;
+  typedef cpsapiContainer base;
 
   /**
    * The wrapped COPASI class
    */
-  typedef KineticLawVariable wrapped;
+  typedef CEventAssignment wrapped;
 
   /**
    * Specific constructor
-   * @param wrapped * pWrapped
+   * @param wrapped * pWrapped (default: nullptr)
+   * @param const Type & type (default: Type::cpsapiEventAssignment)
    */
-  cpsapiKineticLawVariable(wrapped * pWrapped = nullptr);
+  cpsapiEventAssignment(wrapped * pWrapped = nullptr, const cpsapiObjectData::Type & type = cpsapiObjectData::Type::Parameter);
 
   /**
    * Destructor
    */
-  virtual ~cpsapiKineticLawVariable();
-
-  /**
-   * Check whether the object is valid 
-   * @return bool valid
-   */
-  virtual bool isValid() const override;
+  virtual ~cpsapiEventAssignment();
 
   /**
    * Accept the given visitor
@@ -201,7 +127,7 @@ public:
    * @param const CCore::Framework & framework (default: CCore::Framework::__SIZE)
    * @return CCommonName
    */
-CCommonName getDataCN(const Reference & reference, const CCore::Framework & framework = CCore::Framework::__SIZE) const;
+  CCommonName getDataCN(const Reference & reference, const CCore::Framework & framework = CCore::Framework::__SIZE) const;
 
 protected:
   /**
@@ -219,7 +145,7 @@ protected:
    * 
    * @param const cpsapiProperty::Type & property 
    * @param const CCore::Framework &framework 
-   * @return cspapiData
+   * @return cpsapiData property
    */
   virtual cpsapiData getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const override;
 
@@ -234,34 +160,13 @@ protected:
 };
 
 template< class Visitor >
-void cpsapiKineticLawVariable::accept(Visitor & visitor)
+void cpsapiEventAssignment::accept(Visitor & visitor)
 {
   if (isValid())
     {
       cpsapiVisitor::acceptIfVisitable(visitor, this); 
       base::accept(visitor);
-    }
-}
-
-template <>
-inline size_t cpsapiVector< cpsapiKineticLawVariable >::index(const std::string & name) const
-{
-  if (operator bool())
-    {
-      wrapped * pWrapped = WRAPPED;
-      wrapped::const_iterator itParameter = pWrapped->begin();
-      wrapped::const_iterator endParameter = pWrapped->end();
-      
-      for (size_t Index = 0; itParameter != endParameter; ++itParameter, ++Index)
-        {
-          if (itParameter->getObjectName() == name)
-            return Index;
-        }
-    }
-
-  return C_INVALID_INDEX;
+   }
 }
 
 CPSAPI_NAMESPACE_END
-
-

@@ -28,9 +28,9 @@ const CCommonName cpsapiObject::Invalid;
 // static
 const cpsapiObject::Properties cpsapiObject::SupportedProperties =
 {
-  cpsapiProperty::Type::NAME,
-  cpsapiProperty::Type::OBJECT_UNIQUE_NAME,
-  cpsapiProperty::Type::CN
+  cpsapiProperty::NAME,
+  cpsapiProperty::OBJECT_UNIQUE_NAME,
+  cpsapiProperty::CN
 };
 
 // static
@@ -40,7 +40,7 @@ const cpsapiObject::Properties cpsapiObject::HiddenProperties = {};
 const cpsapiObject::References cpsapiObject::SupportedReferences =
 {
   cpsapiReference::Type::NAME,
-  cpsapiProperty::Type::OBJECT_UNIQUE_NAME
+  cpsapiProperty::OBJECT_UNIQUE_NAME
 };
 
 // static
@@ -158,7 +158,7 @@ bool cpsapiObject::setProperty(const cpsapiProperty::Type & property, const cpsa
 
   switch (property)
     {
-    case cpsapiProperty::Type::NAME:
+    case cpsapiProperty::NAME:
       if (value.getType() == cpsapiData::Type::String)
         success = getObject()->setObjectName(value.toString());
 
@@ -181,14 +181,14 @@ cpsapiData cpsapiObject::getProperty(const cpsapiProperty::Type & property, cons
 
   switch (property)
     {
-    case cpsapiProperty::Type::NAME:
+    case cpsapiProperty::NAME:
       return getObject()->getObjectName();
       break;
 
-    case cpsapiProperty::Type::OBJECT_UNIQUE_NAME:
+    case cpsapiProperty::OBJECT_UNIQUE_NAME:
       return getObject()->getObjectDisplayName();
 
-    case cpsapiProperty::Type::CN:
+    case cpsapiProperty::CN:
       return CCommonName (getObject()->getCN());
 
     default:

@@ -24,12 +24,12 @@ CPSAPI_NAMESPACE_USE
 // static
 const cpsapiModelEntity::Properties cpsapiModelEntity::SupportedProperties =
   {
-    cpsapiProperty::Type::EXPRESSION,
-    cpsapiProperty::Type::INITIAL_EXPRESSION,
-    cpsapiProperty::Type::INITIAL_VALUE,
-    cpsapiProperty::Type::SIMULATION_TYPE,
-    cpsapiProperty::Type::ADD_NOISE,
-    cpsapiProperty::Type::NOISE_EXPRESSION
+    cpsapiProperty::EXPRESSION,
+    cpsapiProperty::INITIAL_EXPRESSION,
+    cpsapiProperty::INITIAL_VALUE,
+    cpsapiProperty::SIMULATION_TYPE,
+    cpsapiProperty::ADD_NOISE,
+    cpsapiProperty::NOISE_EXPRESSION
   };
 
 cpsapiModelEntity::cpsapiModelEntity(CModelEntity * pObject, const cpsapiObjectData::Type & type)
@@ -65,19 +65,19 @@ bool cpsapiModelEntity::setProperty(const cpsapiProperty::Type & property, const
 
   switch (property)
     {
-    case cpsapiProperty::Type::EXPRESSION:
+    case cpsapiProperty::EXPRESSION:
       if (value.getType() == cpsapiData::Type::String)
         success = pEntity->setExpression(value.toString());
 
       break;
 
-    case cpsapiProperty::Type::INITIAL_EXPRESSION:
+    case cpsapiProperty::INITIAL_EXPRESSION:
       if (value.getType() == cpsapiData::Type::String)
         success = pEntity->setInitialExpression(value.toString());
 
       break;
 
-    case cpsapiProperty::Type::INITIAL_VALUE:
+    case cpsapiProperty::INITIAL_VALUE:
       if (value.getType() == cpsapiData::Type::Double)
         {
           pChangedObject = pEntity->getInitialValueReference();
@@ -87,13 +87,13 @@ bool cpsapiModelEntity::setProperty(const cpsapiProperty::Type & property, const
 
       break;
 
-    case cpsapiProperty::Type::SIMULATION_TYPE:
+    case cpsapiProperty::SIMULATION_TYPE:
       if (value.getType() == cpsapiData::Type::String)
         success = pEntity->setStatus(CModelEntity::StatusName.toEnum(value.toString()));
 
       break;
 
-    case cpsapiProperty::Type::ADD_NOISE:
+    case cpsapiProperty::ADD_NOISE:
       if (value.getType() == cpsapiData::Type::Bool)
         {
           pEntity->setHasNoise(value.toBool());
@@ -102,7 +102,7 @@ bool cpsapiModelEntity::setProperty(const cpsapiProperty::Type & property, const
 
       break;
 
-    case cpsapiProperty::Type::NOISE_EXPRESSION:
+    case cpsapiProperty::NOISE_EXPRESSION:
       if (value.getType() == cpsapiData::Type::String)
         success = pEntity->setNoiseExpression(value.toString());
 
@@ -128,28 +128,28 @@ cpsapiData cpsapiModelEntity::getProperty(const cpsapiProperty::Type & property,
 
   switch (property)
     {
-    case cpsapiProperty::Type::EXPRESSION:
+    case cpsapiProperty::EXPRESSION:
       return pEntity->getExpression();
       break;
 
-    case cpsapiProperty::Type::INITIAL_EXPRESSION:
+    case cpsapiProperty::INITIAL_EXPRESSION:
       return pEntity->getInitialExpression();
       break;
 
-    case cpsapiProperty::Type::INITIAL_VALUE:
+    case cpsapiProperty::INITIAL_VALUE:
       return  pEntity->getInitialValue();
       break;
 
-    case cpsapiProperty::Type::SIMULATION_TYPE:
+    case cpsapiProperty::SIMULATION_TYPE:
       return CModelEntity::StatusName[pEntity->getStatus()];
 
       break;
 
-    case cpsapiProperty::Type::ADD_NOISE:
+    case cpsapiProperty::ADD_NOISE:
       return pEntity->hasNoise();
       break;
 
-    case cpsapiProperty::Type::NOISE_EXPRESSION:
+    case cpsapiProperty::NOISE_EXPRESSION:
       return pEntity->getNoiseExpression();
 
       break;

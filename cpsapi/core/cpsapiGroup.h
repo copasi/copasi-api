@@ -30,10 +30,10 @@ public:
    */ 
   enum class Property
   {
-    PARAMETER_VALUE = cpsapiProperty::Type::PARAMETER_VALUE,
-    NAME = cpsapiProperty::Type::NAME,
-    OBJECT_UNIQUE_NAME = cpsapiProperty::Type::OBJECT_UNIQUE_NAME,
-    CN = cpsapiProperty::Type::CN
+    PARAMETER_VALUE = cpsapiProperty::PARAMETER_VALUE,
+    NAME = cpsapiProperty::NAME,
+    OBJECT_UNIQUE_NAME = cpsapiProperty::OBJECT_UNIQUE_NAME,
+    CN = cpsapiProperty::CN
   };
 
   /**
@@ -199,7 +199,7 @@ protected:
   virtual bool setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & framework) override;
 
   /**
-   * Retreive the property
+   * Retrieve the property
    * 
    * @param const cpsapiProperty::Type & property 
    * @param const CCore::Framework &framework 
@@ -208,7 +208,7 @@ protected:
   virtual cpsapiData getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const override;
 
   /**
-   * Retreive the data reference
+   * Retrieve the data reference
    * 
    * @param const cpsapiReference::Type & reference 
    * @param const CCore::Framework &framework 

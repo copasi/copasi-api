@@ -22,7 +22,7 @@ const cpsapiGroup::Properties cpsapiGroup::SupportedProperties = {};
 // static
 const cpsapiGroup::Properties cpsapiGroup::HiddenProperties = 
 {
-  cpsapiProperty::Type::PARAMETER_VALUE
+  cpsapiProperty::PARAMETER_VALUE
 };
 
 // static
@@ -31,7 +31,7 @@ const cpsapiGroup::References cpsapiGroup::SupportedReferences = {};
 // static
 const cpsapiGroup::References cpsapiGroup::HiddenReferences = 
 {
-  cpsapiProperty::Type::PARAMETER_VALUE
+  cpsapiProperty::PARAMETER_VALUE
 };
 
 cpsapiGroup::cpsapiGroup(wrapped * pWrapped, const cpsapiObjectData::Type & type)

@@ -26,9 +26,9 @@ CPSAPI_NAMESPACE_USE
 // static
 const cpsapiKineticLawVariable::Properties cpsapiKineticLawVariable::SupportedProperties =
   {
-    cpsapiProperty::Type::PARAMETER_ROLE,
-    cpsapiProperty::Type::PARAMETER_VALUE,
-    cpsapiProperty::Type::PARAMETER_MAPPING
+    cpsapiProperty::PARAMETER_ROLE,
+    cpsapiProperty::PARAMETER_VALUE,
+    cpsapiProperty::PARAMETER_MAPPING
   };
 
 // static
@@ -38,7 +38,7 @@ const cpsapiKineticLawVariable::Properties cpsapiKineticLawVariable::HiddenPrope
 // static
 const cpsapiKineticLawVariable::References cpsapiKineticLawVariable::SupportedReferences =
   {
-    cpsapiProperty::Type::PARAMETER_VALUE
+    cpsapiProperty::PARAMETER_VALUE
   };
 
 
@@ -99,17 +99,17 @@ bool cpsapiKineticLawVariable::setProperty(const cpsapiProperty::Type & property
 
   switch (property)
     {
-    case cpsapiProperty::Type::PARAMETER_ROLE:
+    case cpsapiProperty::PARAMETER_ROLE:
       success = false; // The role of a reaction parameter must not be changed
       break;
 
-    case cpsapiProperty::Type::PARAMETER_VALUE:
+    case cpsapiProperty::PARAMETER_VALUE:
       if (WRAPPED->mpMappedObject != nullptr
           && WRAPPED->mpMappedObject->getType() == cpsapiObjectData::Type::Parameter)
         success &= static_cast< CCopasiParameter * >(**WRAPPED->mpMappedObject)->setValue(value.toDouble());
       break;
 
-    case cpsapiProperty::Type::PARAMETER_MAPPING:
+    case cpsapiProperty::PARAMETER_MAPPING:
       switch (pParameter->getUsage())
         {
         case CFunctionParameter::Role::SUBSTRATE:
@@ -164,7 +164,7 @@ bool cpsapiKineticLawVariable::setProperty(const cpsapiProperty::Type & property
     }
 
   if (success
-      && property == cpsapiProperty::Type::PARAMETER_MAPPING)
+      && property == cpsapiProperty::PARAMETER_MAPPING)
     WRAPPED->updateMappedObject();
 
   return success && cpsapiTransaction::synchronize(pReaction, Framework);
@@ -190,18 +190,18 @@ cpsapiData cpsapiKineticLawVariable::getProperty(const cpsapiProperty::Type & pr
 
   switch (property)
     {
-    case cpsapiProperty::Type::PARAMETER_ROLE:
+    case cpsapiProperty::PARAMETER_ROLE:
       if (pParameter != nullptr)
         return CFunctionParameter::RoleNameXML[pParameter->getUsage()];
       break;
 
-    case cpsapiProperty::Type::PARAMETER_VALUE:
+    case cpsapiProperty::PARAMETER_VALUE:
       if (WRAPPED->mpMappedObject != nullptr
           && WRAPPED->mpMappedObject->getType() == cpsapiObjectData::Type::Parameter)
         return static_cast< CCopasiParameter * >(**WRAPPED->mpMappedObject)->getValue< C_FLOAT64 >();
       break;
 
-    case cpsapiProperty::Type::PARAMETER_MAPPING:
+    case cpsapiProperty::PARAMETER_MAPPING:
       if (pParameter != nullptr
           && WRAPPED->mpMappedObject != nullptr)
         switch (pParameter->getUsage())

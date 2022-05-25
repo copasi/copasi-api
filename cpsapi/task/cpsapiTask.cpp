@@ -23,7 +23,7 @@ CPSAPI_NAMESPACE_USE
 // static
 const cpsapiTask::Properties cpsapiTask::SupportedProperties =
   {
-    cpsapiProperty::Type::TASK_TYPE
+    cpsapiProperty::TASK_TYPE
   };
 
 cpsapiTask::cpsapiTask(wrapped * pWrapped)

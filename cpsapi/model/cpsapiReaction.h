@@ -30,16 +30,16 @@ public:
    */ 
   enum class Property
   {
-    CHEMICAL_EQUATION = cpsapiProperty::Type::CHEMICAL_EQUATION,
-    KINETIC_LAW = cpsapiProperty::Type::KINETIC_LAW,
-    KINETIC_LAW_EXPRESSION = cpsapiProperty::Type::KINETIC_LAW_EXPRESSION,
-    KINETIC_LAW_UNIT_TYPE = cpsapiProperty::Type::KINETIC_LAW_UNIT_TYPE,
-    SCALING_COMPARTMENT = cpsapiProperty::Type::SCALING_COMPARTMENT,
-    ADD_NOISE = cpsapiProperty::Type::ADD_NOISE,
-    NOISE_EXPRESSION = cpsapiProperty::Type::NOISE_EXPRESSION,
-    NAME = cpsapiProperty::Type::NAME,
-    OBJECT_UNIQUE_NAME = cpsapiProperty::Type::OBJECT_UNIQUE_NAME,
-    CN = cpsapiProperty::Type::CN
+    CHEMICAL_EQUATION = cpsapiProperty::CHEMICAL_EQUATION,
+    KINETIC_LAW = cpsapiProperty::KINETIC_LAW,
+    KINETIC_LAW_EXPRESSION = cpsapiProperty::KINETIC_LAW_EXPRESSION,
+    KINETIC_LAW_UNIT_TYPE = cpsapiProperty::KINETIC_LAW_UNIT_TYPE,
+    SCALING_COMPARTMENT = cpsapiProperty::SCALING_COMPARTMENT,
+    ADD_NOISE = cpsapiProperty::ADD_NOISE,
+    NOISE_EXPRESSION = cpsapiProperty::NOISE_EXPRESSION,
+    NAME = cpsapiProperty::NAME,
+    OBJECT_UNIQUE_NAME = cpsapiProperty::OBJECT_UNIQUE_NAME,
+    CN = cpsapiProperty::CN
   };
 
   /**
@@ -194,7 +194,7 @@ protected:
   virtual bool setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & framework) override;
 
   /**
-   * Retreive the property
+   * Retrieve the property
    * 
    * @param const cpsapiProperty::Type & property 
    * @param const CCore::Framework &framework 
@@ -203,7 +203,7 @@ protected:
   virtual cpsapiData getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const override;
 
   /**
-   * Retreive the data reference
+   * Retrieve the data reference
    * 
    * @param const cpsapiReference::Type & reference 
    * @param const CCore::Framework &framework 

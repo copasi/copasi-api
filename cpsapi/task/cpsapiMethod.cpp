@@ -19,7 +19,7 @@ CPSAPI_NAMESPACE_USE
 // static
 const cpsapiMethod::Properties cpsapiMethod::SupportedProperties =
   {
-    cpsapiProperty::Type::METHOD_TYPE
+    cpsapiProperty::METHOD_TYPE
   };
 
 cpsapiMethod::cpsapiMethod(wrapped * pWrapped)

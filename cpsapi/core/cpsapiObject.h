@@ -55,9 +55,9 @@ public:
    */
   enum class Property
   {
-    NAME = cpsapiProperty::Type::NAME,
-    OBJECT_UNIQUE_NAME = cpsapiProperty::Type::OBJECT_UNIQUE_NAME,
-    CN = cpsapiProperty::Type::CN
+    NAME = cpsapiProperty::NAME,
+    OBJECT_UNIQUE_NAME = cpsapiProperty::OBJECT_UNIQUE_NAME,
+    CN = cpsapiProperty::CN
   };
 
   /**
@@ -324,7 +324,7 @@ protected:
   virtual bool setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & framework);
 
   /**
-   * Retreive the property
+   * Retrieve the property
    * 
    * @param const cpsapiProperty::Type & property 
    * @param const CCore::Framework &framework 
@@ -353,7 +353,7 @@ protected:
   static bool isHiddenReference(const cpsapiReference::Type & reference);
 
   /**
-   * Retreive the data reference
+   * Retrieve the data reference
    * 
    * @param const cpsapiReference::Type & reference 
    * @param const CCore::Framework &framework 

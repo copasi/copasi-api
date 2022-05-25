@@ -24,8 +24,8 @@ CPSAPI_NAMESPACE_USE
 // static
 const cpsapiSpecies::Properties cpsapiSpecies::SupportedProperties =
   {
-    cpsapiProperty::Type::INITIAL_VALUE,
-    cpsapiProperty::Type::UNIT // READ ONLY
+    cpsapiProperty::INITIAL_VALUE,
+    cpsapiProperty::UNIT // READ ONLY
   };
 
 cpsapiSpecies::cpsapiSpecies(wrapped * pWrapped)
@@ -63,7 +63,7 @@ bool cpsapiSpecies::setProperty(const cpsapiProperty::Type & property, const cps
 
   switch (property)
     {
-    case cpsapiProperty::Type::INITIAL_VALUE:
+    case cpsapiProperty::INITIAL_VALUE:
       if (Framework == CCore::Framework::__SIZE)
         Framework = CCore::Framework::Concentration;
 
@@ -89,7 +89,7 @@ bool cpsapiSpecies::setProperty(const cpsapiProperty::Type & property, const cps
 
       break;
 
-    case cpsapiProperty::Type::UNIT:
+    case cpsapiProperty::UNIT:
       success = false;
       break;
 
@@ -113,14 +113,14 @@ cpsapiData cpsapiSpecies::getProperty(const cpsapiProperty::Type & property, con
 
   switch (property)
     {
-    case cpsapiProperty::Type::INITIAL_VALUE:
+    case cpsapiProperty::INITIAL_VALUE:
       if (framework == CCore::Framework::ParticleNumbers)
         return pWrapped->getInitialValue();
       
       return pWrapped->getInitialConcentration();
       break;
 
-    case cpsapiProperty::Type::UNIT:
+    case cpsapiProperty::UNIT:
       return pWrapped->getUnits();
       break;
       

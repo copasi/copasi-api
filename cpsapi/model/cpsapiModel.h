@@ -41,18 +41,18 @@ public:
    */ 
   enum class Property
   {
-    INITIAL_VALUE = cpsapiProperty::Type::INITIAL_VALUE,
-    NAME = cpsapiProperty::Type::NAME,
-    OBJECT_UNIQUE_NAME = cpsapiProperty::Type::OBJECT_UNIQUE_NAME,
-    CN = cpsapiProperty::Type::CN,
-    UNIT = cpsapiProperty::Type::UNIT,
-    VOLUME_UNIT = cpsapiProperty::Type::VOLUME_UNIT,
-    AREA_UNIT = cpsapiProperty::Type::AREA_UNIT,
-    LENGTH_UNIT = cpsapiProperty::Type::LENGTH_UNIT,
-    TIME_UNIT = cpsapiProperty::Type::TIME_UNIT,
-    QUANTITY_UNIT = cpsapiProperty::Type::QUANTITY_UNIT,
-    MODEL_TYPE = cpsapiProperty::Type::MODEL_TYPE,
-    AVOGADRO_NUMBER = cpsapiProperty::Type::AVOGADRO_NUMBER
+    INITIAL_VALUE = cpsapiProperty::INITIAL_VALUE,
+    NAME = cpsapiProperty::NAME,
+    OBJECT_UNIQUE_NAME = cpsapiProperty::OBJECT_UNIQUE_NAME,
+    CN = cpsapiProperty::CN,
+    UNIT = cpsapiProperty::UNIT,
+    VOLUME_UNIT = cpsapiProperty::VOLUME_UNIT,
+    AREA_UNIT = cpsapiProperty::AREA_UNIT,
+    LENGTH_UNIT = cpsapiProperty::LENGTH_UNIT,
+    TIME_UNIT = cpsapiProperty::TIME_UNIT,
+    QUANTITY_UNIT = cpsapiProperty::QUANTITY_UNIT,
+    MODEL_TYPE = cpsapiProperty::MODEL_TYPE,
+    AVOGADRO_NUMBER = cpsapiProperty::AVOGADRO_NUMBER
   };
 
   /**

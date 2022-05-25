@@ -26,7 +26,7 @@ CPSAPI_NAMESPACE_USE
 // static
 const cpsapiGlobalQuantity::Properties cpsapiGlobalQuantity::SupportedProperties =
   {
-    cpsapiProperty::Type::UNIT
+    cpsapiProperty::UNIT
   };
 
 cpsapiGlobalQuantity::cpsapiGlobalQuantity(wrapped * pWrapped)
@@ -64,7 +64,7 @@ bool cpsapiGlobalQuantity::setProperty(const cpsapiProperty::Type & property, co
 
   switch (property)
     {
-    case cpsapiProperty::Type::UNIT:
+    case cpsapiProperty::UNIT:
       if (value.getType() == cpsapiData::Type::String)
         success &= pWrapped->setUnitExpression(value.toString());
       break;
@@ -90,7 +90,7 @@ cpsapiData cpsapiGlobalQuantity::getProperty(const cpsapiProperty::Type & proper
 
   switch (property)
     {
-    case cpsapiProperty::Type::UNIT:
+    case cpsapiProperty::UNIT:
       return pWrapped->getUnitExpression();
       break;
       

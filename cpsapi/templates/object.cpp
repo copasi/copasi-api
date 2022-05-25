@@ -23,7 +23,7 @@ CPSAPI_NAMESPACE_USE
 // static
 const cpsapiTemplate::Properties cpsapiTemplate::SupportedProperties =
 {
-  cpsapiProperty::Type::PARAMETER_VALUE
+  cpsapiProperty::PARAMETER_VALUE
 };
 
 // static
@@ -32,7 +32,7 @@ const cpsapiTemplate::Properties cpsapiTemplate::HiddenProperties = {};
 // static
 const cpsapiTemplate::References cpsapiTemplate::SupportedReferences =
 {
-  cpsapiProperty::Type::PARAMETER_VALUE
+  cpsapiProperty::PARAMETER_VALUE
 };
 
 // static
@@ -45,16 +45,6 @@ cpsapiTemplate::cpsapiTemplate(wrapped * pWrapped, const cpsapiObjectData::Type 
 // virtual
 cpsapiTemplate::~cpsapiTemplate()
 {}
-
-// virtual 
-void cpsapiTemplate::accept(cpsapiVisitor & visitor)
-{
-  if (!isValid())
-    return;
-
-  visitor.visit(this, Type::Parameter);
-  base::accept(visitor);
-}
 
 bool cpsapiTemplate::setProperty(const cpsapiTemplate::Property & property, const cpsapiData & value, const CCore::Framework & framework)
 {
@@ -70,7 +60,7 @@ cpsapiData cpsapiTemplate::getProperty(const Property & property, const CCore::F
 bool cpsapiTemplate::setProperty(const cpsapiProperty::Type & property, const cpsapiData & value, const CCore::Framework & framework)
 {
   if (!isValid()
-      && isHiddenProperty< cpsapiTemplate >(property))
+      || isHiddenProperty< cpsapiTemplate >(property))
     return false;
 
   if (!isImplementedProperty< cpsapiTemplate >(property))
@@ -81,7 +71,7 @@ bool cpsapiTemplate::setProperty(const cpsapiProperty::Type & property, const cp
 
   switch (property)
     {
-    case cpsapiProperty::Type::PARAMETER_VALUE:
+    case cpsapiProperty::PARAMETER_VALUE:
       switch (pParameter->getType())
         {
         case wrapped::Type::DOUBLE:
@@ -135,18 +125,17 @@ bool cpsapiTemplate::setProperty(const cpsapiProperty::Type & property, const cp
 cpsapiData cpsapiTemplate::getProperty(const cpsapiProperty::Type & property, const CCore::Framework & framework) const
 {
   if (!isValid()
-      && isHiddenProperty< cpsapiTemplate >(property))
+      || isHiddenProperty< cpsapiTemplate >(property))
     return cpsapiData();
 
   if (!isImplementedProperty<cpsapiTemplate>(property))
     return base::getProperty(property, framework);
 
   wrapped * pParameter = WRAPPED;
-  bool success = false;
-
+  
   switch (property)
     {
-    case cpsapiProperty::Type::PARAMETER_VALUE:
+    case cpsapiProperty::PARAMETER_VALUE:
       switch (pParameter->getType())
         {
         case wrapped::Type::DOUBLE:

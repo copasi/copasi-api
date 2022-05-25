@@ -37,15 +37,15 @@ public:
 
   enum class Property
   {
-    EXPRESSION = cpsapiProperty::Type::EXPRESSION,
-    INITIAL_EXPRESSION = cpsapiProperty::Type::INITIAL_EXPRESSION,
-    INITIAL_VALUE = cpsapiProperty::Type::INITIAL_VALUE,
-    SIMULATION_TYPE = cpsapiProperty::Type::SIMULATION_TYPE,
-    ADD_NOISE = cpsapiProperty::Type::ADD_NOISE,
-    NOISE_EXPRESSION = cpsapiProperty::Type::NOISE_EXPRESSION,
-    NAME = cpsapiProperty::Type::NAME,
-    OBJECT_UNIQUE_NAME = cpsapiProperty::Type::OBJECT_UNIQUE_NAME,
-    CN = cpsapiProperty::Type::CN
+    EXPRESSION = cpsapiProperty::EXPRESSION,
+    INITIAL_EXPRESSION = cpsapiProperty::INITIAL_EXPRESSION,
+    INITIAL_VALUE = cpsapiProperty::INITIAL_VALUE,
+    SIMULATION_TYPE = cpsapiProperty::SIMULATION_TYPE,
+    ADD_NOISE = cpsapiProperty::ADD_NOISE,
+    NOISE_EXPRESSION = cpsapiProperty::NOISE_EXPRESSION,
+    NAME = cpsapiProperty::NAME,
+    OBJECT_UNIQUE_NAME = cpsapiProperty::OBJECT_UNIQUE_NAME,
+    CN = cpsapiProperty::CN
   };
 
   static const Properties SupportedProperties;

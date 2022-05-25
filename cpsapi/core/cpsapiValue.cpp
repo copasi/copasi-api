@@ -19,7 +19,7 @@ CPSAPI_NAMESPACE_USE
 // static
 const cpsapiValue::Properties cpsapiValue::SupportedProperties =
   {
-    cpsapiProperty::Type::VALUE
+    cpsapiProperty::VALUE
   };
 
 // static

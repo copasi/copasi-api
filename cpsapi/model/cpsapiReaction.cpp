@@ -26,13 +26,13 @@ CPSAPI_NAMESPACE_USE
 // static
 const cpsapiReaction::Properties cpsapiReaction::SupportedProperties =
   {
-    cpsapiProperty::Type::CHEMICAL_EQUATION,
-    cpsapiProperty::Type::KINETIC_LAW,
-    cpsapiProperty::Type::KINETIC_LAW_EXPRESSION,
-    cpsapiProperty::Type::KINETIC_LAW_UNIT_TYPE,
-    cpsapiProperty::Type::SCALING_COMPARTMENT,
-    cpsapiProperty::Type::ADD_NOISE,
-    cpsapiProperty::Type::NOISE_EXPRESSION
+    cpsapiProperty::CHEMICAL_EQUATION,
+    cpsapiProperty::KINETIC_LAW,
+    cpsapiProperty::KINETIC_LAW_EXPRESSION,
+    cpsapiProperty::KINETIC_LAW_UNIT_TYPE,
+    cpsapiProperty::SCALING_COMPARTMENT,
+    cpsapiProperty::ADD_NOISE,
+    cpsapiProperty::NOISE_EXPRESSION
   };
 
 // static
@@ -133,16 +133,16 @@ bool cpsapiReaction::setProperty(const cpsapiProperty::Type & property, const cp
 
   switch (property)
     {
-    case cpsapiProperty::Type::CHEMICAL_EQUATION:
+    case cpsapiProperty::CHEMICAL_EQUATION:
       Reaction.setChemEqString(value.toString(), Reaction.getFunctionName());
       success &= Reaction.createMetabolites();
       break;
 
-    case cpsapiProperty::Type::KINETIC_LAW:
+    case cpsapiProperty::KINETIC_LAW:
       Reaction.setFunctionAndDoMapping(value.toString());
       break;
 
-    case cpsapiProperty::Type::KINETIC_LAW_EXPRESSION:
+    case cpsapiProperty::KINETIC_LAW_EXPRESSION:
       {
         CFunction * pFunction = pWrapped->createFunctionFromExpression(value.toString());
 
@@ -153,19 +153,19 @@ bool cpsapiReaction::setProperty(const cpsapiProperty::Type & property, const cp
       }
       break;
 
-    case cpsapiProperty::Type::KINETIC_LAW_UNIT_TYPE:
+    case cpsapiProperty::KINETIC_LAW_UNIT_TYPE:
       Reaction.setKineticLawUnitType(CReaction::KineticLawUnitTypeName.toEnum(value.toString()));
       break;
 
-    case cpsapiProperty::Type::SCALING_COMPARTMENT:
+    case cpsapiProperty::SCALING_COMPARTMENT:
       Reaction.setScalingCompartment(value.toString());
       break;
 
-    case cpsapiProperty::Type::ADD_NOISE:
+    case cpsapiProperty::ADD_NOISE:
       Reaction.setHasNoise(value.toBool());
       break;
 
-    case cpsapiProperty::Type::NOISE_EXPRESSION:
+    case cpsapiProperty::NOISE_EXPRESSION:
       Reaction.setNoiseExpression(value.toString());
       break;
 
@@ -197,31 +197,31 @@ cpsapiData cpsapiReaction::getProperty(const cpsapiProperty::Type & property, co
 
   switch (property)
     {
-    case cpsapiProperty::Type::CHEMICAL_EQUATION:
+    case cpsapiProperty::CHEMICAL_EQUATION:
       return Reaction.getChemEqString();
       break;
 
-    case cpsapiProperty::Type::KINETIC_LAW:
+    case cpsapiProperty::KINETIC_LAW:
       return Reaction.getFunctionName();
       break;
 
-    case cpsapiProperty::Type::KINETIC_LAW_EXPRESSION:
+    case cpsapiProperty::KINETIC_LAW_EXPRESSION:
       return Reaction.getFunction().getInfix();
       break;
 
-    case cpsapiProperty::Type::KINETIC_LAW_UNIT_TYPE:
+    case cpsapiProperty::KINETIC_LAW_UNIT_TYPE:
       return CReaction::KineticLawUnitTypeName[Reaction.getKineticLawUnitType()];
       break;
 
-    case cpsapiProperty::Type::SCALING_COMPARTMENT:
+    case cpsapiProperty::SCALING_COMPARTMENT:
       return Reaction.getScalingCompartment();
       break;
 
-    case cpsapiProperty::Type::ADD_NOISE:
+    case cpsapiProperty::ADD_NOISE:
       return Reaction.hasNoise();
       break;
 
-    case cpsapiProperty::Type::NOISE_EXPRESSION:
+    case cpsapiProperty::NOISE_EXPRESSION:
       return Reaction.getNoiseExpression();
       break;
 

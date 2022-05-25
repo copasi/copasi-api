@@ -41,6 +41,8 @@ friend class cpsapiGlobalQuantity;
 friend class cpsapiReaction;
 friend class cpsapiKineticLawVariable;
 friend class cpsapiModel;
+friend class cpsapiEvent;
+friend class cpsapiEventAssignment;
 
 private:
   struct sChangeInfo {

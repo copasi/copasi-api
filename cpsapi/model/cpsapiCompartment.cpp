@@ -22,9 +22,9 @@ CPSAPI_NAMESPACE_USE
 // static
 const cpsapiCompartment::Properties cpsapiCompartment::SupportedProperties =
   {
-    cpsapiProperty::Type::DIMENSIONALITY,
-    cpsapiProperty::Type::INITIAL_VALUE,
-    cpsapiProperty::Type::UNIT // READ ONLY
+    cpsapiProperty::DIMENSIONALITY,
+    cpsapiProperty::INITIAL_VALUE,
+    cpsapiProperty::UNIT // READ ONLY
   };
 
 cpsapiCompartment::cpsapiCompartment(cpsapiCompartment::wrapped * pWrapped)
@@ -141,7 +141,7 @@ bool cpsapiCompartment::setProperty(const cpsapiProperty::Type & property, const
 
   switch (property)
     {
-    case cpsapiProperty::Type::DIMENSIONALITY:
+    case cpsapiProperty::DIMENSIONALITY:
       Framework = CCore::Framework::__SIZE;
       
       if (value.getType() == cpsapiData::Type::Int32)
@@ -151,7 +151,7 @@ bool cpsapiCompartment::setProperty(const cpsapiProperty::Type & property, const
 
       break;
 
-    case cpsapiProperty::Type::INITIAL_VALUE:
+    case cpsapiProperty::INITIAL_VALUE:
       if (Framework == CCore::Framework::__SIZE)
         Framework = CCore::Framework::Concentration;
 
@@ -166,7 +166,7 @@ bool cpsapiCompartment::setProperty(const cpsapiProperty::Type & property, const
         
       break;
 
-    case cpsapiProperty::Type::UNIT:
+    case cpsapiProperty::UNIT:
       success = false;
       break;
 
@@ -190,15 +190,15 @@ cpsapiData cpsapiCompartment::getProperty(const cpsapiProperty::Type & property,
 
   switch (property)
     {
-    case cpsapiProperty::Type::DIMENSIONALITY:
+    case cpsapiProperty::DIMENSIONALITY:
       return pWrapped->getDimensionality();
       break;
 
-    case cpsapiProperty::Type::INITIAL_VALUE:
+    case cpsapiProperty::INITIAL_VALUE:
       return pWrapped->getInitialValue();
       break;
 
-    case cpsapiProperty::Type::UNIT:
+    case cpsapiProperty::UNIT:
       return pWrapped->getUnits();
       break;
       

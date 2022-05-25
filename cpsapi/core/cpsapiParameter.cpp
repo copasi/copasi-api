@@ -23,7 +23,7 @@ CPSAPI_NAMESPACE_USE
 // static
 const cpsapiParameter::Properties cpsapiParameter::SupportedProperties =
 {
-  cpsapiProperty::Type::PARAMETER_VALUE
+  cpsapiProperty::PARAMETER_VALUE
 };
 
 // static
@@ -32,7 +32,7 @@ const cpsapiParameter::Properties cpsapiParameter::HiddenProperties = {};
 // static
 const cpsapiParameter::References cpsapiParameter::SupportedReferences =
 {
-  cpsapiProperty::Type::PARAMETER_VALUE
+  cpsapiProperty::PARAMETER_VALUE
 };
 
 // static
@@ -71,7 +71,7 @@ bool cpsapiParameter::setProperty(const cpsapiProperty::Type & property, const c
 
   switch (property)
     {
-    case cpsapiProperty::Type::PARAMETER_VALUE:
+    case cpsapiProperty::PARAMETER_VALUE:
       switch (pParameter->getType())
         {
         case wrapped::Type::DOUBLE:
@@ -135,7 +135,7 @@ cpsapiData cpsapiParameter::getProperty(const cpsapiProperty::Type & property, c
 
   switch (property)
     {
-    case cpsapiProperty::Type::PARAMETER_VALUE:
+    case cpsapiProperty::PARAMETER_VALUE:
       switch (pParameter->getType())
         {
         case wrapped::Type::DOUBLE:
