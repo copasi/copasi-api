@@ -59,32 +59,7 @@ public:
     __SIZE
   };
 
-  struct VisitorInterface 
-  {
-    virtual ~VisitorInterface() {}
-    virtual void visit(cpsapiObject * pObject) const = 0;
-  };
-
-  template < class cpsapi, class Visitor >
-  struct VisitorImplementation : public VisitorInterface
-  {
-    VisitorImplementation(Visitor & visitor)
-      : mVisitor(visitor)
-    {}
-
-    virtual ~VisitorImplementation() {}
-
-    virtual void visit(cpsapiObject * pObject) const override
-    {
-      cpsapiVisitor::acceptIfVisitable< Visitor, cpsapi >(mVisitor, static_cast< cpsapi * >(pObject));
-      static_cast< typename cpsapi::base * >(pObject)->accept(mVisitor);
-    }
-
-    Visitor & mVisitor;
-  };
-
-
-  struct PartInterface
+    struct PartInterface
   {
     PartInterface(const PartType & partType)
       : type(partType)
@@ -100,7 +75,7 @@ public:
 
     virtual const std::type_info & copasiType() const = 0;
 
-    virtual void accept(CDataObject * /* pDataObject */, const VisitorInterface & /* visitor */) const = 0;
+    virtual void accept(CDataObject * /* pDataObject */, const cpsapiVisitor::VisitorInterface & /* visitor */) const = 0;
 
     const PartType type;
   };
@@ -122,7 +97,7 @@ public:
 
     virtual const std::type_info & copasiType() const override;
  
-    virtual void accept(CDataObject * pDataObject, const VisitorInterface & visitor) const override;
+    virtual void accept(CDataObject * pDataObject, const cpsapiVisitor::VisitorInterface & visitor) const override;
  };
 
 
@@ -200,12 +175,12 @@ cpsapiObject * cpsapiFactory::Part< cpsapi, copasi >::copy(const cpsapiObject & 
 
 // virtual
 template <>
-inline void cpsapiFactory::Part< void, void >::accept(CDataObject * /* pDataObject */ , const VisitorInterface &  /* visitor */) const
+inline void cpsapiFactory::Part< void, void >::accept(CDataObject * /* pDataObject */ , const cpsapiVisitor::VisitorInterface &  /* visitor */) const
 {}
 
 // virtual 
 template < class cpsapi, class copasi >
-void cpsapiFactory::Part< cpsapi, copasi >::accept(CDataObject * pDataObject, const VisitorInterface & visitor) const
+void cpsapiFactory::Part< cpsapi, copasi >::accept(CDataObject * pDataObject, const cpsapiVisitor::VisitorInterface & visitor) const
 {
   std::unique_ptr< cpsapiObject > Object(create(pDataObject));
 

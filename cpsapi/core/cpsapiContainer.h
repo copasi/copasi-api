@@ -75,9 +75,7 @@ void cpsapiContainer::accept(Visitor & visitor)
       wrapped::objectMap & Objects = WRAPPED->getObjects();
 
       for (CDataObject * pDataObject : Objects)
-        {
-          cpsapiFactory::accept< Visitor >(visitor, pDataObject);
-        }
+        cpsapiVisitor::accept(visitor, pDataObject);
     }
 }
 

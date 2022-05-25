@@ -22,7 +22,7 @@ CPSAPI_NAMESPACE_BEGIN
 
 // static
 template < class Visitor >
-void cpsapiFactory::accept(Visitor & visitor , CDataObject * pDataObject)
+void cpsapiVisitor::accept(Visitor & visitor , CDataObject * pDataObject)
 {
   const cpsapiFactory::PartInterface & Part = cpsapiFactory::info(pDataObject);
   std::unique_ptr< cpsapiObject > Object(Part.create(pDataObject));
@@ -30,79 +30,79 @@ void cpsapiFactory::accept(Visitor & visitor , CDataObject * pDataObject)
   if (Object)
     switch (Part.type)
       {
-      case PartType::vectorCompartment:
+      case cpsapiFactory::PartType::vectorCompartment:
         Part.accept(pDataObject, VisitorImplementation< cpsapiVector< cpsapiCompartment >, Visitor >(visitor));
         break;
 
-      case PartType::vectorSpecies:
+      case cpsapiFactory::PartType::vectorSpecies:
         Part.accept(pDataObject, VisitorImplementation< cpsapiVector< cpsapiSpecies >, Visitor >(visitor));
         break;
 
-      case PartType::vectorGlobalQuantity:
+      case cpsapiFactory::PartType::vectorGlobalQuantity:
         Part.accept(pDataObject, VisitorImplementation< cpsapiVector< cpsapiGlobalQuantity >, Visitor >(visitor));
         break;
 
-      case PartType::vectorReaction:
+      case cpsapiFactory::PartType::vectorReaction:
         Part.accept(pDataObject, VisitorImplementation< cpsapiVector< cpsapiReaction >, Visitor >(visitor));
         break;
 
-      case PartType::vectorDataModel:
+      case cpsapiFactory::PartType::vectorDataModel:
         Part.accept(pDataObject, VisitorImplementation< cpsapiVector< cpsapiDataModel >, Visitor >(visitor));
         break;
 
-      case PartType::vectorTask:
+      case cpsapiFactory::PartType::vectorTask:
         Part.accept(pDataObject, VisitorImplementation< cpsapiVector< cpsapiTask >, Visitor >(visitor));
         break;
 
-      case PartType::value:
+      case cpsapiFactory::PartType::value:
         Part.accept(pDataObject, VisitorImplementation< cpsapiValue, Visitor >(visitor));
         break;
 
-      case PartType::model:
+      case cpsapiFactory::PartType::model:
         Part.accept(pDataObject, VisitorImplementation< cpsapiModel, Visitor >(visitor));
         break;
 
-      case PartType::compartment:
+      case cpsapiFactory::PartType::compartment:
         Part.accept(pDataObject, VisitorImplementation< cpsapiCompartment, Visitor >(visitor));
         break;
 
-      case PartType::species:
+      case cpsapiFactory::PartType::species:
         Part.accept(pDataObject, VisitorImplementation< cpsapiSpecies, Visitor >(visitor));
         break;
 
-      case PartType::globalQuantity:
+      case cpsapiFactory::PartType::globalQuantity:
         Part.accept(pDataObject, VisitorImplementation< cpsapiGlobalQuantity, Visitor >(visitor));
         break;
 
-      case PartType::reaction:
+      case cpsapiFactory::PartType::reaction:
         Part.accept(pDataObject, VisitorImplementation< cpsapiReaction, Visitor >(visitor));
         break;
 
-      case PartType::dataModel:
+      case cpsapiFactory::PartType::dataModel:
         Part.accept(pDataObject, VisitorImplementation< cpsapiDataModel, Visitor >(visitor));
         break;
 
-      case PartType::parameter:
+      case cpsapiFactory::PartType::parameter:
         Part.accept(pDataObject, VisitorImplementation< cpsapiParameter, Visitor >(visitor));
         break;
 
-      case PartType::group:
+      case cpsapiFactory::PartType::group:
         Part.accept(pDataObject, VisitorImplementation< cpsapiGroup, Visitor >(visitor));
         break;
 
-      case PartType::method:
+      case cpsapiFactory::PartType::method:
         Part.accept(pDataObject, VisitorImplementation< cpsapiMethod, Visitor >(visitor));
         break;
 
-      case PartType::problem:
+      case cpsapiFactory::PartType::problem:
         Part.accept(pDataObject, VisitorImplementation< cpsapiProblem, Visitor >(visitor));
         break;
 
-      case PartType::task:
+      case cpsapiFactory::PartType::task:
         Part.accept(pDataObject, VisitorImplementation< cpsapiTask, Visitor >(visitor));
         break;
 
-      case PartType::__SIZE:
+      case cpsapiFactory::PartType::__SIZE:
         break;
       }
 }

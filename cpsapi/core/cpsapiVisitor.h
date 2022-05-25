@@ -24,6 +24,30 @@ CPSAPI_NAMESPACE_BEGIN
 
 struct cpsapiVisitor
 {
+  struct VisitorInterface
+  {
+    virtual ~VisitorInterface() {}
+    virtual void visit(cpsapiObject * pObject) const = 0;
+  };
+
+  template < class cpsapi, class Visitor >
+  struct VisitorImplementation : public VisitorInterface
+  {
+    VisitorImplementation(Visitor & visitor)
+      : mVisitor(visitor)
+    {}
+
+    virtual ~VisitorImplementation() {}
+
+    virtual void visit(cpsapiObject * pObject) const override
+    {
+      cpsapiVisitor::acceptIfVisitable< Visitor, cpsapi >(mVisitor, static_cast< cpsapi * >(pObject));
+      static_cast< typename cpsapi::base * >(pObject)->accept(mVisitor);
+    }
+
+    Visitor & mVisitor;
+  };
+
 private:
   template < typename visitor, typename visited, typename Z = decltype(std::declval< visitor >().visit(std::declval< visited * >())) >
   static void doVisit(visitor & v, visited * pV, int)
@@ -41,6 +65,9 @@ public:
   {
     doVisit(visitor, pVisited, 0);
   }
+
+  template < class Visitor >
+  static void accept(Visitor & visitor, CDataObject * pObject);
 };
 
 CPSAPI_NAMESPACE_END

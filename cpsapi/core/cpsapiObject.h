@@ -23,7 +23,6 @@
 #pragma GCC diagnostic pop
 
 #include "cpsapi/core/cpsapiProperty.h"
-#include "cpsapi/core/cpsapiVisitor.h"
 #include "cpsapi/core/cpsapiObjectData.h"
 
 class CDataObject;
@@ -365,6 +364,12 @@ protected:
 
   Data::Pointer mpData;
 };
+
+CPSAPI_NAMESPACE_END
+
+#include "cpsapi/core/cpsapiVisitor.h"
+
+CPSAPI_NAMESPACE_BEGIN
 
 template < class Visitor >
 void cpsapiObject::accept(Visitor & visitor)

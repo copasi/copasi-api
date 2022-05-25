@@ -41,6 +41,7 @@ void Visitor::visit< cpsapiModel >(cpsapiModel * pObject)
 {
   std::cout << "visit cpsapiModel: " << (*pObject)->getCN() << std::endl;
 }
+
 CPSAPI_NAMESPACE_END
 
 
