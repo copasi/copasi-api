@@ -89,13 +89,12 @@ public:
   public:
     Data(const base::Data & data)
       : base::Data(data)
-      , mDefaultAssignment()
+      , mDefaultEventAssignment()
     {}
 
     virtual ~Data() {}
 
-
-    cpsapiEventAssignment mDefaultAssignment;
+    cpsapiEventAssignment mDefaultEventAssignment;
   };
 
   /**
@@ -125,7 +124,7 @@ public:
    * @param const std::string & name 
    * @return cpsapiEventAssignment 
    */
-  cpsapiEventAssignment addAssignment(const std::string & name);
+  cpsapiEventAssignment addEventAssignment(const std::string & name);
 
   /**
    * Delete the Assignment with the given name 
@@ -133,7 +132,7 @@ public:
    * @param const std::string & name = (default: current assignment) 
    * @return bool success 
    */
-  bool deleteAssignment(const std::string & name = "");
+  bool deleteEventAssignment(const std::string & name = "");
 
   /**
    * Retrieve an assignment
@@ -141,14 +140,14 @@ public:
    * @param const std::string & name = (default: current assignment) 
    * @return cpsapiEventAssignment 
    */
-  cpsapiEventAssignment assignment(const std::string & name = "");
+  cpsapiEventAssignment eventAssignment(const std::string & name = "");
 
   /**
    * Retrieve the vector af assignments
    * 
    * @return cpsapiVector< cpsapiEventAssignment > 
    */
-  cpsapiVector< cpsapiEventAssignment > getAssignments() const;
+  cpsapiVector< cpsapiEventAssignment > getEventAssignments() const;
   
   /**
    * Set a property of the object to the provided value under the given framework.
@@ -215,13 +214,13 @@ private:
    * @param const std::string & name
    * @return cpsapiEventAssignment 
    */
-  cpsapiEventAssignment __assignment(const std::string & name) const;
+  cpsapiEventAssignment __eventAssignment(const std::string & name) const;
 
   /**
    * Update the default event assignment
    * @param assignment 
    */
-  void updateDefaultAssignment(const cpsapiEventAssignment & assignment);
+  void updateDefaultEventAssignment(const cpsapiEventAssignment & assignment);
 };
 
 template < class Visitor >

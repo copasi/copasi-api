@@ -190,6 +190,26 @@ cpsapiVector< cpsapiReaction > cpsapiDataModel::getReactions()
   return model().getReactions();
 }
 
+cpsapiEvent cpsapiDataModel::addEvent(const std::string & name)
+{
+  return model().addEvent(name);
+}
+
+bool cpsapiDataModel::deleteEvent(const std::string & name)
+{
+  return model().deleteEvent(name);
+}
+
+cpsapiEvent cpsapiDataModel::event(const std::string & name)
+{
+  return model().event(name);
+}
+
+cpsapiVector< cpsapiEvent > cpsapiDataModel::getEvents()
+{
+  return model().getEvents();
+}
+
 cpsapiGlobalQuantity cpsapiDataModel::addGlobalQuantity(const std::string & name)
 {
   return model().addGlobalQuantity(name);

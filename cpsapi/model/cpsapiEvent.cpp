@@ -51,7 +51,7 @@ cpsapiEvent::cpsapiEvent(wrapped * pWrapped, const cpsapiObjectData::Type & type
 cpsapiEvent::~cpsapiEvent()
 {}
 
-cpsapiEventAssignment cpsapiEvent::addAssignment(const std::string & name)
+cpsapiEventAssignment cpsapiEvent::addEventAssignment(const std::string & name)
 {
   if (!isValid())
     return nullptr;
@@ -61,26 +61,26 @@ cpsapiEventAssignment cpsapiEvent::addAssignment(const std::string & name)
   if (!Assignments.add(CEventAssignment(name)))
     return nullptr;
 
-  cpsapiEventAssignment Assignment = __assignment(name);
+  cpsapiEventAssignment Assignment = __eventAssignment(name);
 
   if (!Assignment)
     return nullptr;
 
-  if (*DATA->mDefaultAssignment != *Assignment)
-    updateDefaultAssignment(Assignment);
+  if (*DATA->mDefaultEventAssignment != *Assignment)
+    updateDefaultEventAssignment(Assignment);
 
-  return DATA->mDefaultAssignment;
+  return DATA->mDefaultEventAssignment;
 }
 
-bool cpsapiEvent::deleteAssignment(const std::string & name)
+bool cpsapiEvent::deleteEventAssignment(const std::string & name)
 {
-  CEventAssignment * pAssignment = static_cast< CEventAssignment * >(*__assignment(name));
+  CEventAssignment * pAssignment = static_cast< CEventAssignment * >(*__eventAssignment(name));
 
   if (pAssignment == nullptr)
     return false;
   
-  if (*DATA->mDefaultAssignment == pAssignment)
-    updateDefaultAssignment(nullptr);
+  if (*DATA->mDefaultEventAssignment == pAssignment)
+    updateDefaultEventAssignment(nullptr);
   
   CModel * pModel = static_cast< CModel * >(WRAPPED->getObjectAncestor("Model"));
   cpsapiTransaction::beginStructureChange(pModel);
@@ -92,20 +92,20 @@ bool cpsapiEvent::deleteAssignment(const std::string & name)
   return true;
 }
 
-cpsapiEventAssignment cpsapiEvent::assignment(const std::string & name)
+cpsapiEventAssignment cpsapiEvent::eventAssignment(const std::string & name)
 {
-  cpsapiEventAssignment Assignment(__assignment(name));
+  cpsapiEventAssignment Assignment(__eventAssignment(name));
 
   if (!Assignment)
     return Assignment;
 
-  if (*DATA->mDefaultAssignment != *Assignment)
-    updateDefaultAssignment(Assignment);
+  if (*DATA->mDefaultEventAssignment != *Assignment)
+    updateDefaultEventAssignment(Assignment);
 
-  return DATA->mDefaultAssignment;
+  return DATA->mDefaultEventAssignment;
 }
 
-cpsapiVector< cpsapiEventAssignment > cpsapiEvent::getAssignments() const
+cpsapiVector< cpsapiEventAssignment > cpsapiEvent::getEventAssignments() const
 {
   if (!isValid())
     return cpsapiVector< cpsapiEventAssignment >();
@@ -113,13 +113,13 @@ cpsapiVector< cpsapiEventAssignment > cpsapiEvent::getAssignments() const
   return cpsapiVector< cpsapiEventAssignment >(&WRAPPED->getAssignments());
 }
 
-cpsapiEventAssignment cpsapiEvent::__assignment(const std::string & name) const
+cpsapiEventAssignment cpsapiEvent::__eventAssignment(const std::string & name) const
 { 
   if (!isValid())
     return nullptr;
     
   if (name.empty())
-    return DATA->mDefaultAssignment;
+    return DATA->mDefaultEventAssignment;
 
   size_t Index = WRAPPED->getAssignments().getIndex(name);
 
@@ -129,9 +129,9 @@ cpsapiEventAssignment cpsapiEvent::__assignment(const std::string & name) const
   return  &WRAPPED->getAssignments()[Index];
 }
 
-void cpsapiEvent::updateDefaultAssignment(const cpsapiEventAssignment & assignment)
+void cpsapiEvent::updateDefaultEventAssignment(const cpsapiEventAssignment & assignment)
 {
-  DATA->mDefaultAssignment = assignment;
+  DATA->mDefaultEventAssignment = assignment;
 }
 
 bool cpsapiEvent::setProperty(const cpsapiEvent::Property & property, const cpsapiData & value, const CCore::Framework & framework)

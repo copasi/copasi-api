@@ -19,6 +19,7 @@
 #include "cpsapi/model/cpsapiSpecies.h"
 #include "cpsapi/model/cpsapiGlobalQuantity.h"
 #include "cpsapi/model/cpsapiReaction.h"
+#include "cpsapi/model/cpsapiEvent.h"
 
 #pragma GCC diagnostic push
 #include <copasi/model/CModel.h> 
@@ -88,7 +89,7 @@ public:
       , mDefaultCompartment()
       , mDefaultReaction()
       , mDefaultGlobalQuantity()
-      , mpDefaultEvent(nullptr)
+      , mDefaultEvent()
     {}
 
     virtual ~Data() {}
@@ -96,7 +97,7 @@ public:
     cpsapiCompartment mDefaultCompartment;
     cpsapiReaction mDefaultReaction;
     cpsapiGlobalQuantity mDefaultGlobalQuantity;
-    CEvent * mpDefaultEvent;
+    cpsapiEvent mDefaultEvent;
   };
 
   /**
@@ -155,6 +156,22 @@ public:
 
   cpsapiVector< cpsapiReaction > getReactions() const;
   
+  cpsapiEvent addEvent(const std::string & name);
+
+  bool deleteEvent(const std::string & name = "");
+
+  cpsapiEvent event(const std::string & name = "");
+
+  cpsapiVector< cpsapiEvent > getEvents() const;
+  
+  cpsapiEventAssignment addEventAssignment(const std::string & name, const std::string & event = "");
+
+  bool deleteEventAssignment(const std::string & name = "", const std::string & event = "");
+
+  cpsapiEventAssignment eventAssignment(const std::string & name = "", const std::string & event = "");
+
+  cpsapiVector< cpsapiEventAssignment > getEventAssignments(const std::string & event = "") const;
+  
   void deleteAllDependents(CDataContainer * pContainer);
 
   bool setProperty(const Property & property, const cpsapiData & value, const CCore::Framework & framework = CCore::Framework::__SIZE);
@@ -180,6 +197,13 @@ private:
   cpsapiReaction __reaction(const std::string & name) const;
 
   void updateDefaultReaction(const cpsapiReaction & reaction);
+  
+#ifdef __event
+# undef __event
+#endif
+  cpsapiEvent __event(const std::string & name) const;
+
+  void updateDefaultEvent(const cpsapiEvent & event);
   
   void deleteDependents(const CDataObject::DataObjectSet & set);
 };

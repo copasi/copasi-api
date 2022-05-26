@@ -235,6 +235,54 @@ cpsapiVector< cpsapiGlobalQuantity > cpsapi::getGlobalQuantities(const std::stri
 }
 
 // static 
+bool cpsapi::addReaction(const std::string & name, const std::string & modelName)
+{
+  return dataModel(modelName).addReaction(name);
+}
+
+// static
+ bool cpsapi::deleteReaction(const std::string & name, const std::string & modelName)
+{
+  return dataModel(modelName).deleteReaction(name);
+}
+
+// static
+cpsapiReaction cpsapi::reaction(const std::string & name, const std::string & modelName)
+{
+  return dataModel(modelName).reaction(name);
+}
+
+// static
+cpsapiVector< cpsapiReaction > cpsapi::getReactions(const std::string & modelName)
+{
+  return dataModel(modelName).getReactions();
+}
+  
+// static
+bool cpsapi::addEvent(const std::string & name, const std::string & modelName)
+{
+  return dataModel(modelName).addEvent(name);
+}
+
+// static
+bool cpsapi::deleteEvent(const std::string & name, const std::string & modelName)
+{
+  return dataModel(modelName).deleteEvent(name);
+}
+
+// static
+cpsapiEvent cpsapi::event(const std::string & name, const std::string & modelName)
+{
+  return dataModel(modelName).event(name);
+}
+
+// static
+cpsapiVector< cpsapiEvent > cpsapi::getEvents(const std::string & modelName)
+{
+  return dataModel(modelName).getEvents();
+}
+
+// static 
 void cpsapi::init()
 {
   CRootContainer::init(0, nullptr);

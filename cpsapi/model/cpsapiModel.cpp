@@ -357,6 +357,103 @@ void cpsapiModel::updateDefaultReaction(const cpsapiReaction & reaction)
   DATA->mDefaultReaction = reaction;
 }
 
+cpsapiEvent cpsapiModel::addEvent(const std::string & name)
+{
+  if (!isValid())
+    return nullptr;
+
+  cpsapiTransaction::beginStructureChange(WRAPPED);
+
+  CEvent * pEvent = WRAPPED->createEvent(name);
+
+  if (pEvent != nullptr)
+    updateDefaultEvent(pEvent);
+
+  return pEvent;
+}
+
+bool cpsapiModel::deleteEvent(const std::string & name)
+{
+  CEvent * pEvent = static_cast< CEvent *>(*__event(name));
+
+  if (pEvent == nullptr)
+    return false;
+
+  if (*DATA->mDefaultEvent == pEvent)
+    updateDefaultEvent(nullptr);
+
+  cpsapiTransaction::beginStructureChange(WRAPPED);
+
+  deleteAllDependents(pEvent);
+  cpsapiObjectData::deleted(pEvent);
+  delete pEvent;
+
+  return true;
+}
+
+
+cpsapiEvent cpsapiModel::event(const std::string & name)
+{
+  cpsapiEvent Event = __event(name);
+
+  if (!Event)
+    return nullptr;
+
+  if (*DATA->mDefaultEvent != *Event)
+    updateDefaultEvent(Event);
+
+  return Event;
+}
+
+cpsapiVector< cpsapiEvent > cpsapiModel::getEvents() const
+{
+  if (!isValid())
+    return cpsapiVector< cpsapiEvent >();
+
+  return cpsapiVector< cpsapiEvent >(&WRAPPED->getEvents());
+}
+
+cpsapiEvent cpsapiModel::__event(const std::string & name) const
+{
+  if (!isValid())
+    return nullptr;
+
+  if (name.empty())
+    return DATA->mDefaultEvent;
+
+  size_t Index = WRAPPED->getEvents().getIndex(name);
+
+  if (Index == C_INVALID_INDEX)
+    return nullptr;
+
+  return &WRAPPED->getEvents()[Index];
+}
+
+void cpsapiModel::updateDefaultEvent(const cpsapiEvent & event)
+{
+  DATA->mDefaultEvent = event;
+}
+
+cpsapiEventAssignment cpsapiModel::addEventAssignment(const std::string & name, const std::string & event)
+{
+  return this->event(event).addEventAssignment(name);
+}
+
+bool cpsapiModel::deleteEventAssignment(const std::string & name, const std::string & event)
+{
+  return __event(event).deleteEventAssignment(name);
+}
+
+cpsapiEventAssignment cpsapiModel::eventAssignment(const std::string & name, const std::string & event)
+{
+  return this->event(event).eventAssignment(name);
+}
+
+cpsapiVector< cpsapiEventAssignment > cpsapiModel::getEventAssignments(const std::string & event) const
+{
+  return const_cast< cpsapiModel * >(this)->event(event).getEventAssignments();
+}
+
 void cpsapiModel::deleteDependents(const CDataObject::DataObjectSet & set)
 {
   for (const CDataObject * pObject : set)

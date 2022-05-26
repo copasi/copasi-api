@@ -21,6 +21,9 @@
 #include "cpsapi/model/cpsapiCompartment.h"
 #include "cpsapi/model/cpsapiSpecies.h"
 #include "cpsapi/model/cpsapiGlobalQuantity.h"
+#include "cpsapi/model/cpsapiReaction.h"
+#include "cpsapi/model/cpsapiEvent.h"
+#include "cpsapi/model/cpsapiEventAssignment.h"
 
 class CRootContainer;
 class CDataModel;
@@ -107,6 +110,22 @@ public:
   static cpsapiGlobalQuantity globalQuantity(const std::string & name = "", const std::string & modelName = "");
 
   static cpsapiVector< cpsapiGlobalQuantity > getGlobalQuantities(const std::string & modelName = "");
+  
+  static bool addReaction(const std::string & name, const std::string & modelName = "");
+
+  static bool deleteReaction(const std::string & name, const std::string & modelName = "");
+
+  static cpsapiReaction reaction(const std::string & name = "", const std::string & modelName = "");
+
+  static cpsapiVector< cpsapiReaction > getReactions(const std::string & modelName = "");
+  
+  static bool addEvent(const std::string & name, const std::string & modelName = "");
+
+  static bool deleteEvent(const std::string & name, const std::string & modelName = "");
+
+  static cpsapiEvent event(const std::string & name = "", const std::string & modelName = "");
+
+  static cpsapiVector< cpsapiEvent > getEvents(const std::string & modelName = "");
   
 private:
   static std::map< std::string, CDataModel * > DataModels;

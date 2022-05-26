@@ -135,6 +135,14 @@ public:
 
   cpsapiVector< cpsapiReaction > getReactions();
 
+  cpsapiEvent addEvent(const std::string & name);
+
+  bool deleteEvent(const std::string & name);
+
+  cpsapiEvent event(const std::string & name = "");
+
+  cpsapiVector< cpsapiEvent > getEvents();
+
   cpsapiGlobalQuantity addGlobalQuantity(const std::string & name);
 
   bool deleteGlobalQuantity(const std::string & name);
