@@ -374,7 +374,7 @@ cpsapiEvent cpsapiModel::addEvent(const std::string & name)
 
 bool cpsapiModel::deleteEvent(const std::string & name)
 {
-  CEvent * pEvent = static_cast< CEvent *>(*__event(name));
+  CEvent * pEvent = static_cast< CEvent *>(*__EVENT(name));
 
   if (pEvent == nullptr)
     return false;
@@ -394,7 +394,7 @@ bool cpsapiModel::deleteEvent(const std::string & name)
 
 cpsapiEvent cpsapiModel::event(const std::string & name)
 {
-  cpsapiEvent Event = __event(name);
+  cpsapiEvent Event = __EVENT(name);
 
   if (!Event)
     return nullptr;
@@ -413,7 +413,7 @@ cpsapiVector< cpsapiEvent > cpsapiModel::getEvents() const
   return cpsapiVector< cpsapiEvent >(&WRAPPED->getEvents());
 }
 
-cpsapiEvent cpsapiModel::__event(const std::string & name) const
+cpsapiEvent cpsapiModel::__EVENT(const std::string & name) const
 {
   if (!isValid())
     return nullptr;
@@ -441,7 +441,7 @@ cpsapiEventAssignment cpsapiModel::addEventAssignment(const std::string & name, 
 
 bool cpsapiModel::deleteEventAssignment(const std::string & name, const std::string & event)
 {
-  return __event(event).deleteEventAssignment(name);
+  return __EVENT(event).deleteEventAssignment(name);
 }
 
 cpsapiEventAssignment cpsapiModel::eventAssignment(const std::string & name, const std::string & event)

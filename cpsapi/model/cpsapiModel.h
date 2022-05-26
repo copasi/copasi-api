@@ -198,7 +198,13 @@ private:
 
   void updateDefaultReaction(const cpsapiReaction & reaction);
   
-  cpsapiEvent __event(const std::string & name) const;
+  /**
+   * Retrieve the event with the given name 
+   * Upper case name due __event being a Visual C keyword
+   * @param const std::string & name 
+   * @return cpsapiEvent 
+   */
+  cpsapiEvent __EVENT(const std::string & name) const;
 
   void updateDefaultEvent(const cpsapiEvent & event);
   
