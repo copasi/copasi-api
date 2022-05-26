@@ -198,9 +198,6 @@ private:
 
   void updateDefaultReaction(const cpsapiReaction & reaction);
   
-#ifdef __event
-# undef __event
-#endif
   cpsapiEvent __event(const std::string & name) const;
 
   void updateDefaultEvent(const cpsapiEvent & event);
