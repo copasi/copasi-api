@@ -42,6 +42,12 @@ if(EXTRA_INCLUDE_DIRS)
   endforeach()
 endif(EXTRA_INCLUDE_DIRS)
 
+# compile as position independent code
+if (UNIX OR CYGWIN)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+endif()
+
 set(CPSAPI_DEPENDENCY_DIR "" CACHE PATH "Installation directory of the CPSAPI dependencies")
 
 if (CPSAPI_DEPENDENCY_DIR)
@@ -61,14 +67,29 @@ find_package(LIBCOPASISE REQUIRED)
 include_directories(BEFORE ${LIBCOPASISE_INCLUDE_DIR})
 
 add_subdirectory(cpsapi)
+
 option (WITH_DOCUMENTATION "Build the documentation." OFF)
 if (WITH_DOCUMENTATION)
 add_subdirectory (docs)
 endif()
+
 add_subdirectory(examples)
 
 include(CTest)
 add_subdirectory(tests)
+
+# for the language bindings we need swig
+option (ENABLE_CSHARP "Enable language bindings for the C# language." OFF)
+option (ENABLE_JAVA "Enable language bindings for the Java language." OFF)
+option (ENABLE_PYTHON "Enable language bindings for the Python language." OFF)
+option (ENABLE_R "Enable language bindings for the R language." OFF)
+
+# we need swig for the language bindings. Only if SWIG was found, the options to
+# build the different language bindings are enabled
+# TODO test the SWIG version
+if (ENABLE_CSHARP OR ENABLE_JAVA OR ENABLE_PYTHON OR ENABLE_R)
+  add_subdirectory(bindings)
+endif ()
 
 get_directory_property(DirDefs COMPILE_DEFINITIONS)
 

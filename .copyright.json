@@ -24,7 +24,8 @@
         "*.c",
         "*.h",
         "*.h.in",
-        "*.java"
+        "*.java",
+        "*.i"
       ],
       "commentStart": "//"
     },

@@ -1,0 +1,31 @@
+# BEGIN: Copyright 
+# Copyright (C) 2022 by Pedro Mendes, Rector and Visitors of the 
+# University of Virginia, University of Heidelberg, and University 
+# of Connecticut School of Medicine. 
+# All rights reserved 
+# END: Copyright 
+
+# BEGIN: License 
+# Licensed under the Artistic License 2.0 (the "License"); 
+# you may not use this file except in compliance with the License. 
+# You may obtain a copy of the License at 
+#   https://opensource.org/licenses/Artistic-2.0 
+# END: License 
+
+# patch c++ wrapper file 
+set (WRAPPER_FILE "${BIN_DIRECTORY}/cpsapi_wrapper.cpp")
+
+if (NOT EXISTS ${WRAPPER_FILE})
+  message(FATAL_ERROR "Wrapper file does not exist")
+endif()
+
+message(STATUS "Patching C++ wrapper")
+
+file(READ "${WRAPPER_FILE}" SOURCECODE)
+
+string(REPLACE "enum CTaskEnum::Method," "CTaskEnum::Method," SOURCECODE "${SOURCECODE}" )
+string(REPLACE "enum CTaskEnum::Method " "CTaskEnum::Method " SOURCECODE "${SOURCECODE}" )
+string(REPLACE "enum CTaskEnum::Task " "CTaskEnum::Task " SOURCECODE "${SOURCECODE}" )
+string(REPLACE "enum CTaskEnum::Task," "CTaskEnum::Task," SOURCECODE "${SOURCECODE}" )
+
+file(WRITE "${WRAPPER_FILE}" "${SOURCECODE}")
