@@ -31,7 +31,7 @@ sys.path.append(os.path.dirname(__file__))
 ")
 file(APPEND  "${WRAPPER_FILE}" "${SOURCECODE}")
 
-# add COPASI version to wrapper file
+# add CPSAPI version to wrapper file
 if (VERSION)
 file(APPEND  "${WRAPPER_FILE}" "\n__version__ = '${VERSION}'\n")
 endif()
@@ -63,4 +63,4 @@ string(REPLACE
 
 endforeach()
 
-file(WRITE "${BIN_DIRECTORY}/COPASI3.py" "${SOURCECODE}")
+file(WRITE "${BIN_DIRECTORY}/cpsapi3.py" "${SOURCECODE}")

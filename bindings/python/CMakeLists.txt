@@ -34,7 +34,10 @@ file(GLOB SWIG_DEPENDENCIES
 
 ADD_CUSTOM_COMMAND(	
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/cpsapi_wrapper.cpp
+           ${CMAKE_CURRENT_BINARY_DIR}/cpsapi_wrapper.h
+           ${CMAKE_CURRENT_BINARY_DIR}/cpsapi.pth
            ${CMAKE_CURRENT_BINARY_DIR}/cpsapi.py
+           ${CMAKE_CURRENT_BINARY_DIR}/cpsapi3.py
     COMMAND "${SWIG_EXECUTABLE}"
     ARGS  -I${CMAKE_CURRENT_SOURCE_DIR}/../swig/
           -I${CMAKE_CURRENT_SOURCE_DIR}/../../
@@ -61,7 +64,7 @@ ADD_CUSTOM_COMMAND(
     COMMAND "${CMAKE_COMMAND}"
     ARGS -DBIN_DIRECTORY=\"${CMAKE_CURRENT_BINARY_DIR}\"
          -DSRC_DIRECTORY=\"${CMAKE_CURRENT_SOURCE_DIR}\"
-         -DVERSION=${CPSAPI_VERSION_MAJOR}.${CPSAPI_VERSION_MINOR}.${CPSAPI_VERSION_BUILD}
+         -DVERSION=${CMAKE_PROJECT_VERSION}
          -P "${CMAKE_CURRENT_SOURCE_DIR}/patch-python.cmake"
 
     MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/python.i
@@ -98,7 +101,7 @@ set_target_properties(binding_python_lib PROPERTIES
 
 add_dependencies( binding_python_lib binding_python_swig cpsapi) 
 
-set_target_properties (binding_python_lib PROPERTIES OUTPUT_NAME "_CPSAPI")
+set_target_properties (binding_python_lib PROPERTIES OUTPUT_NAME "_cpsapi")
 if (UNIX)
 	set_target_properties (binding_python_lib PROPERTIES PREFIX "")
 	set_target_properties (binding_python_lib PROPERTIES SUFFIX ".so")
@@ -139,11 +142,11 @@ else()
   set(PYTHON_PACKAGE_INSTALL_DIR ${MISC_PREFIX}bindings/python)
 endif()
 
-INSTALL(TARGETS binding_python_lib DESTINATION ${PYTHON_PACKAGE_INSTALL_DIR}/copasi )
+INSTALL(TARGETS binding_python_lib DESTINATION ${PYTHON_PACKAGE_INSTALL_DIR}/cpsapi )
 
-file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/copasi.pth" "copasi\n")
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/copasi.pth  DESTINATION ${PYTHON_PACKAGE_INSTALL_DIR})
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/cpsapi.py  DESTINATION ${PYTHON_PACKAGE_INSTALL_DIR}/copasi )
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/cpsapi.pth" "cpsapi\n")
+INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/cpsapi.pth  DESTINATION ${PYTHON_PACKAGE_INSTALL_DIR})
+INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/cpsapi.py  DESTINATION ${PYTHON_PACKAGE_INSTALL_DIR}/cpsapi )
 file(GLOB examples ${CMAKE_CURRENT_SOURCE_DIR}/examples/*.py)
 INSTALL(FILES ${examples} DESTINATION ${MISC_PREFIX}bindings/python) 
 

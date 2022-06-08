@@ -24,6 +24,8 @@
 %typemap("rtype") bool, bool *, bool &, const bool&      "logical";
 #endif 
 
+#include "local.cpp"
+
 %include cpsapiCompartment.i
 %include cpsapiContainer.i
 %include cpsapiDataCollector.i
