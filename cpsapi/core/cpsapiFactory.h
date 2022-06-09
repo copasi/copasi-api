@@ -37,11 +37,14 @@ public:
   template < class Type >
   static void free_unique(void *);
 
-  enum struct PartType { 
+  enum class PartType { 
     vectorCompartment = 0,
     vectorSpecies,
     vectorGlobalQuantity,
     vectorReaction,
+    vectorReactionParameter,
+    vectorEvent,
+    vectorEventAssignment,
     vectorDataModel,
     vectorTask,
     value,
@@ -50,6 +53,9 @@ public:
     species,
     globalQuantity,
     reaction,
+    reactionParameter,
+    event,
+    eventAssignment,
     dataModel,
     parameter,
     group,

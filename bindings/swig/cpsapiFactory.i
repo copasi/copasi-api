@@ -12,8 +12,6 @@
 //   https://opensource.org/licenses/Artistic-2.0 
 // END: License 
 
-%{
+// We are not exposing anything from cpsapiFactory
+// %include <cpsapi/core/cpsapiFactory.h>
 
-#include <cpsapi/core/cpsapiFactory.h>
-
-%}

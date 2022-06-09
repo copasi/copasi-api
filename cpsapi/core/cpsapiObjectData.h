@@ -36,19 +36,21 @@ class cpsapiObjectData
 friend class cpsapiObject;
 
 public:
-  enum struct Type
+  enum class Type
   {
     Object,
+    Value,
     Container,
     Vector,
     ModelEntity,
-    Value,
     Model,
     Compartment,
     Species,
     GlobalQuantity,
     Reaction,
     ReactionParameter,
+    Event,
+    EventAssignment,
     DataModel,
     Parameter,
     Group,

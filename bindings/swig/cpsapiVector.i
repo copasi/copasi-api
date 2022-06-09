@@ -60,6 +60,24 @@ typedef cpsapiVector< cpsapiGlobalQuantity > cpsapiVectorGlobalQuantity;
 }
 typedef cpsapiVector< cpsapiReaction > cpsapiVectorReaction;
 
+%template(cpsapiVectorEvent) cpsapiVector< cpsapiEvent >;
+%extend cpsapiVector< cpsapiEvent > {
+  cpsapiEvent & __getitem__(unsigned int i)
+    {
+      return $self->operator[](i);
+    }
+}
+typedef cpsapiVector< cpsapiEvent > cpsapiVectorEvent;
+
+%template(cpsapiVectorEventAssignment) cpsapiVector< cpsapiEventAssignment >;
+%extend cpsapiVector< cpsapiEventAssignment > {
+  cpsapiEventAssignment & __getitem__(unsigned int i)
+    {
+      return $self->operator[](i);
+    }
+}
+typedef cpsapiVector< cpsapiEventAssignment > cpsapiVectorEventAssignment;
+
 %template(cpsapiVectorDataModel) cpsapiVector< cpsapiDataModel >;
 %extend cpsapiVector< cpsapiDataModel > {
   cpsapiDataModel & __getitem__(unsigned int i)

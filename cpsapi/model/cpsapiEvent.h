@@ -102,7 +102,7 @@ public:
    * @param wrapped * pWrapped (default: nullptr)
    * @param const Type & type (default: Type::cpsapiEvent)
    */
-  cpsapiEvent(wrapped * pWrapped = nullptr, const cpsapiObjectData::Type & type = cpsapiObjectData::Type::Parameter);
+  cpsapiEvent(wrapped * pWrapped = nullptr, const cpsapiObjectData::Type & type = cpsapiObjectData::Type::Event);
 
   /**
    * Destructor

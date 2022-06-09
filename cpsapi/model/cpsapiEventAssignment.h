@@ -84,7 +84,7 @@ public:
    * @param wrapped * pWrapped (default: nullptr)
    * @param const Type & type (default: Type::cpsapiEventAssignment)
    */
-  cpsapiEventAssignment(wrapped * pWrapped = nullptr, const cpsapiObjectData::Type & type = cpsapiObjectData::Type::Parameter);
+  cpsapiEventAssignment(wrapped * pWrapped = nullptr, const cpsapiObjectData::Type & type = cpsapiObjectData::Type::EventAssignment);
 
   /**
    * Destructor

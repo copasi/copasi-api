@@ -12,8 +12,9 @@
 //   https://opensource.org/licenses/Artistic-2.0 
 // END: License 
 
-%{
+%ignore cpsapiGroup::SupportedProperties;
+%ignore cpsapiGroup::HiddenProperties;
+%ignore cpsapiGroup::SupportedReferences;
+%ignore cpsapiGroup::HiddenReferences;
 
-#include <cpsapi/core/cpsapiGroup.h>
-
-%}
+%include <cpsapi/core/cpsapiGroup.h>

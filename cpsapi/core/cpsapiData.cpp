@@ -54,7 +54,7 @@ cpsapiData::cpsapiData(const CCommonName & value)
   : base(value)
 {}
 
-cpsapiData::cpsapiData(const Vector & value)
+cpsapiData::cpsapiData(const cpsapiData::Vector & value)
   : base(value)
 {}
 
@@ -92,7 +92,7 @@ cpsapiData::cpsapiData(const cpsapiData::Type & type, void * pValue)
       break;
 
     case Type::Vector:
-      base::operator=(*static_cast< Vector * >(pValue));
+      base::operator=(*static_cast< cpsapiData::Vector * >(pValue));
       break;
 
     case Type::Object:
@@ -175,10 +175,10 @@ CCommonName cpsapiData::toCommonName() const
 
 const cpsapiData::Vector & cpsapiData::toData() const
 {
-  static const Vector Invalid;
+  static const cpsapiData::Vector Invalid;
 
-  if (std::holds_alternative< Vector >(*this))
-    return std::get< Vector >(*this);
+  if (std::holds_alternative< cpsapiData::Vector >(*this))
+    return std::get< cpsapiData::Vector >(*this);
 
 
   return Invalid;

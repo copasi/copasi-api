@@ -26,12 +26,12 @@
 
 CPSAPI_NAMESPACE_BEGIN
 
-class cpsapiData : public std::variant< C_FLOAT64, C_INT32, unsigned C_INT32, size_t, bool, std::string, CRegisteredCommonName, std::shared_ptr< cpsapiObject >, std::vector< cpsapiData > >
+class cpsapiData : protected std::variant< C_FLOAT64, C_INT32, unsigned C_INT32, size_t, bool, std::string, CRegisteredCommonName, std::shared_ptr< cpsapiObject >, std::vector< cpsapiData > >
 {
   typedef std::variant< C_FLOAT64, C_INT32, unsigned C_INT32, size_t, bool, std::string, CRegisteredCommonName, std::shared_ptr< cpsapiObject >, std::vector< cpsapiData > > base;
 
 public:
-  enum struct Type
+  enum class Type
   {
     Double = 0,
     Int32,
@@ -55,7 +55,7 @@ public:
 
   cpsapiData(const C_INT32 & value);
 
-  cpsapiData(const unsigned C_INT32 & value);
+  cpsapiData(const C_UINT32 & value);
 
   cpsapiData(const size_t & value);
 
@@ -83,7 +83,7 @@ public:
 
   C_INT32 toInt32() const;
 
-  unsigned C_INT32 toUnsignedInt32() const;
+  C_UINT32 toUnsignedInt32() const;
 
   size_t toSizeType() const;
 

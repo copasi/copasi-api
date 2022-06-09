@@ -40,6 +40,9 @@ void cpsapiFactory::init()
       insert< cpsapiVector< cpsapiSpecies >, CDataVectorNS< CMetab > >(PartType::vectorSpecies);
       insert< cpsapiVector< cpsapiGlobalQuantity >, CDataVectorN< CModelValue > >(PartType::vectorGlobalQuantity);
       insert< cpsapiVector< cpsapiReaction >, CDataVectorNS< CReaction > >(PartType::vectorReaction);
+      insert< cpsapiVector< cpsapiKineticLawVariable >, CDataVector< cpsapiKineticLawVariable::KineticLawVariable > >(PartType::vectorReactionParameter);
+      insert< cpsapiVector< cpsapiEvent >, CDataVectorN< CEvent > >(PartType::vectorEvent);
+      insert< cpsapiVector< cpsapiEventAssignment >, CDataVectorN< CEventAssignment > >(PartType::vectorEventAssignment);
       insert< cpsapiVector< cpsapiDataModel >, CDataVector< CDataModel > >(PartType::vectorDataModel);
       insert< cpsapiVector< cpsapiTask >, CDataVectorN< CCopasiTask > >(PartType::vectorTask);
       insert< cpsapiValue, CDataObjectReference< C_FLOAT64 > >(PartType::value);
@@ -53,6 +56,9 @@ void cpsapiFactory::init()
       insert< cpsapiSpecies, CMetab >(PartType::species);
       insert< cpsapiGlobalQuantity, CModelValue >(PartType::globalQuantity);
       insert< cpsapiReaction, CReaction >(PartType::reaction);
+      insert< cpsapiKineticLawVariable, cpsapiKineticLawVariable::KineticLawVariable >(PartType::reactionParameter);
+      insert< cpsapiEvent, CEvent >(PartType::event);
+      insert< cpsapiEventAssignment, CEventAssignment >(PartType::eventAssignment);
       insert< cpsapiDataModel, CDataModel >(PartType::dataModel);
       insert< cpsapiParameter, CCopasiParameter >(PartType::parameter);
       insert< cpsapiGroup, CCopasiParameterGroup >(PartType::group);

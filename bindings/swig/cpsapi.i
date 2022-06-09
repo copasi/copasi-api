@@ -72,24 +72,24 @@ CPSAPI_NAMESPACE_USE
 %include cpsapiValue.i
 %include cpsapiContainer.i
 %include cpsapiVector.i
+%include cpsapiFactory.i
+%include cpsapiParameter.i
+%include cpsapiGroup.i
+%include cpsapiData.i
 
 
 /*
 %include cpsapiCompartment.i
 %include cpsapiContainer.i
 %include cpsapiDataCollector.i
-%include cpsapiData.i
 %include cpsapiDataModel.i
 %include cpsapiEventAssignment.i
 %include cpsapiEvent.i
-%include cpsapiFactory.i
 %include cpsapiGlobalQuantity.i
-%include cpsapiGroup.i
 %include cpsapiKineticLawVariable.i
 %include cpsapiMethod.i
 %include cpsapiModelEntity.i
 %include cpsapiModel.i
-%include cpsapiParameter.i
 %include cpsapiProblem.i
 %include cpsapiReaction.i
 %include cpsapiRoot.i
