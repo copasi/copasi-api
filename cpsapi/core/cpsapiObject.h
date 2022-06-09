@@ -42,7 +42,7 @@ class cpsapiObject
   friend class cpsapiData;
 
 public:
-  static  const CCommonName Invalid;
+  static const CCommonName Invalid;
 
   typedef std::set< cpsapiProperty::Type > Properties;
   typedef std::set< cpsapiReference::Type > References;

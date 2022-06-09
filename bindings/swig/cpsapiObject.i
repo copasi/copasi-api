@@ -12,8 +12,19 @@
 //   https://opensource.org/licenses/Artistic-2.0 
 // END: License 
 
-%{
+%ignore cpsapiObject::cpsapiObject;
+%ignore cpsapiObject::~cpsapiObject;
+%ignore cpsapiObject::SupportedProperties;
+%ignore cpsapiObject::HiddenProperties;
+%ignore cpsapiObject::SupportedReferences;
+%ignore cpsapiObject::HiddenReferences;
+%ignore cpsapiObject::operator->;
+%ignore cpsapiObject::operator*;
 
-#include <cpsapi/core/cpsapiObject.h>
+%include <cpsapi/core/cpsapiObject.h>
 
-%}
+%extend cpsapiObject {
+  CDataObject * dataObject() {
+    return $self->operator*();
+  }
+}

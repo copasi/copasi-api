@@ -12,10 +12,12 @@
 //   https://opensource.org/licenses/Artistic-2.0 
 // END: License 
 
+#include <cpsapi/git-commit.h>
+#include <cpsapi/cpsapiConfig.h>
 #include <cpsapi/core/cpsapiObjectData.h>
 #include <cpsapi/core/cpsapiGroup.h>
 #include <cpsapi/core/cpsapiProperty.h>
-#include <cpsapi/core/cpsapiValue.h>>
+#include <cpsapi/core/cpsapiValue.h>
 #include <cpsapi/core/cpsapiObject.h>
 #include <cpsapi/core/cpsapiParameter.h>
 #include <cpsapi/core/cpsapiDataModel.h>
@@ -36,8 +38,6 @@
 #include <cpsapi/model/cpsapiKineticLawVariable.h>
 #include <cpsapi/model/cpsapiEvent.h>
 #include <cpsapi/model/cpsapiEventAssignment.h>
-#include <cpsapi/git-commit.h>
-#include <cpsapi/cpsapiConfig.h>
 #include <cpsapi/task/cpsapiTask.h>
 #include <cpsapi/task/cpsapiProblem.h>
 #include <cpsapi/task/cpsapiMethod.h>

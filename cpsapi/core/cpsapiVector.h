@@ -72,21 +72,19 @@ public:
   class iterator: public wrapped::iterator
   {
   public:
-    iterator() = delete;
-
-    iterator(const iterator & src)
-      : wrapped::iterator(src)
-      , mMap(src.mMap)
+    iterator()
+      : wrapped::iterator()
+      , mpMap(nullptr)
     {}
-
+    
     iterator(const typename wrapped::iterator & src, ObjectMap & map)
       : wrapped::iterator(src)
-      , mMap(map)
+      , mpMap(&map)
     {}
 
     iterator(ObjectMap & map)
       : wrapped::iterator()
-      , mMap(map)
+      , mpMap(&map)
     {}
 
     ~iterator() {}
@@ -94,10 +92,10 @@ public:
     Object & operator*() const
     {
       typename Object::wrapped & Wrapped = wrapped::iterator::operator*();
-      typename ObjectMap::iterator found = mMap.find(&Wrapped);
+      typename ObjectMap::iterator found = mpMap->find(&Wrapped);
 
-      if (found == mMap.end())
-        found = mMap.insert(std::make_pair(&Wrapped, Object(&Wrapped))).first;
+      if (found == mpMap->end())
+        found = mpMap->insert(std::make_pair(&Wrapped, Object(&Wrapped))).first;
 
       return found->second;
     }
@@ -105,10 +103,10 @@ public:
     Object * operator->() const
     {
       typename Object::wrapped & Wrapped = wrapped::iterator::operator*();
-      typename ObjectMap::iterator found = mMap.find(&Wrapped);
+      typename ObjectMap::iterator found = mpMap->find(&Wrapped);
 
-      if (found == mMap.end())
-        found = mMap.insert(std::make_pair(&Wrapped, Object(&Wrapped))).first;
+      if (found == mpMap->end())
+        found = mpMap->insert(std::make_pair(&Wrapped, Object(&Wrapped))).first;
 
       return &found->second;
     }
@@ -116,10 +114,10 @@ public:
     operator Object * () const
     {
       typename Object::wrapped & Wrapped = wrapped::iterator::operator*();
-      typename ObjectMap::iterator found = mMap.find(&Wrapped);
+      typename ObjectMap::iterator found = mpMap->find(&Wrapped);
 
-      if (found == mMap.end())
-        found = mMap.insert(std::make_pair(&Wrapped, Object(&Wrapped))).first;
+      if (found == mpMap->end())
+        found = mpMap->insert(std::make_pair(&Wrapped, Object(&Wrapped))).first;
 
       return &found->second;
     }
@@ -154,7 +152,7 @@ public:
 
     iterator operator+(const typename wrapped::iterator::difference_type & n) const
     {
-      return iterator(wrapped::iterator::operator+(n), mMap);
+      return iterator(wrapped::iterator::operator+(n), *mpMap);
     }
 
     iterator & operator-=(const typename wrapped::iterator::difference_type & n)
@@ -165,11 +163,11 @@ public:
 
     iterator operator-(const typename wrapped::iterator::difference_type & n) const
     {
-      return iterator(wrapped::iterator::operator-(n), mMap);
+      return iterator(wrapped::iterator::operator-(n), *mpMap);
     }
 
   protected:
-    ObjectMap & mMap;
+    ObjectMap * mpMap;
   };
 
   /**

@@ -12,8 +12,14 @@
 //   https://opensource.org/licenses/Artistic-2.0 
 // END: License 
 
-%{
+%ignore cpsapiObjectData::cpsapiObjectData;
+%ignore cpsapiObjectData::~cpsapiObjectData;
+%ignore cpsapiObjectData::Manager;
+%ignore cpsapiObjectData::release;
+%ignore cpsapiObjectData::erase;
+%ignore cpsapiObjectData::deleted;
+%ignore cpsapiObjectData::deleted;
+%ignore cpsapiObjectData::assertDataType;
 
-#include <cpsapi/core/cpsapiObjectData.h>
+%include <cpsapi/core/cpsapiObjectData.h>
 
-%}

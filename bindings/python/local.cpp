@@ -31,8 +31,8 @@
 // Properties, Inc. and EML Research, gGmbH.
 // All rights reserved.
 
-#include <bindings/common/local_common.cpp>
-#include <bindings/common/downcast_common.cpp>
+// #include <bindings/common/local_common.cpp>
+// #include <bindings/common/downcast_common.cpp>
 
 SWIGRUNTIME PyObject *
 SWIG_Python_NewPointerObj(PyObject *self, const void *ptr, swig_type_info *type, int flags)

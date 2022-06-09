@@ -12,8 +12,10 @@
 //   https://opensource.org/licenses/Artistic-2.0 
 // END: License 
 
-%{
+%ignore cpsapiValue::cpsapiValue(wrapped *);
+%ignore cpsapiValue::SupportedProperties;
+%ignore cpsapiValue::HiddenProperties;
+%ignore cpsapiValue::SupportedReferences;
+%ignore cpsapiValue::HiddenReferences;
 
-#include <cpsapi/core/cpsapiValue.h>
-
-%}
+%include <cpsapi/core/cpsapiValue.h>

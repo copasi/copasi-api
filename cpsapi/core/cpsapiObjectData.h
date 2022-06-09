@@ -33,6 +33,8 @@ class cpsapiObject;
  */
 class cpsapiObjectData
 {
+friend class cpsapiObject;
+
 public:
   enum struct Type
   {
@@ -76,10 +78,6 @@ public:
 
   virtual ~cpsapiObjectData() {}
 
-  CDataObject * mpObject = nullptr;
-
-  Type mType = Type::Object;
-
   /**
    * Assert that mpData points of the proper class 
    * 
@@ -88,6 +86,11 @@ public:
    */
   template < class CType >
   static void assertDataType(Pointer & baseData);
+
+protected:
+  CDataObject * mpObject = nullptr;
+
+  Type mType = Type::Object;
 
 private:
   // We make clear Base class needs to be inherited

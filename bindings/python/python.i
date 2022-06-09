@@ -18,7 +18,7 @@ import types
 import sys 
 %}
 
-%include "../swig/cpsapi.i"
+%include "bindings/swig/cpsapi.i"
 
 %{
 #include <cpsapi/core/cpsapiRoot.h>

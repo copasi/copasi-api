@@ -17,3 +17,9 @@
 #include <cpsapi/core/cpsapiProperty.h>
 
 %}
+
+%ignore cpsapiProperty::cpsapiProperty;
+%ignore cpsapiProperty::~cpsapiProperty;
+
+%include <cpsapi/core/cpsapiProperty.h>
+
