@@ -67,7 +67,7 @@ jobs:
     - name: Download COPASI
       shell: bash
       run: |
-        git clone --single-branch --branch release/Version-4.36 https://github.com/copasi/COPASI
+        git clone --single-branch --branch release/Version-4.37 https://github.com/copasi/COPASI
 
     - name: Update COPASI Version
       shell: bash
