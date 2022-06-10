@@ -26,9 +26,9 @@
 
 CPSAPI_NAMESPACE_BEGIN
 
-class cpsapiData : protected std::variant< C_FLOAT64, C_INT32, unsigned C_INT32, size_t, bool, std::string, CRegisteredCommonName, std::shared_ptr< cpsapiObject >, std::vector< cpsapiData > >
+class cpsapiData : protected std::variant< C_FLOAT64, C_INT32, C_UINT32, size_t, bool, std::string, CRegisteredCommonName, std::shared_ptr< cpsapiObject >, std::vector< cpsapiData > >
 {
-  typedef std::variant< C_FLOAT64, C_INT32, unsigned C_INT32, size_t, bool, std::string, CRegisteredCommonName, std::shared_ptr< cpsapiObject >, std::vector< cpsapiData > > base;
+  typedef std::variant< C_FLOAT64, C_INT32, C_UINT32, size_t, bool, std::string, CRegisteredCommonName, std::shared_ptr< cpsapiObject >, std::vector< cpsapiData > > base;
 
 public:
   enum class Type

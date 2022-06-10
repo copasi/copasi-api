@@ -148,7 +148,7 @@ cpsapiData cpsapiTemplate::getProperty(const cpsapiProperty::Type & property, co
           break;
 
         case wrapped::Type::UINT:
-          return * (unsigned C_INT32 *) pParameter->getValidValuesPointer();
+          return * (C_UINT32 *) pParameter->getValidValuesPointer();
           break;
 
         case wrapped::Type::BOOL:

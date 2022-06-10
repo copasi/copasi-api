@@ -85,7 +85,7 @@ bool cpsapiValue::setProperty(const cpsapiProperty::Type & property, const cpsap
     case CDataValue::Type::UINT:
       if (value.getType() == cpsapiData::Type::UnsignedInt32)
         {
-          *(unsigned C_INT32 *) getObject()->getValuePointer() = value.toUnsignedInt32();
+          *(C_UINT32 *) getObject()->getValuePointer() = value.toUnsignedInt32();
           return true;
         }
       break;
@@ -134,7 +134,7 @@ cpsapiData cpsapiValue::getProperty(const cpsapiProperty::Type & property, const
       break;
       
     case CDataValue::Type::UINT:
-      return *(unsigned C_INT32 *) getObject()->getValuePointer();
+      return *(C_UINT32 *) getObject()->getValuePointer();
       break;
       
     case CDataValue::Type::BOOL:

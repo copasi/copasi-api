@@ -47,7 +47,7 @@ void cpsapiFactory::init()
       insert< cpsapiVector< cpsapiTask >, CDataVectorN< CCopasiTask > >(PartType::vectorTask);
       insert< cpsapiValue, CDataObjectReference< C_FLOAT64 > >(PartType::value);
       insert< cpsapiValue, CDataObjectReference< C_INT32 > >(PartType::value);
-      insert< cpsapiValue, CDataObjectReference< unsigned C_INT32 > >(PartType::value);
+      insert< cpsapiValue, CDataObjectReference< C_UINT32 > >(PartType::value);
       insert< cpsapiValue, CDataObjectReference< size_t > >(PartType::value);
       insert< cpsapiValue, CDataObjectReference< std::string > >(PartType::value);
       insert< cpsapiValue, CDataObjectReference< CCommonName > >(PartType::value);

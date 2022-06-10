@@ -30,7 +30,7 @@ cpsapiData::cpsapiData(const C_INT32 & value)
   : base(value)
 {}
 
-cpsapiData::cpsapiData(const unsigned C_INT32 & value)
+cpsapiData::cpsapiData(const C_UINT32 & value)
   : base(value)
 {}
 
@@ -72,7 +72,7 @@ cpsapiData::cpsapiData(const cpsapiData::Type & type, void * pValue)
       break;
 
     case Type::UnsignedInt32:
-      base::operator=(*static_cast< unsigned C_INT32 * >(pValue));
+      base::operator=(*static_cast< C_UINT32 * >(pValue));
       break;
 
     case Type::SizeType:
@@ -133,10 +133,10 @@ C_INT32 cpsapiData::toInt32() const
   return 0;
 }
 
-unsigned C_INT32 cpsapiData::toUnsignedInt32() const
+C_UINT32 cpsapiData::toUnsignedInt32() const
 {
-  if (std::holds_alternative< unsigned C_INT32 >(*this))
-    return std::get< unsigned C_INT32 >(*this);
+  if (std::holds_alternative< C_UINT32 >(*this))
+    return std::get< C_UINT32 >(*this);
 
   return 0;
 }
